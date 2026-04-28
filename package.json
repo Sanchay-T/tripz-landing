@@ -1,0 +1,30 @@
+{
+  "name": "tripz-landing",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TripZ FIHORIZON landing page",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --max-warnings=0",
+    "test": "node --test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "module",
+  "dependencies": {
+    "lucide-react": "^1.11.0",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.4"
+  },
+  "overrides": {
+    "postcss": "8.5.10"
+  }
+}
