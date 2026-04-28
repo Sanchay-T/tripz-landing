@@ -11,9 +11,9 @@ export const liveStatus = {
 
 export const navLinks = [
   { label: "How it works", href: "#how" },
-  { label: "Stories", href: "#stories" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Business", href: "#business" }
+  { label: "Services", href: "#services" },
+  { label: "The desk", href: "#desk" },
+  { label: "Stories", href: "#stories" }
 ];
 
 export const heroStats = [
@@ -51,31 +51,46 @@ export const heroAgent = {
   role: "Senior agent · Mumbai · 6 yr"
 };
 
+export const alsoOnline = [
+  { initials: "KP", name: "Kenji Park", city: "Tokyo" },
+  { initials: "ML", name: "Maya Leclerc", city: "Paris" },
+  { initials: "DO", name: "Diego Okafor", city: "Lagos" }
+];
+
+export const lastSave = {
+  route: "AI 144 → BLR",
+  detail: "Rebooked · same class · 4 min ago"
+};
+
 export const services = [
   {
     n: "No. 01",
     title: "Cheap flights & hotels",
     body: "Real prices, no surge tricks. A human checks every itinerary before you pay.",
-    cta: "Get a quote"
+    cta: "Get a quote",
+    href: "#contact"
   },
   {
     n: "No. 02",
     title: "Group & family bookings",
     body: "Ten people, one itinerary, one named agent on a single thread.",
-    cta: "Plan a group trip"
+    cta: "Plan a group trip",
+    href: "#contact"
   },
   {
     n: "No. 03",
     title: "Corporate travel",
     body: "Bulk fares, a named agent per traveller, monthly invoice — no SaaS dashboard.",
-    cta: "Talk to us"
+    cta: "Talk to us",
+    href: "#contact"
   },
   {
     n: "No. 04",
     title: "Live human help",
     body: "One number. Picked up in 38 seconds. Any hour. Any leg of the trip.",
     cta: "Call now",
-    live: true
+    live: true,
+    href: `tel:${supportPhoneE164}`
   }
 ];
 
@@ -165,13 +180,14 @@ export const steps = [
 export const footerLinks = {
   Product: [
     { label: "How it works", href: "#how" },
-    { label: "Stories", href: "#stories" },
-    { label: "Pricing", href: "#pricing" }
+    { label: "Services", href: "#services" },
+    { label: "The desk", href: "#desk" },
+    { label: "Stories", href: "#stories" }
   ],
   Company: [
-    { label: "Business", href: "#business" },
-    { label: "Careers", href: "#" },
-    { label: "Press", href: "#" }
+    { label: "Get in touch", href: "#contact" },
+    { label: "Careers", href: "mailto:careers@tripz.co.in" },
+    { label: "Press", href: "mailto:press@tripz.co.in" }
   ],
   Legal: [
     { label: "Terms", href: "#" },

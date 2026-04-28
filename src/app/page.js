@@ -1,9 +1,11 @@
 import {
+  alsoOnline,
   ctaActions,
   desk,
   footerLinks,
   heroAgent,
   heroStats,
+  lastSave,
   liveStatus,
   metrics,
   navLinks,
@@ -101,29 +103,55 @@ function LivePill({ onDark = false }) {
   );
 }
 
-function CtaRow({ tone = "light", compact = false }) {
-  const onDark = tone === "dark";
+function WhatsAppLine() {
+  return (
+    <a
+      className="hero-aside-cta"
+      href={ctaActions.whatsapp.href}
+      target="_blank"
+      rel="noreferrer"
+    >
+      <span className="badge" aria-hidden="true">
+        <Icons.whatsapp size={13} />
+      </span>
+      Or message us on WhatsApp
+      <span className="arrow" aria-hidden="true">
+        →
+      </span>
+    </a>
+  );
+}
+
+function HeroCtas() {
   return (
     <>
-      <a
-        className={`cta primary${compact ? " compact" : ""}`}
-        href={ctaActions.call.href}
-      >
-        <Icons.phone size={compact ? 14 : 16} />
+      <a className="cta primary" href={ctaActions.call.href}>
+        <Icons.phone size={16} />
         {ctaActions.call.label}
-        {ctaActions.call.meta && (
-          <span className="meta">{ctaActions.call.meta}</span>
-        )}
+        <span className="meta">{ctaActions.call.meta}</span>
       </a>
-      <a
-        className={`cta secondary${onDark ? " on-dark" : ""}${compact ? " compact" : ""}`}
-        href={ctaActions.chat.href}
-      >
-        <Icons.chat size={compact ? 14 : 16} />
+      <a className="cta secondary" href={ctaActions.chat.href}>
+        <Icons.chat size={16} />
+        {ctaActions.chat.label}
+      </a>
+    </>
+  );
+}
+
+function ClosingCtas() {
+  return (
+    <>
+      <a className="cta primary" href={ctaActions.call.href}>
+        <Icons.phone size={16} />
+        {ctaActions.call.label}
+        <span className="meta">{ctaActions.call.meta}</span>
+      </a>
+      <a className="cta secondary" href={ctaActions.chat.href}>
+        <Icons.chat size={16} />
         {ctaActions.chat.label}
       </a>
       <a
-        className={`cta tertiary${onDark ? " on-dark" : ""}`}
+        className="cta tertiary"
         href={ctaActions.whatsapp.href}
         target="_blank"
         rel="noreferrer"
@@ -159,6 +187,56 @@ function Nav() {
   );
 }
 
+function OperationsPanel() {
+  return (
+    <aside className="ops-panel" aria-label="Live operations">
+      <div className="ops-strip">
+        <span>
+          Fig. 01 · <b>The desk</b>
+        </span>
+        <span>03:47 IST</span>
+      </div>
+
+      <article className="agent-card">
+        <div className="meta">
+          <span className="dot" aria-hidden="true" /> {heroAgent.meta}
+        </div>
+        <p className="quote">&ldquo;{heroAgent.quote}&rdquo;</p>
+        <div className="who">
+          <span className="avatar">{heroAgent.initials}</span>
+          <span>
+            <b>{heroAgent.name}</b> — {heroAgent.role}
+          </span>
+        </div>
+      </article>
+
+      <div className="ops-online">
+        <div className="ops-online-label">
+          <span>
+            Also online · <b>{liveStatus.humansOnline - 1} more</b>
+          </span>
+          <span>EN · HI · FR · JP · YO</span>
+        </div>
+        {alsoOnline.map((agent) => (
+          <div key={agent.initials} className="ops-row">
+            <span className="mini-avatar" aria-hidden="true">
+              {agent.initials}
+            </span>
+            <span className="name">{agent.name}</span>
+            <span className="city">{agent.city}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="ops-save">
+        <span className="label">Last save</span>
+        <span className="body">{lastSave.route}</span>
+        <span className="detail">{lastSave.detail}</span>
+      </div>
+    </aside>
+  );
+}
+
 function Hero() {
   return (
     <section className="hero" id="top" aria-labelledby="hero-headline">
@@ -177,33 +255,20 @@ function Hero() {
           rebooking, refunds, and arguments so you don&rsquo;t have to.
         </p>
         <div className="hero-ctas">
-          <CtaRow />
+          <HeroCtas />
         </div>
+        <WhatsAppLine />
         <div className="hero-stats">
           {heroStats.map((stat) => (
             <div key={stat.label}>
-              <b>{stat.value}</b>· {stat.label}
+              <b>{stat.value}</b>
+              <span>· {stat.label}</span>
             </div>
           ))}
         </div>
       </div>
       <div className="hero-side">
-        <article className="agent-card">
-          <div className="meta">
-            <span className="dot" aria-hidden="true" /> {heroAgent.meta}
-          </div>
-          <p className="quote">&ldquo;{heroAgent.quote}&rdquo;</p>
-          <div className="who">
-            <span className="avatar">{heroAgent.initials}</span>
-            <span>
-              <b>{heroAgent.name}</b> — {heroAgent.role}
-            </span>
-          </div>
-          <div className="footnote">
-            <span>Fig. 01 · The desk</span>
-            <span>Picked up · 03:47 IST</span>
-          </div>
-        </article>
+        <OperationsPanel />
       </div>
     </section>
   );
@@ -213,9 +278,11 @@ function Services() {
   return (
     <section className="services" id="services" aria-label="Services">
       {services.map((service) => (
-        <article
+        <a
           key={service.n}
+          href={service.href}
           className={`service${service.live ? " live" : ""}`}
+          {...(service.href.startsWith("tel:") ? {} : {})}
         >
           <div className="num">{service.n}</div>
           <h3>{service.title}</h3>
@@ -223,7 +290,7 @@ function Services() {
           <span className="arrow">
             {service.cta} <Icons.arrow size={13} />
           </span>
-        </article>
+        </a>
       ))}
     </section>
   );
@@ -231,7 +298,7 @@ function Services() {
 
 function PullBand() {
   return (
-    <section className="pullband" aria-label="Customer story">
+    <section className="pullband" id="stories" aria-label="Customer story">
       <div className="pullband-inner">
         <div className="mark" aria-hidden="true">
           &ldquo;
@@ -278,14 +345,24 @@ function Steps() {
     );
   }
   return (
-    <section className="steps" aria-label="How it works">
-      {steps.map((step) => (
-        <article key={step.n} className="step">
-          <span className="num">Step {step.n}</span>
-          <h3>{renderTitle(step.title)}</h3>
-          <p>{step.body}</p>
-        </article>
-      ))}
+    <section className="steps-section" id="steps" aria-labelledby="steps-head">
+      <div className="steps-head">
+        <header className="section-head">
+          <span className="marker">§ 02 · How it works</span>
+          <h2 id="steps-head" className="display">
+            Three steps. <em>That is the product.</em>
+          </h2>
+        </header>
+      </div>
+      <div className="steps">
+        {steps.map((step) => (
+          <article key={step.n} className="step">
+            <span className="num">Step {step.n}</span>
+            <h3>{renderTitle(step.title)}</h3>
+            <p>{step.body}</p>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }
@@ -294,21 +371,31 @@ function Desk() {
   return (
     <section
       className="section on-dark"
-      id="stories"
+      id="desk"
       aria-labelledby="desk-head"
     >
       <header className="section-head">
         <div>
-          <span className="marker on-dark">§ 02 · The desk</span>
-          <h2 id="desk-head" className="display on-dark" style={{ marginTop: 12 }}>
+          <span className="marker on-dark">§ 03 · The desk</span>
+          <h2
+            id="desk-head"
+            className="display on-dark"
+            style={{ marginTop: 14 }}
+          >
             One of <em>fourteen</em> people is already online.
           </h2>
+          <p className="section-lede">
+            Named, located, time-zoned. Every booking gets a real agent — not a
+            queue. Tap a name and you&rsquo;re on a thread with <em>them</em>,
+            not a ticket.
+          </p>
         </div>
         <LivePill onDark />
       </header>
       <div className="agent-grid">
         {desk.map((agent) => (
           <article key={agent.initials} className="agent-tile">
+            <span className="online-dot" aria-label="Online" />
             <div className="row">
               <span className="avatar">{agent.initials}</span>
               <div>
@@ -355,7 +442,7 @@ function Closing() {
         <em>call a human.</em>
       </h2>
       <div className="ctas">
-        <CtaRow />
+        <ClosingCtas />
       </div>
     </section>
   );
@@ -363,12 +450,13 @@ function Closing() {
 
 function Footer() {
   return (
-    <footer className="tz-footer" id="business">
+    <footer className="tz-footer">
       <div className="footer-grid">
         <div className="footer-brand">
           <Wordmark onDark size={28} />
           <p className="tagline">
-            TripZ — picked up <em style={{ color: "#7ec79d" }}>by humans.</em>
+            TripZ — picked up{" "}
+            <em style={{ color: "var(--tz-accent-on-dark)" }}>by humans.</em>
           </p>
           <div className="footer-call" style={{ marginTop: 28 }}>
             <span className="label">Call any hour</span>
@@ -391,7 +479,9 @@ function Footer() {
         ))}
       </div>
       <div className="footer-bottom">
-        <span>© {new Date().getFullYear()} TripZ · Bengaluru / Mumbai / Bangkok</span>
+        <span>
+          © {new Date().getFullYear()} TripZ · Bengaluru / Mumbai / Bangkok
+        </span>
         <LivePill onDark />
       </div>
     </footer>
