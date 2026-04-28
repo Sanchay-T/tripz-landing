@@ -305,12 +305,108 @@ p {
   margin-top: 22px;
 }
 
+.hero-headline .line {
+  display: block;
+  will-change: transform, opacity, filter;
+}
+
 .hero-headline em {
   font-family: var(--tz-italic);
   font-style: italic;
   font-weight: 400;
   color: var(--tz-accent);
   letter-spacing: -0.035em;
+  display: inline-block;
+}
+
+.hero-headline em.breath {
+  animation: tz-breath 6.5s ease-in-out infinite;
+  animation-delay: 1.6s;
+  will-change: opacity;
+}
+
+.hero-headline em.breath-b {
+  animation-delay: 4.85s;
+}
+
+@keyframes tz-breath {
+  0%,
+  100% {
+    opacity: 0.78;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-headline em.breath {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Eyebrow rule line draws in for the hero only */
+.hero .hero-eyebrow::before {
+  transform-origin: left center;
+  animation: tz-eyebrow-draw 0.8s 0.05s ease-out both;
+}
+
+@keyframes tz-eyebrow-draw {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero .hero-eyebrow::before {
+    animation: none;
+  }
+}
+
+/* Typewriter caret on the agent quote */
+.agent-card .quote .caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin: 0 1px -0.07em 1px;
+  background: var(--tz-accent);
+  animation: tz-caret 0.85s steps(2, start) infinite;
+  vertical-align: baseline;
+}
+
+.agent-card .quote .caret-fade {
+  animation: tz-caret-fade 1s ease-out forwards;
+}
+
+@keyframes tz-caret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes tz-caret-fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agent-card .quote .caret {
+    display: none;
+  }
 }
 
 .hero-lede {
@@ -432,11 +528,29 @@ p {
   font-weight: 600;
 }
 
+.ops-card-slot {
+  position: relative;
+  border-bottom: 1px solid var(--tz-rule);
+}
+
+.agent-card-rotator {
+  position: relative;
+  min-height: 220px;
+}
+
+.agent-card-frame {
+  position: absolute;
+  inset: 0;
+}
+
+.agent-card-frame > .agent-card {
+  height: 100%;
+}
+
 .ops-panel .agent-card {
   border-left: none;
   background: var(--tz-paper);
   padding: 26px 22px 22px;
-  position: relative;
 }
 
 .ops-panel .agent-card::before {
@@ -447,6 +561,112 @@ p {
   bottom: 0;
   width: 3px;
   background: var(--tz-accent);
+}
+
+.ops-clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ops-clock-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--tz-accent);
+  box-shadow: 0 0 0 3px rgba(31, 69, 56, 0.18);
+  animation: tz-pulse 2.4s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ops-clock-dot {
+    animation: none;
+  }
+}
+
+/* Just in feed */
+.ops-justin {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 16px 22px;
+  background: var(--tz-ink);
+  color: var(--tz-paper);
+  border-bottom: 1px solid var(--tz-rule);
+  overflow: hidden;
+}
+
+.ops-justin-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--tz-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tz-accent-on-dark);
+  font-weight: 600;
+}
+
+.ops-justin-label .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--tz-accent-on-dark);
+  box-shadow: 0 0 0 3px rgba(126, 199, 157, 0.22);
+  animation: tz-pulse-dark 2s ease-out infinite;
+}
+
+.ops-justin-track {
+  position: relative;
+  height: 22px;
+  overflow: hidden;
+}
+
+.ops-justin-row {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  letter-spacing: -0.005em;
+  color: rgba(244, 246, 244, 0.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ops-justin-row b {
+  color: var(--tz-paper);
+  font-weight: 600;
+}
+
+.ops-justin-row .subj {
+  color: var(--tz-accent-on-dark);
+  font-style: italic;
+  font-family: var(--tz-italic);
+  font-size: 14px;
+}
+
+.ops-justin-row .ago {
+  margin-left: auto;
+  font-family: var(--tz-mono);
+  font-size: 10px;
+  color: rgba(244, 246, 244, 0.55);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+/* Online slot rotation — keep height stable */
+.ops-row.ops-slot {
+  position: relative;
+  min-height: 26px;
+}
+
+.ops-row.ops-slot .mini-avatar {
+  flex-shrink: 0;
 }
 
 .ops-online {
@@ -481,6 +701,7 @@ p {
 }
 
 .ops-row .mini-avatar {
+  position: relative;
   width: 26px;
   height: 26px;
   border-radius: 999px;
@@ -493,6 +714,37 @@ p {
   font-weight: 600;
   font-size: 10px;
   letter-spacing: 0;
+}
+
+.ops-row .mini-dot {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--tz-accent);
+  border: 2px solid var(--tz-accent-soft);
+  animation: tz-mini-pulse 2.4s ease-out infinite;
+  animation-delay: var(--dot-delay, 0s);
+}
+
+@keyframes tz-mini-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ops-row .mini-dot {
+    animation: none;
+  }
 }
 
 .ops-row .name {
@@ -525,17 +777,24 @@ p {
   color: var(--tz-ink-muted);
 }
 
+.ops-save .save-body-wrap {
+  display: grid;
+  gap: 4px;
+}
+
 .ops-save .body {
   font-family: var(--tz-display);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--tz-ink);
+  display: block;
 }
 
 .ops-save .detail {
   font-size: 12px;
   color: var(--tz-ink-muted);
+  display: block;
 }
 
 /* ─────────── AGENT CARD ─────────── */

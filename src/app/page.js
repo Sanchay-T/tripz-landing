@@ -1,11 +1,7 @@
 import {
-  alsoOnline,
   ctaActions,
   desk,
   footerLinks,
-  heroAgent,
-  heroStats,
-  lastSave,
   liveStatus,
   metrics,
   navLinks,
@@ -16,66 +12,10 @@ import {
   supportPhoneDisplay,
   supportPhoneE164
 } from "@/lib/site-data.mjs";
-
-const Icons = {
-  phone: (props) => (
-    <svg
-      width={props.size ?? 16}
-      height={props.size ?? 16}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 3.09 4.18 2 2 0 0 1 5.08 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L9.09 10.09a16 16 0 0 0 6 6l1.45-1.45a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  ),
-  chat: (props) => (
-    <svg
-      width={props.size ?? 16}
-      height={props.size ?? 16}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-  ),
-  whatsapp: (props) => (
-    <svg
-      width={props.size ?? 16}
-      height={props.size ?? 16}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M19.07 4.93A10 10 0 0 0 4.42 18.5L3 22l3.6-1.37A10 10 0 1 0 19.07 4.93Zm-7 16.32a8.3 8.3 0 0 1-4.21-1.16l-.3-.18-2.13.81.81-2.07-.2-.31a8.3 8.3 0 1 1 6.03 2.91Zm4.6-6.18c-.25-.13-1.49-.74-1.72-.82-.23-.08-.4-.13-.57.13-.17.25-.66.82-.81.99-.15.16-.3.18-.55.06a6.78 6.78 0 0 1-3.4-2.97c-.26-.44.26-.4.74-1.34.08-.16.04-.3-.02-.43l-.78-1.88c-.21-.5-.42-.43-.57-.44h-.49a.94.94 0 0 0-.69.32 2.86 2.86 0 0 0-.9 2.13c0 1.26.92 2.47 1.05 2.64.13.17 1.81 2.77 4.39 3.88.61.27 1.09.43 1.46.55.61.2 1.17.17 1.61.1.49-.07 1.49-.61 1.71-1.2.21-.59.21-1.1.15-1.2-.06-.1-.23-.16-.48-.29Z" />
-    </svg>
-  ),
-  arrow: (props) => (
-    <svg
-      width={props.size ?? 13}
-      height={props.size ?? 13}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
-    </svg>
-  )
-};
+import HeroLeft from "./components/HeroLeft";
+import OperationsPanel from "./components/OperationsPanel";
+import { Reveal, StaggerGroup, StaggerItem } from "./components/Reveal";
+import { Icons } from "./components/icons";
 
 function Wordmark({ onDark = false, size = 22 }) {
   return (
@@ -100,41 +40,6 @@ function LivePill({ onDark = false }) {
       <span className="dot" aria-hidden="true" />
       {liveStatus.humansOnline} humans · {liveStatus.avgPickupSeconds}s pickup
     </span>
-  );
-}
-
-function WhatsAppLine() {
-  return (
-    <a
-      className="hero-aside-cta"
-      href={ctaActions.whatsapp.href}
-      target="_blank"
-      rel="noreferrer"
-    >
-      <span className="badge" aria-hidden="true">
-        <Icons.whatsapp size={13} />
-      </span>
-      Or message us on WhatsApp
-      <span className="arrow" aria-hidden="true">
-        →
-      </span>
-    </a>
-  );
-}
-
-function HeroCtas() {
-  return (
-    <>
-      <a className="cta primary" href={ctaActions.call.href}>
-        <Icons.phone size={16} />
-        {ctaActions.call.label}
-        <span className="meta">{ctaActions.call.meta}</span>
-      </a>
-      <a className="cta secondary" href={ctaActions.chat.href}>
-        <Icons.chat size={16} />
-        {ctaActions.chat.label}
-      </a>
-    </>
   );
 }
 
@@ -187,86 +92,10 @@ function Nav() {
   );
 }
 
-function OperationsPanel() {
-  return (
-    <aside className="ops-panel" aria-label="Live operations">
-      <div className="ops-strip">
-        <span>
-          Fig. 01 · <b>The desk</b>
-        </span>
-        <span>03:47 IST</span>
-      </div>
-
-      <article className="agent-card">
-        <div className="meta">
-          <span className="dot" aria-hidden="true" /> {heroAgent.meta}
-        </div>
-        <p className="quote">&ldquo;{heroAgent.quote}&rdquo;</p>
-        <div className="who">
-          <span className="avatar">{heroAgent.initials}</span>
-          <span>
-            <b>{heroAgent.name}</b> — {heroAgent.role}
-          </span>
-        </div>
-      </article>
-
-      <div className="ops-online">
-        <div className="ops-online-label">
-          <span>
-            Also online · <b>{liveStatus.humansOnline - 1} more</b>
-          </span>
-          <span>EN · HI · FR · JP · YO</span>
-        </div>
-        {alsoOnline.map((agent) => (
-          <div key={agent.initials} className="ops-row">
-            <span className="mini-avatar" aria-hidden="true">
-              {agent.initials}
-            </span>
-            <span className="name">{agent.name}</span>
-            <span className="city">{agent.city}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="ops-save">
-        <span className="label">Last save</span>
-        <span className="body">{lastSave.route}</span>
-        <span className="detail">{lastSave.detail}</span>
-      </div>
-    </aside>
-  );
-}
-
 function Hero() {
   return (
     <section className="hero" id="top" aria-labelledby="hero-headline">
-      <div>
-        <span className="eyebrow">Volume 01 · Human travel help</span>
-        <h1 id="hero-headline" className="hero-headline">
-          Travel help,
-          <br />
-          <em>without the</em>
-          <br />
-          <em>hold music.</em>
-        </h1>
-        <p className="hero-lede">
-          TripZ is a <em>service</em>, not a chatbot. A real person picks up in
-          under a minute — any hour, any leg of the trip — and handles the
-          rebooking, refunds, and arguments so you don&rsquo;t have to.
-        </p>
-        <div className="hero-ctas">
-          <HeroCtas />
-        </div>
-        <WhatsAppLine />
-        <div className="hero-stats">
-          {heroStats.map((stat) => (
-            <div key={stat.label}>
-              <b>{stat.value}</b>
-              <span>· {stat.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <HeroLeft />
       <div className="hero-side">
         <OperationsPanel />
       </div>
@@ -276,29 +105,33 @@ function Hero() {
 
 function Services() {
   return (
-    <section className="services" id="services" aria-label="Services">
+    <StaggerGroup
+      as="section"
+      className="services"
+      id="services"
+    >
       {services.map((service) => (
-        <a
-          key={service.n}
-          href={service.href}
-          className={`service${service.live ? " live" : ""}`}
-          {...(service.href.startsWith("tel:") ? {} : {})}
-        >
-          <div className="num">{service.n}</div>
-          <h3>{service.title}</h3>
-          <p>{service.body}</p>
-          <span className="arrow">
-            {service.cta} <Icons.arrow size={13} />
-          </span>
-        </a>
+        <StaggerItem key={service.n}>
+          <a
+            href={service.href}
+            className={`service${service.live ? " live" : ""}`}
+          >
+            <div className="num">{service.n}</div>
+            <h3>{service.title}</h3>
+            <p>{service.body}</p>
+            <span className="arrow">
+              {service.cta} <Icons.arrow size={13} />
+            </span>
+          </a>
+        </StaggerItem>
       ))}
-    </section>
+    </StaggerGroup>
   );
 }
 
 function PullBand() {
   return (
-    <section className="pullband" id="stories" aria-label="Customer story">
+    <Reveal as="section" className="pullband" id="stories">
       <div className="pullband-inner">
         <div className="mark" aria-hidden="true">
           &ldquo;
@@ -308,28 +141,30 @@ function PullBand() {
           <p className="attribution">— {pullQuote.attribution}</p>
         </div>
       </div>
-    </section>
+    </Reveal>
   );
 }
 
 function Situations() {
   return (
     <section className="section" id="how" aria-labelledby="situations-head">
-      <header className="section-head">
+      <Reveal as="header" className="section-head">
         <span className="marker">§ 01 · Three situations</span>
         <h2 id="situations-head" className="display">
           When the trip goes <em>sideways.</em>
         </h2>
-      </header>
-      <div className="situations">
+      </Reveal>
+      <StaggerGroup className="situations">
         {situations.map((s) => (
-          <article key={s.n} className="situation">
-            <span className="num">— {s.n}</span>
-            <h3>{s.title}</h3>
-            <p>{s.body}</p>
-          </article>
+          <StaggerItem key={s.n}>
+            <article className="situation">
+              <span className="num">— {s.n}</span>
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </article>
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGroup>
     </section>
   );
 }
@@ -347,22 +182,24 @@ function Steps() {
   return (
     <section className="steps-section" id="steps" aria-labelledby="steps-head">
       <div className="steps-head">
-        <header className="section-head">
+        <Reveal as="header" className="section-head">
           <span className="marker">§ 02 · How it works</span>
           <h2 id="steps-head" className="display">
             Three steps. <em>That is the product.</em>
           </h2>
-        </header>
+        </Reveal>
       </div>
-      <div className="steps">
+      <StaggerGroup className="steps">
         {steps.map((step) => (
-          <article key={step.n} className="step">
-            <span className="num">Step {step.n}</span>
-            <h3>{renderTitle(step.title)}</h3>
-            <p>{step.body}</p>
-          </article>
+          <StaggerItem key={step.n}>
+            <article className="step">
+              <span className="num">Step {step.n}</span>
+              <h3>{renderTitle(step.title)}</h3>
+              <p>{step.body}</p>
+            </article>
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGroup>
     </section>
   );
 }
@@ -374,7 +211,7 @@ function Desk() {
       id="desk"
       aria-labelledby="desk-head"
     >
-      <header className="section-head">
+      <Reveal as="header" className="section-head">
         <div>
           <span className="marker on-dark">§ 03 · The desk</span>
           <h2
@@ -391,50 +228,54 @@ function Desk() {
           </p>
         </div>
         <LivePill onDark />
-      </header>
-      <div className="agent-grid">
+      </Reveal>
+      <StaggerGroup className="agent-grid">
         {desk.map((agent) => (
-          <article key={agent.initials} className="agent-tile">
-            <span className="online-dot" aria-label="Online" />
-            <div className="row">
-              <span className="avatar">{agent.initials}</span>
-              <div>
-                <div className="name">{agent.name}</div>
-                <div className="role">{agent.role}</div>
+          <StaggerItem key={agent.initials}>
+            <article className="agent-tile">
+              <span className="online-dot" aria-label="Online" />
+              <div className="row">
+                <span className="avatar">{agent.initials}</span>
+                <div>
+                  <div className="name">{agent.name}</div>
+                  <div className="role">{agent.role}</div>
+                </div>
               </div>
-            </div>
-            <blockquote>&ldquo;{agent.quote}&rdquo;</blockquote>
-            <div className="footer-row">
-              <span>
-                <b>{agent.tenure}</b> · tenure
-              </span>
-              <span>
-                <b>{agent.saves}</b>
-              </span>
-            </div>
-          </article>
+              <blockquote>&ldquo;{agent.quote}&rdquo;</blockquote>
+              <div className="footer-row">
+                <span>
+                  <b>{agent.tenure}</b> · tenure
+                </span>
+                <span>
+                  <b>{agent.saves}</b>
+                </span>
+              </div>
+            </article>
+          </StaggerItem>
         ))}
-      </div>
+      </StaggerGroup>
     </section>
   );
 }
 
 function Metrics() {
   return (
-    <section className="metrics" aria-label="Metrics">
+    <StaggerGroup as="section" className="metrics">
       {metrics.map((m) => (
-        <div key={m.label} className="metric">
-          <div className="value">{m.value}</div>
-          <div className="label">{m.label}</div>
-        </div>
+        <StaggerItem key={m.label}>
+          <div className="metric">
+            <div className="value">{m.value}</div>
+            <div className="label">{m.label}</div>
+          </div>
+        </StaggerItem>
       ))}
-    </section>
+    </StaggerGroup>
   );
 }
 
 function Closing() {
   return (
-    <section className="closing" id="contact" aria-labelledby="closing-head">
+    <Reveal as="section" className="closing" id="contact">
       <span className="marker">End of issue</span>
       <h2 id="closing-head">
         Next trip,
@@ -444,7 +285,7 @@ function Closing() {
       <div className="ctas">
         <ClosingCtas />
       </div>
-    </section>
+    </Reveal>
   );
 }
 

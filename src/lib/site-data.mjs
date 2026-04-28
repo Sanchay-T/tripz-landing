@@ -51,16 +51,62 @@ export const heroAgent = {
   role: "Senior agent · Mumbai · 6 yr"
 };
 
-export const alsoOnline = [
-  { initials: "KP", name: "Kenji Park", city: "Tokyo" },
-  { initials: "ML", name: "Maya Leclerc", city: "Paris" },
-  { initials: "DO", name: "Diego Okafor", city: "Lagos" }
+export const heroQuotes = [
+  {
+    initials: "AS",
+    name: "Asha Sharma",
+    role: "Senior agent · Mumbai · 6 yr",
+    quote: "Hi — I've pulled up your booking. Tell me what happened."
+  },
+  {
+    initials: "KP",
+    name: "Kenji Park",
+    role: "Recovery · Tokyo · 4 yr",
+    quote: "Connected. I see your Narita itinerary — one moment."
+  },
+  {
+    initials: "ML",
+    name: "Maya Leclerc",
+    role: "Senior agent · Paris · 8 yr",
+    quote: "Bonjour — I have your file. Let's sort the embassy first."
+  },
+  {
+    initials: "DO",
+    name: "Diego Okafor",
+    role: "Corporate · Lagos · 5 yr",
+    quote: "On the line. Twelve passengers — let me line up the legs."
+  }
 ];
 
-export const lastSave = {
-  route: "AI 144 → BLR",
-  detail: "Rebooked · same class · 4 min ago"
-};
+export const onlinePool = [
+  { initials: "KP", name: "Kenji Park", city: "Tokyo" },
+  { initials: "ML", name: "Maya Leclerc", city: "Paris" },
+  { initials: "DO", name: "Diego Okafor", city: "Lagos" },
+  { initials: "RJ", name: "Rohan Joshi", city: "Bengaluru" },
+  { initials: "AY", name: "Aditi Yadav", city: "Delhi" },
+  { initials: "SC", name: "Sara Chen", city: "Singapore" },
+  { initials: "TB", name: "Tomás Barcelos", city: "Lisbon" },
+  { initials: "NM", name: "Nadia Maalouf", city: "Beirut" }
+];
+
+export const alsoOnline = onlinePool.slice(0, 3);
+
+export const justInFeed = [
+  { who: "Asha", verb: "confirmed", subject: "AI 144 boarding pass", ago: "4s ago" },
+  { who: "Kenji", verb: "rebooked", subject: "JL 412 → HND", ago: "12s ago" },
+  { who: "Maya", verb: "filed", subject: "Schengen appeal · Paris", ago: "21s ago" },
+  { who: "Diego", verb: "couriered", subject: "lost bag · MRS → DXB", ago: "38s ago" },
+  { who: "Rohan", verb: "queued", subject: "wedding party · 24 pax", ago: "56s ago" },
+  { who: "Sara", verb: "swapped", subject: "SQ 25 hotel · Changi", ago: "1m ago" }
+];
+
+export const recentSaves = [
+  { route: "AI 144 → BLR", detail: "Rebooked · same class · 4 min ago" },
+  { route: "Lost bag · FRA", detail: "PIR filed · couriered · 12 min ago" },
+  { route: "Schengen visa", detail: "Embassy slot · Paris · 28 min ago" },
+  { route: "NRT runway closed", detail: "Hotel arranged · 41 min ago" },
+  { route: "Group of 12 · DXB", detail: "Single thread · 1 invoice · 1 hr ago" }
+];
 
 export const services = [
   {
