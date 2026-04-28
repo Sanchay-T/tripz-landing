@@ -181,7 +181,7 @@ function AlsoOnlineList({ reduced }) {
     <div className="ops-online">
       <div className="ops-online-label">
         <span>
-          Also online · <b>{liveStatus.humansOnline - 1} more</b>
+          Also online · <b>{liveStatus.expertsOnShift - 1} more experts</b>
         </span>
         <span>EN · HI · FR · JP · YO</span>
       </div>

@@ -5,7 +5,7 @@ const whatsappMessage =
   "Hi TripZ — I need a human on this. Can someone from the desk pick up?";
 
 export const liveStatus = {
-  humansOnline: 14,
+  expertsOnShift: 10,
   avgPickupSeconds: 38
 };
 
@@ -44,36 +44,36 @@ export const ctaActions = {
 };
 
 export const heroAgent = {
-  meta: "Live · Agent online · 03:47 IST",
+  meta: "Live · Travel expert online · 03:47 IST",
   quote: "Hi — I've pulled up your booking. Tell me what happened.",
   initials: "AS",
   name: "Asha Sharma",
-  role: "Senior agent · Mumbai · 6 yr"
+  role: "Senior travel expert · Mumbai · 6 yr"
 };
 
 export const heroQuotes = [
   {
     initials: "AS",
     name: "Asha Sharma",
-    role: "Senior agent · Mumbai · 6 yr",
+    role: "Senior travel expert · Mumbai · 6 yr",
     quote: "Hi — I've pulled up your booking. Tell me what happened."
   },
   {
     initials: "KP",
     name: "Kenji Park",
-    role: "Recovery · Tokyo · 4 yr",
+    role: "Recovery expert · Tokyo · 4 yr",
     quote: "Connected. I see your Narita itinerary — one moment."
   },
   {
     initials: "ML",
     name: "Maya Leclerc",
-    role: "Senior agent · Paris · 8 yr",
+    role: "Senior travel expert · Paris · 8 yr",
     quote: "Bonjour — I have your file. Let's sort the embassy first."
   },
   {
     initials: "DO",
     name: "Diego Okafor",
-    role: "Corporate · Lagos · 5 yr",
+    role: "Corporate travel expert · Lagos · 5 yr",
     quote: "On the line. Twelve passengers — let me line up the legs."
   }
 ];
@@ -112,28 +112,28 @@ export const services = [
   {
     n: "No. 01",
     title: "Cheap flights & hotels",
-    body: "Real prices, no surge tricks. A human checks every itinerary before you pay.",
+    body: "The price you see is the price you pay. 80% of our bookings come with free cancellation and free date change — and we beat what the apps quote.",
     cta: "Get a quote",
     href: "#contact"
   },
   {
     n: "No. 02",
-    title: "Group & family bookings",
-    body: "Ten people, one itinerary, one named agent on a single thread.",
+    title: "Group bookings",
+    body: "10 to 1,000 passengers. 10 to 500 rooms. Destination weddings, corporate offsites, annual events — every airline and hotel, one thread.",
     cta: "Plan a group trip",
     href: "#contact"
   },
   {
     n: "No. 03",
-    title: "Corporate travel",
-    body: "Bulk fares, a named agent per traveller, monthly invoice — no SaaS dashboard.",
-    cta: "Talk to us",
+    title: "International trips",
+    body: "A travel expert who's actually been there. Lowest rates worldwide, with visa, transit, and student US / Europe routes handled end-to-end.",
+    cta: "Plan a trip",
     href: "#contact"
   },
   {
     n: "No. 04",
-    title: "Live human help",
-    body: "One number. Picked up in 38 seconds. Any hour. Any leg of the trip.",
+    title: "Personalised expert support",
+    body: "10+ travel experts. 24/7/365. Call or message — a real expert picks up in under a minute and stays with you for the whole trip.",
     cta: "Call now",
     live: true,
     href: `tel:${supportPhoneE164}`
@@ -167,7 +167,7 @@ export const desk = [
   {
     initials: "AS",
     name: "Asha Sharma",
-    role: "Senior · Mumbai · EN/HI/MR",
+    role: "Senior expert · Mumbai · EN/HI/MR",
     quote: "Most rebookings beat the airline by an hour. That's the whole job.",
     tenure: "6 yr",
     saves: "412 saves"
@@ -175,7 +175,7 @@ export const desk = [
   {
     initials: "KP",
     name: "Kenji Park",
-    role: "Recovery · Tokyo · EN/JP",
+    role: "Recovery expert · Tokyo · EN/JP",
     quote: "When Narita closes, I already know which Haneda hotel still has a runway shuttle.",
     tenure: "4 yr",
     saves: "298 saves"
@@ -183,7 +183,7 @@ export const desk = [
   {
     initials: "ML",
     name: "Maya Leclerc",
-    role: "Senior · Paris · EN/FR/ES",
+    role: "Senior expert · Paris · EN/FR/ES",
     quote: "Schengen visa drama, on hold with the embassy — I read French faster than the bot.",
     tenure: "8 yr",
     saves: "521 saves"
@@ -191,7 +191,7 @@ export const desk = [
   {
     initials: "DO",
     name: "Diego Okafor",
-    role: "Corporate · Lagos · EN/FR/YO",
+    role: "Corporate expert · Lagos · EN/FR/YO",
     quote: "Twelve passengers, three layovers — one thread. Finance gets one invoice.",
     tenure: "5 yr",
     saves: "367 saves"
@@ -200,8 +200,8 @@ export const desk = [
 
 export const metrics = [
   { value: "2,847", label: "trips saved last month" },
-  { value: "38s", label: "avg pickup time" },
-  { value: "9.6 / 10", label: "customer satisfaction" },
+  { value: "80%", label: "bookings with free cancel + date change" },
+  { value: "10", label: "travel experts on shift, 24/7" },
   { value: "₹1.2 Cr", label: "refunded for members" }
 ];
 

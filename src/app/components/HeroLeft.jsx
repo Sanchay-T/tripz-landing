@@ -54,7 +54,7 @@ export default function HeroLeft() {
       variants={C}
     >
       <motion.span className="eyebrow hero-eyebrow" variants={I}>
-        Volume 01 · Human travel help
+        Volume 01 · Travel, booked by experts
       </motion.span>
 
       <motion.h1
@@ -74,9 +74,8 @@ export default function HeroLeft() {
       </motion.h1>
 
       <motion.p className="hero-lede" variants={I}>
-        TripZ is a <em>service</em>, not a chatbot. A real person picks up in
-        under a minute — any hour, any leg of the trip — and handles the
-        rebooking, refunds, and arguments so you don&rsquo;t have to.
+        Flights, hotels, group bookings, and a real <em>expert</em> on the
+        line — 24/7. We plan, book, and rebook so you don&rsquo;t have to.
       </motion.p>
 
       <motion.div className="hero-ctas" variants={I}>

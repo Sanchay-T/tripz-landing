@@ -53,9 +53,9 @@ describe("TripZ landing content", () => {
   });
 
   it("publishes a live status the brand can quote", () => {
-    assert.equal(typeof liveStatus.humansOnline, "number");
+    assert.equal(typeof liveStatus.expertsOnShift, "number");
     assert.equal(typeof liveStatus.avgPickupSeconds, "number");
-    assert.ok(liveStatus.humansOnline > 0);
+    assert.ok(liveStatus.expertsOnShift > 0);
     assert.ok(liveStatus.avgPickupSeconds > 0);
   });
 });

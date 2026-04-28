@@ -35,10 +35,10 @@ function LivePill({ onDark = false }) {
   return (
     <span
       className={`live-pill${onDark ? " on-dark" : ""}`}
-      aria-label={`${liveStatus.humansOnline} humans online, average pickup ${liveStatus.avgPickupSeconds} seconds`}
+      aria-label={`${liveStatus.expertsOnShift} travel experts online, average pickup ${liveStatus.avgPickupSeconds} seconds`}
     >
       <span className="dot" aria-hidden="true" />
-      {liveStatus.humansOnline} humans · {liveStatus.avgPickupSeconds}s pickup
+      {liveStatus.expertsOnShift} experts · {liveStatus.avgPickupSeconds}s pickup
     </span>
   );
 }
@@ -219,12 +219,13 @@ function Desk() {
             className="display on-dark"
             style={{ marginTop: 14 }}
           >
-            One of <em>fourteen</em> people is already online.
+            One of <em>ten travel experts</em> is already online.
           </h2>
           <p className="section-lede">
-            Named, located, time-zoned. Every booking gets a real agent — not a
-            queue. Tap a name and you&rsquo;re on a thread with <em>them</em>,
-            not a ticket.
+            Travel agents book what you tell them. Travel experts <em>advise</em>
+            {" "}— they&rsquo;ve been there, they read the language, they know
+            which embassy desk to call. Tap a name and you&rsquo;re on a thread
+            with <em>them</em>, not a queue.
           </p>
         </div>
         <LivePill onDark />

@@ -3,12 +3,12 @@ import "./globals.css";
 export const metadata = {
   title: "TripZ — Travel help, without the hold music.",
   description:
-    "TripZ is a service, not a chatbot. A real person picks up in under a minute — any hour, any leg of the trip — and handles the rebooking, refunds, and arguments so you don't have to.",
+    "Flights, hotels, group bookings, international trips — and a real travel expert on the line, 24/7. 10+ experts. 80% of bookings come with free cancellation and free date change.",
   metadataBase: new URL("https://tripz.co.in"),
   openGraph: {
     title: "TripZ — Travel help, without the hold music.",
     description:
-      "A real person picks up in under a minute. 38s avg pickup · 24/7 coverage · 14 humans online right now.",
+      "A real travel expert picks up in under a minute. 38s avg pickup · 24/7 · 10 experts on shift right now.",
     type: "website",
     siteName: "TripZ"
   },
@@ -16,7 +16,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "TripZ — Travel help, without the hold music.",
     description:
-      "A real person picks up in under a minute. 38s avg pickup · 24/7 coverage."
+      "A real travel expert picks up in under a minute. 38s avg pickup · 24/7 · 365 days."
   }
 };
 

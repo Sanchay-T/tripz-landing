@@ -69,11 +69,10 @@ export default function HeroStats({ startDelayMs = 0 }) {
         animate={!reduced}
         startDelayMs={startDelayMs}
       />
-      <StaticStat value="24/7" label="Coverage" />
+      <StaticStat value="24/7" label="365 days" />
       <NumStat
-        value={9.6}
-        decimals={1}
-        label="CSAT"
+        value={10}
+        label="Experts on shift"
         animate={!reduced}
         startDelayMs={startDelayMs + 180}
       />
