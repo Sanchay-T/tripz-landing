@@ -74,8 +74,9 @@ export default function HeroLeft() {
       </motion.h1>
 
       <motion.p className="hero-lede" variants={I}>
-        Flights, hotels, group bookings, and a real <em>expert</em> on the
-        line — 24/7. We plan, book, and rebook so you don&rsquo;t have to.
+        Flights, hotels, group bookings, and a real <em>expert</em>
+        {" "}on the line — 24/7. We plan, book, and rebook so you
+        don&rsquo;t have to.
       </motion.p>
 
       <motion.div className="hero-ctas" variants={I}>
