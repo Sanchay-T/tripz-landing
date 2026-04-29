@@ -84,10 +84,6 @@ export default function HeroLeft() {
           {ctaActions.call.label}
           <span className="meta">{ctaActions.call.meta}</span>
         </a>
-        <a className="cta secondary" href={ctaActions.chat.href}>
-          <Icons.chat size={16} />
-          {ctaActions.chat.label}
-        </a>
       </motion.div>
 
       <motion.a

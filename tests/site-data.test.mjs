@@ -20,11 +20,11 @@ import {
 } from "../src/lib/site-data.mjs";
 
 describe("TripZ landing content", () => {
-  it("exposes the three primary contact channels", () => {
+  it("exposes the two primary contact channels", () => {
     assert.equal(typeof ctaActions.call.href, "string");
     assert.equal(ctaActions.call.href, `tel:${supportPhoneE164}`);
     assert.ok(ctaActions.whatsapp.href.startsWith("https://wa.me/"));
-    assert.ok(ctaActions.chat.href.length > 0);
+    assert.equal(ctaActions.chat, undefined, "live chat should be removed");
   });
 
   it("uses an India-formatted display phone", () => {

@@ -1,4 +1,4 @@
-export const supportPhoneDisplay = "+91 99566 51212";
+export const supportPhoneDisplay = "+91 995 665 1212";
 export const supportPhoneE164 = "+919956651212";
 export const supportEmail = "hello@tripz.co.in";
 
@@ -29,11 +29,6 @@ export const ctaActions = {
     meta: "24/7",
     href: `tel:${supportPhoneE164}`,
     icon: "phone"
-  },
-  chat: {
-    label: "Live chat",
-    href: "#support",
-    icon: "chat"
   },
   whatsapp: {
     label: "WhatsApp",

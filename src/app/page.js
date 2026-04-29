@@ -53,12 +53,8 @@ function ClosingCtas() {
         {ctaActions.call.label}
         <span className="meta">{ctaActions.call.meta}</span>
       </a>
-      <a className="cta secondary" href={ctaActions.chat.href}>
-        <Icons.chat size={16} />
-        {ctaActions.chat.label}
-      </a>
       <a
-        className="cta tertiary"
+        className="cta secondary"
         href={ctaActions.whatsapp.href}
         target="_blank"
         rel="noreferrer"
