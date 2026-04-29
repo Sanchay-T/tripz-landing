@@ -183,7 +183,7 @@ function AlsoOnlineList({ reduced }) {
         <span>
           Also online · <b>{liveStatus.expertsOnShift - 1} more experts</b>
         </span>
-        <span>EN · HI · FR · JP · YO</span>
+        <span>EN · HI · MR · TA · KN · TE</span>
       </div>
       {slots.map((agent, i) => (
         <div
