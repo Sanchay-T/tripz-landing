@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  aboutBand,
   ctaActions,
   desk,
   heroAgent,
@@ -10,10 +11,11 @@ import {
   navLinks,
   pullQuote,
   services,
-  situations,
   steps,
+  supportEmail,
   supportPhoneDisplay,
-  supportPhoneE164
+  supportPhoneE164,
+  whyTripz
 } from "../src/lib/site-data.mjs";
 
 describe("TripZ landing content", () => {
@@ -39,10 +41,15 @@ describe("TripZ landing content", () => {
   it("keeps the editorial sections populated", () => {
     assert.equal(navLinks.length >= 3, true);
     assert.equal(heroStats.length, 3);
-    assert.equal(situations.length, 3);
+    assert.equal(whyTripz.length, 4);
     assert.equal(steps.length, 3);
     assert.equal(desk.length, 4);
     assert.equal(metrics.length, 4);
+  });
+
+  it("publishes the foreword and contact email", () => {
+    assert.ok(aboutBand.paragraphs.length >= 3);
+    assert.match(supportEmail, /^[\w.+-]+@tripz\.co\.in$/);
   });
 
   it("keeps the hero agent and pull quote populated", () => {

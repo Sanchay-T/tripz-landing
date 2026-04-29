@@ -1,4 +1,5 @@
 import {
+  aboutBand,
   ctaActions,
   desk,
   footerLinks,
@@ -7,10 +8,11 @@ import {
   navLinks,
   pullQuote,
   services,
-  situations,
   steps,
+  supportEmail,
   supportPhoneDisplay,
-  supportPhoneE164
+  supportPhoneE164,
+  whyTripz
 } from "@/lib/site-data.mjs";
 import HeroLeft from "./components/HeroLeft";
 import OperationsPanel from "./components/OperationsPanel";
@@ -145,22 +147,52 @@ function PullBand() {
   );
 }
 
-function Situations() {
+function renderTitleParts(parts) {
+  return parts.map((part, i) =>
+    typeof part === "string" ? (
+      <span key={i}>{part}</span>
+    ) : (
+      <em key={i}>{part.it}</em>
+    )
+  );
+}
+
+function About() {
   return (
-    <section className="section" id="how" aria-labelledby="situations-head">
-      <Reveal as="header" className="section-head">
-        <span className="marker">§ 01 · Three situations</span>
-        <h2 id="situations-head" className="display">
-          When the trip goes <em>sideways.</em>
+    <section className="section about-band" id="about" aria-labelledby="about-head">
+      <Reveal as="header" className="section-head about-head">
+        <span className="marker">{aboutBand.marker}</span>
+        <h2 id="about-head" className="display">
+          {renderTitleParts(aboutBand.headline)}
         </h2>
       </Reveal>
-      <StaggerGroup className="situations">
-        {situations.map((s) => (
-          <StaggerItem key={s.n}>
-            <article className="situation">
-              <span className="num">— {s.n}</span>
-              <h3>{s.title}</h3>
-              <p>{s.body}</p>
+      <Reveal as="div" className="about-prose">
+        {aboutBand.paragraphs.map((p, i) => (
+          <p key={i} className={i === aboutBand.paragraphs.length - 1 ? "kicker" : ""}>
+            {p}
+          </p>
+        ))}
+      </Reveal>
+    </section>
+  );
+}
+
+function WhyTripz() {
+  return (
+    <section className="section why-band" id="why" aria-labelledby="why-head">
+      <Reveal as="header" className="section-head">
+        <span className="marker">§ 01 · Why TripZ</span>
+        <h2 id="why-head" className="display">
+          Four reasons people <em>stay.</em>
+        </h2>
+      </Reveal>
+      <StaggerGroup className="why-grid">
+        {whyTripz.map((reason) => (
+          <StaggerItem key={reason.n}>
+            <article className="why-card">
+              <span className="num">— {reason.n}</span>
+              <h3>{reason.title}</h3>
+              <p>{reason.body}</p>
             </article>
           </StaggerItem>
         ))}
@@ -170,17 +202,8 @@ function Situations() {
 }
 
 function Steps() {
-  function renderTitle(parts) {
-    return parts.map((part, i) =>
-      typeof part === "string" ? (
-        <span key={i}>{part}</span>
-      ) : (
-        <em key={i}>{part.it}</em>
-      )
-    );
-  }
   return (
-    <section className="steps-section" id="steps" aria-labelledby="steps-head">
+    <section className="steps-section" id="how" aria-labelledby="steps-head">
       <div className="steps-head">
         <Reveal as="header" className="section-head">
           <span className="marker">§ 02 · How it works</span>
@@ -194,7 +217,7 @@ function Steps() {
           <StaggerItem key={step.n}>
             <article className="step">
               <span className="num">Step {step.n}</span>
-              <h3>{renderTitle(step.title)}</h3>
+              <h3>{renderTitleParts(step.title)}</h3>
               <p>{step.body}</p>
             </article>
           </StaggerItem>
@@ -356,9 +379,10 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
+        <About />
         <Services />
         <PullBand />
-        <Situations />
+        <WhyTripz />
         <Steps />
         <Desk />
         <Metrics />

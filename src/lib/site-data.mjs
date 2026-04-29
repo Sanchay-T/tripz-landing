@@ -1,5 +1,6 @@
 export const supportPhoneDisplay = "+91 99566 51212";
 export const supportPhoneE164 = "+919956651212";
+export const supportEmail = "hello@tripz.co.in";
 
 const whatsappMessage =
   "Hi TripZ — I need a human on this. Can someone from the desk pick up?";
@@ -10,10 +11,10 @@ export const liveStatus = {
 };
 
 export const navLinks = [
-  { label: "How it works", href: "#how" },
   { label: "Services", href: "#services" },
-  { label: "The desk", href: "#desk" },
-  { label: "Stories", href: "#stories" }
+  { label: "Why TripZ", href: "#why" },
+  { label: "How it works", href: "#how" },
+  { label: "The desk", href: "#desk" }
 ];
 
 export const heroStats = [
@@ -112,32 +113,66 @@ export const recentSaves = [
 export const services = [
   {
     n: "No. 01",
-    title: "Cheap flights & hotels",
-    body: "The price you see is the price you pay. 80% of our bookings come with free cancellation and free date change — and we beat what the apps quote.",
+    title: "Best deals on flights & hotels",
+    body: "The price you see is the price you pay. No hidden charges, no last-minute surprises. We often beat what the apps quote — and most bookings come with free cancellation and date change.",
     cta: "Get a quote",
     href: "#contact"
   },
   {
     n: "No. 02",
-    title: "Group bookings",
-    body: "10 to 1,000 passengers. 10 to 500 rooms. Destination weddings, corporate offsites, annual events — every airline and hotel, one thread.",
+    title: "Exclusive group bookings",
+    body: "10 to 1,000+ passengers. 10 to 500 rooms. One expert team — destination weddings, corporate offsites, MICE travel and special celebrations, all with global airline and hotel access.",
     cta: "Plan a group trip",
     href: "#contact"
   },
   {
     n: "No. 03",
-    title: "International trips",
-    body: "A travel expert who's actually been there. Lowest rates worldwide, with visa, transit, and student US / Europe routes handled end-to-end.",
+    title: "International trips, expertly planned",
+    body: "Lowest fares worldwide, smarter routes, special fares for students flying to the US or Europe — with visa and transit guidance handled end-to-end.",
     cta: "Plan a trip",
     href: "#contact"
   },
   {
     n: "No. 04",
-    title: "Personalised expert support",
-    body: "10+ travel experts. 24/7/365. Call or message — a real expert picks up in under a minute and stays with you for the whole trip.",
+    title: "Personal travel experts on call, 24/7",
+    body: "Holidays, international travel, destination weddings or corporate events — call or message anytime. 24/7, 365 days. A real expert picks up and stays with you the whole way.",
     cta: "Call now",
     live: true,
     href: `tel:${supportPhoneE164}`
+  }
+];
+
+export const aboutBand = {
+  marker: "Foreword",
+  headline: ["Travel planning should feel ", { it: "easy" }, ", not stressful."],
+  paragraphs: [
+    "We're human-first, not bot-first — with real travel experts available 24/7 to help you book smarter and travel better.",
+    "We offer the best deals on flights and hotels, expert itinerary planning, international travel support, and student fares for those studying abroad.",
+    "From holidays and business travel to destination weddings, corporate offsites, group bookings and special occasions — we handle it all with personalised support and seamless planning.",
+    "No AI bots. No generic responses. Just real experts, real guidance, and better travel deals."
+  ]
+};
+
+export const whyTripz = [
+  {
+    n: "01",
+    title: "Real people, real support — 24/7.",
+    body: "No AI bots. Just travel experts you can actually speak to whenever you need help."
+  },
+  {
+    n: "02",
+    title: "Better prices with smarter planning.",
+    body: "Great deals on flights and hotels, along with personalised guidance to help you travel better."
+  },
+  {
+    n: "03",
+    title: "We take care of the unexpected.",
+    body: "Refunds, reschedules, booking issues or special requests — we handle it all, so you don't have to stress."
+  },
+  {
+    n: "04",
+    title: "More than just bookings.",
+    body: "From international and student travel to destination weddings, group trips and corporate travel — we help plan it all."
   }
 ];
 
@@ -145,24 +180,6 @@ export const pullQuote = {
   body: "The Frankfurt flight cancelled at 2am. One call to TripZ, back in my seat by 6am — they did in twelve minutes what the airline couldn't in three hours.",
   attribution: "Rohan M. · Bengaluru → Berlin · member since 2024"
 };
-
-export const situations = [
-  {
-    n: "01",
-    title: "The 2am cancellation",
-    body: "Your flight dies. We rebook — same night, same class, no chatbot loops. You sleep; we fight the GDS."
-  },
-  {
-    n: "02",
-    title: "The lost bag",
-    body: "We file the PIR, chase the airline daily, courier your essentials, and keep receipts for the claim."
-  },
-  {
-    n: "03",
-    title: "The visa mess",
-    body: "Wrong stamp, missing document, embassy chaos. We call the right desk and we speak the language."
-  }
-];
 
 export const desk = [
   {
@@ -226,13 +243,15 @@ export const steps = [
 
 export const footerLinks = {
   Product: [
-    { label: "How it works", href: "#how" },
+    { label: "About TripZ", href: "#about" },
     { label: "Services", href: "#services" },
-    { label: "The desk", href: "#desk" },
-    { label: "Stories", href: "#stories" }
+    { label: "Why TripZ", href: "#why" },
+    { label: "How it works", href: "#how" },
+    { label: "The desk", href: "#desk" }
   ],
   Company: [
-    { label: "Get in touch", href: "#contact" },
+    { label: "Talk to a human", href: "#contact" },
+    { label: `Email · ${supportEmail}`, href: `mailto:${supportEmail}` },
     { label: "Careers", href: "mailto:careers@tripz.co.in" },
     { label: "Press", href: "mailto:press@tripz.co.in" }
   ],

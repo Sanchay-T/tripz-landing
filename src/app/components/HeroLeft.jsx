@@ -63,20 +63,23 @@ export default function HeroLeft() {
         variants={HC}
       >
         <motion.span className="line" variants={HL}>
-          Travel help,
+          Travel experts
         </motion.span>
         <motion.span className="line" variants={HL}>
-          <em className="breath breath-a">without the</em>
+          <em className="breath breath-a">by your side.</em>
         </motion.span>
         <motion.span className="line" variants={HL}>
-          <em className="breath breath-b">hold music.</em>
+          Better prices,
+        </motion.span>
+        <motion.span className="line" variants={HL}>
+          <em className="breath breath-b">in your pocket.</em>
         </motion.span>
       </motion.h1>
 
       <motion.p className="hero-lede" variants={I}>
-        Flights, hotels, group bookings, and a real <em>expert</em>
-        {" "}on the line — 24/7. We plan, book, and rebook so you
-        don&rsquo;t have to.
+        We&rsquo;re <em>human-first</em>, not bot-first. Real travel experts —
+        on call 24/7 — for flights, hotels, group bookings, and international
+        trips. <em>No AI bots.</em> Just real guidance and better deals.
       </motion.p>
 
       <motion.div className="hero-ctas" variants={I}>
