@@ -9,6 +9,7 @@ import {
   liveStatus,
   metrics,
   navLinks,
+  pillars,
   pullQuote,
   services,
   steps,
@@ -50,6 +51,26 @@ describe("TripZ landing content", () => {
   it("publishes the foreword and contact email", () => {
     assert.ok(aboutBand.paragraphs.length >= 3);
     assert.match(supportEmail, /^[\w.+-]+@tripz\.co\.in$/);
+  });
+
+  it("publishes four deep pillars with sub-points and callouts", () => {
+    assert.equal(pillars.length, 4);
+    pillars.forEach((p, i) => {
+      assert.equal(p.id, `pillar-0${i + 1}`);
+      assert.ok(p.marker.length > 0);
+      assert.ok(Array.isArray(p.headline) && p.headline.length > 0);
+      assert.ok(p.lede.length > 0);
+      assert.ok(p.callout.value.length > 0);
+      assert.ok(p.callout.label.length > 0);
+      assert.equal(p.points.length, 4);
+    });
+    assert.equal(pillars[1].tinted, true, "pillar 02 should be tinted");
+  });
+
+  it("services tiles anchor to the matching pillars", () => {
+    assert.equal(services[0].href, "#pillar-01");
+    assert.equal(services[1].href, "#pillar-02");
+    assert.equal(services[2].href, "#pillar-03");
   });
 
   it("keeps the hero agent and pull quote populated", () => {

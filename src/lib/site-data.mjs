@@ -114,31 +114,155 @@ export const services = [
   {
     n: "No. 01",
     title: "Best deals on flights & hotels",
-    body: "The price you see is the price you pay. No hidden charges, no last-minute surprises. We often beat what the apps quote — and most bookings come with free cancellation and date change.",
-    cta: "Get a quote",
-    href: "#contact"
+    body: "The price you see is the price you pay.",
+    cta: "Read more",
+    href: "#pillar-01"
   },
   {
     n: "No. 02",
     title: "Exclusive group bookings",
-    body: "10 to 1,000+ passengers. 10 to 500 rooms. One expert team — destination weddings, corporate offsites, MICE travel and special celebrations, all with global airline and hotel access.",
-    cta: "Plan a group trip",
-    href: "#contact"
+    body: "10 to 1,000+ passengers. One expert team.",
+    cta: "Read more",
+    href: "#pillar-02"
   },
   {
     n: "No. 03",
     title: "International trips, expertly planned",
-    body: "Lowest fares worldwide, smarter routes, special fares for students flying to the US or Europe — with visa and transit guidance handled end-to-end.",
-    cta: "Plan a trip",
-    href: "#contact"
+    body: "Lowest fares worldwide. Visa and transit handled.",
+    cta: "Read more",
+    href: "#pillar-03"
   },
   {
     n: "No. 04",
-    title: "Personal travel experts on call, 24/7",
-    body: "Holidays, international travel, destination weddings or corporate events — call or message anytime. 24/7, 365 days. A real expert picks up and stays with you the whole way.",
+    title: "Personal travel experts on call",
+    body: "Real experts on call, 365 days. We pick up.",
     cta: "Call now",
     live: true,
     href: `tel:${supportPhoneE164}`
+  }
+];
+
+export const pillars = [
+  {
+    id: "pillar-01",
+    marker: "Pillar 01",
+    headline: ["Best deals on ", { it: "flights & hotels." }],
+    lede:
+      "The price you see is the price you pay. No bait-and-switch, no last-minute surprises — just transparent fares with real human support behind every booking.",
+    callout: { value: "80%", label: "Free cancel + date change" },
+    points: [
+      {
+        n: "01",
+        title: "The price you see is the price you pay.",
+        body: "No hidden charges, no last-minute surprises — just transparent fares you can always trust."
+      },
+      {
+        n: "02",
+        title: "Better prices than online platforms.",
+        body: "Seen a fare on an app? Check with us — we can often get you a lower rate."
+      },
+      {
+        n: "03",
+        title: "Flexible bookings, peace of mind.",
+        body: "Most flight and hotel bookings come with free cancellation and date change options."
+      },
+      {
+        n: "04",
+        title: "More savings, less stress.",
+        body: "Tripz often offers better fares than any travel app — with real human support included."
+      }
+    ]
+  },
+  {
+    id: "pillar-02",
+    marker: "Pillar 02",
+    headline: ["Group bookings, ", { it: "10 to 1,000+." }],
+    lede:
+      "From small group trips to large-scale events, Tripz handles bookings of every size seamlessly. One expert team, every airline and hotel, end-to-end.",
+    callout: { value: "10 → 1,000+", label: "Passengers · 10 to 500 rooms" },
+    tinted: true,
+    points: [
+      {
+        n: "01",
+        title: "One expert team for every size.",
+        body: "10 to 1,000+ passengers. 10 to 500 rooms. From small trips to large-scale events, handled seamlessly."
+      },
+      {
+        n: "02",
+        title: "Exclusive group fares, global access.",
+        body: "Better rates with global airline and hotel access — smoother coordination, end-to-end support."
+      },
+      {
+        n: "03",
+        title: "Perfect for every occasion.",
+        body: "Destination weddings, corporate offsites, annual meets, MICE travel and special celebrations."
+      },
+      {
+        n: "04",
+        title: "Flights, stays and logistics — managed.",
+        body: "From booking and check-in to boarding assistance and special requests, our experts support you every step."
+      }
+    ]
+  },
+  {
+    id: "pillar-03",
+    marker: "Pillar 03",
+    headline: ["International trips, ", { it: "expertly planned." }],
+    lede:
+      "From flights and routes to complete trip planning, Tripz helps you travel smarter, more comfortably and at the best possible fares — with a human who's actually been there.",
+    callout: { value: "End-to-end", label: "Visa, transit · students US/EU" },
+    points: [
+      {
+        n: "01",
+        title: "Trips abroad, made easy.",
+        body: "From flights and routes to complete itineraries, planned by an expert who's actually been there."
+      },
+      {
+        n: "02",
+        title: "Better routes, better prices.",
+        body: "Lowest fares, smarter connections and personalised itineraries suited to your budget."
+      },
+      {
+        n: "03",
+        title: "Special fares for students.",
+        body: "Heading to the US, Europe or beyond for studies? We help students book affordable flights with the best options available."
+      },
+      {
+        n: "04",
+        title: "Visa and transit, simplified.",
+        body: "From transit requirements to travel documentation, our experts guide you through every step."
+      }
+    ]
+  },
+  {
+    id: "pillar-04",
+    marker: "Pillar 04",
+    headline: ["Personal travel experts ", { it: "on call." }],
+    lede:
+      "Whether it's a holiday, international travel, destination weddings or corporate events — we're here to help you plan it right and stay with you for the whole trip.",
+    callout: { value: "24/7 · 365", label: "Call or message, anytime" },
+    points: [
+      {
+        n: "01",
+        title: "Your personal travel expert.",
+        body: "Holidays, international travel, destination weddings or corporate events — always available, always real."
+      },
+      {
+        n: "02",
+        title: "Best deals with expert guidance.",
+        body: "From the best deals on flights and hotels to itineraries, routes and special requests, we help you decide."
+      },
+      {
+        n: "03",
+        title: "Support on call or message.",
+        body: "Need help with changes, refunds, booking issues or last-minute assistance? Our team is available 24/7, 365 days."
+      },
+      {
+        n: "04",
+        title: "Travel assistant, end-to-end.",
+        body: "From planning to check-in to boarding, Tripz is with you every step of the way."
+      }
+    ]
   }
 ];
 
@@ -155,24 +279,20 @@ export const aboutBand = {
 
 export const whyTripz = [
   {
-    n: "01",
-    title: "Real people, real support — 24/7.",
-    body: "No AI bots. Just travel experts you can actually speak to whenever you need help."
+    n: "No. 01",
+    title: ["Real people, real ", { it: "support" }, " — 24/7."]
   },
   {
-    n: "02",
-    title: "Better prices with smarter planning.",
-    body: "Great deals on flights and hotels, along with personalised guidance to help you travel better."
+    n: "No. 02",
+    title: ["Better prices, ", { it: "smarter planning." }]
   },
   {
-    n: "03",
-    title: "We take care of the unexpected.",
-    body: "Refunds, reschedules, booking issues or special requests — we handle it all, so you don't have to stress."
+    n: "No. 03",
+    title: ["We take care of the ", { it: "unexpected." }]
   },
   {
-    n: "04",
-    title: "More than just bookings.",
-    body: "From international and student travel to destination weddings, group trips and corporate travel — we help plan it all."
+    n: "No. 04",
+    title: ["More than just ", { it: "bookings." }]
   }
 ];
 

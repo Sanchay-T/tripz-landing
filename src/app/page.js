@@ -6,10 +6,10 @@ import {
   liveStatus,
   metrics,
   navLinks,
+  pillars,
   pullQuote,
   services,
   steps,
-  supportEmail,
   supportPhoneDisplay,
   supportPhoneE164,
   whyTripz
@@ -177,27 +177,67 @@ function About() {
   );
 }
 
-function WhyTripz() {
+function Promise() {
   return (
     <section className="section why-band" id="why" aria-labelledby="why-head">
       <Reveal as="header" className="section-head">
-        <span className="marker">§ 01 · Why TripZ</span>
+        <span className="marker">§ 01 · Promise</span>
         <h2 id="why-head" className="display">
           Four reasons people <em>stay.</em>
         </h2>
       </Reveal>
-      <StaggerGroup className="why-grid">
+      <StaggerGroup as="ul" className="promise-list">
         {whyTripz.map((reason) => (
-          <StaggerItem key={reason.n}>
-            <article className="why-card">
-              <span className="num">— {reason.n}</span>
-              <h3>{reason.title}</h3>
-              <p>{reason.body}</p>
+          <StaggerItem as="li" key={reason.n}>
+            <span className="n">{reason.n}</span>
+            <span className="promise">{renderTitleParts(reason.title)}</span>
+          </StaggerItem>
+        ))}
+      </StaggerGroup>
+    </section>
+  );
+}
+
+function Pillar({ pillar }) {
+  return (
+    <section
+      className={`pillar-band${pillar.tinted ? " tinted" : ""}`}
+      id={pillar.id}
+      aria-labelledby={`${pillar.id}-head`}
+    >
+      <Reveal as="header" className="pillar-head">
+        <span className="marker">{pillar.marker}</span>
+        <h2 id={`${pillar.id}-head`} className="display">
+          {renderTitleParts(pillar.headline)}
+        </h2>
+        <p className="lede">{pillar.lede}</p>
+        <div className="callout">
+          <span className="callout-value">{pillar.callout.value}</span>
+          <span className="callout-label">{pillar.callout.label}</span>
+        </div>
+      </Reveal>
+      <StaggerGroup className="pillar-points">
+        {pillar.points.map((point) => (
+          <StaggerItem key={point.n}>
+            <article className="pillar-point">
+              <span className="n">— {point.n}</span>
+              <h4>{point.title}</h4>
+              <p>{point.body}</p>
             </article>
           </StaggerItem>
         ))}
       </StaggerGroup>
     </section>
+  );
+}
+
+function PillarStack() {
+  return (
+    <>
+      {pillars.map((pillar) => (
+        <Pillar key={pillar.id} pillar={pillar} />
+      ))}
+    </>
   );
 }
 
@@ -381,8 +421,9 @@ export default function Home() {
         <Hero />
         <About />
         <Services />
+        <Promise />
+        <PillarStack />
         <PullBand />
-        <WhyTripz />
         <Steps />
         <Desk />
         <Metrics />

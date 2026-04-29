@@ -63,15 +63,11 @@ export default function HeroLeft() {
         variants={HC}
       >
         <motion.span className="line" variants={HL}>
-          Travel experts
-        </motion.span>
-        <motion.span className="line" variants={HL}>
+          Travel experts{" "}
           <em className="breath breath-a">by your side.</em>
         </motion.span>
         <motion.span className="line" variants={HL}>
-          Better prices,
-        </motion.span>
-        <motion.span className="line" variants={HL}>
+          Better prices,{" "}
           <em className="breath breath-b">in your pocket.</em>
         </motion.span>
       </motion.h1>
