@@ -1452,7 +1452,7 @@ p {
 /* metrics */
 .metrics {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   border-bottom: 1px solid var(--tz-rule);
 }
 
@@ -1742,7 +1742,35 @@ footer.tz-footer {
   .hero {
     grid-template-columns: 1fr;
     gap: 36px;
-    padding-top: 40px;
+    padding-top: 32px;
+    padding-bottom: 36px;
+  }
+
+  /* tighten vertical air between every section on mobile */
+  .section,
+  .about-band,
+  .pullband {
+    padding-block: clamp(40px, 6vw, 56px);
+  }
+
+  .pillar-band {
+    padding-block: clamp(36px, 5.5vw, 52px);
+  }
+
+  .steps-section .steps-head {
+    padding-block: clamp(40px, 6vw, 56px) 0;
+  }
+
+  .steps {
+    margin-top: 32px;
+  }
+
+  .section-head {
+    margin-bottom: 28px;
+  }
+
+  .metric {
+    padding: 36px var(--tz-pad);
   }
 
   .services {

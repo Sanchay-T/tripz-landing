@@ -45,7 +45,7 @@ describe("TripZ landing content", () => {
     assert.equal(whyTripz.length, 4);
     assert.equal(steps.length, 3);
     assert.equal(desk.length, 4);
-    assert.equal(metrics.length, 4);
+    assert.equal(metrics.length, 3);
   });
 
   it("publishes the foreword and contact email", () => {
