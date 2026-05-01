@@ -333,7 +333,6 @@ export const desk = [
 
 export const metrics = [
   { value: "2,847", label: "trips saved last month" },
-  { value: "80%", label: "bookings with free cancel + date change" },
   { value: "10", label: "travel experts on shift, 24/7" }
 ];
 
