@@ -48,9 +48,8 @@ export default function HeroLeft() {
   return (
     <motion.div
       className="hero-left"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-10% 0px -10% 0px", amount: 0.15 }}
+      initial={false}
+      animate="visible"
       variants={C}
     >
       <motion.span className="eyebrow hero-eyebrow" variants={I}>

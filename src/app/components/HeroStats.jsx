@@ -1,13 +1,12 @@
 "use client";
 
-import { useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 const DURATION_MS = 1400;
 const ease = (t) => 1 - Math.pow(1 - t, 3);
 
 function useCountUp(target, decimals = 0, enabled = true, startDelayMs = 0) {
-  const [value, setValue] = useState(enabled ? 0 : target);
+  const [value, setValue] = useState(target);
   const startedRef = useRef(false);
 
   useEffect(() => {
@@ -17,6 +16,7 @@ function useCountUp(target, decimals = 0, enabled = true, startDelayMs = 0) {
     let raf;
     let start;
     const startTimeout = setTimeout(() => {
+      setValue(0);
       const step = (ts) => {
         if (start === undefined) start = ts;
         const t = Math.min((ts - start) / DURATION_MS, 1);
@@ -59,7 +59,7 @@ function StaticStat({ value, label }) {
 }
 
 export default function HeroStats({ startDelayMs = 0 }) {
-  const reduced = useReducedMotion();
+  const reduced = false;
   return (
     <div className="hero-stats">
       <NumStat

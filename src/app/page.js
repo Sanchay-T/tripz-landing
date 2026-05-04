@@ -8,12 +8,19 @@ import {
   navLinks,
   pillars,
   pullQuote,
+  outcomeFeature,
+  recoveryProof,
   services,
   steps,
+  stepsVisual,
   supportPhoneDisplay,
   supportPhoneE164,
+  promiseVisuals,
+  visualAssets,
+  visualInterlude,
   whyTripz
 } from "@/lib/site-data.mjs";
+import Image from "next/image";
 import HeroLeft from "./components/HeroLeft";
 import OperationsPanel from "./components/OperationsPanel";
 import { Reveal, StaggerGroup, StaggerItem } from "./components/Reveal";
@@ -95,9 +102,37 @@ function Hero() {
     <section className="hero" id="top" aria-labelledby="hero-headline">
       <HeroLeft />
       <div className="hero-side">
+        <MediaFigure
+          image={visualAssets.nightDesk}
+          className="hero-mood"
+          loading="eager"
+        />
         <OperationsPanel />
       </div>
     </section>
+  );
+}
+
+function MediaFigure({
+  image,
+  className = "",
+  caption = true,
+  loading = "lazy",
+  sizes = "(max-width: 920px) 100vw, 44vw"
+}) {
+  const preload = loading === "eager";
+  return (
+    <figure className={`media-figure ${className}`.trim()}>
+      <Image
+        src={image.src}
+        alt={image.alt}
+        fill
+        sizes={sizes}
+        preload={preload}
+        loading={loading}
+      />
+      {caption && image.caption && <figcaption>{image.caption}</figcaption>}
+    </figure>
   );
 }
 
@@ -143,6 +178,33 @@ function PullBand() {
   );
 }
 
+function ProofFeature() {
+  return (
+    <section className="proof-feature" id="proof" aria-labelledby="proof-head">
+      <MediaFigure
+        image={recoveryProof.image}
+        className="proof-visual"
+        sizes="(max-width: 920px) 100vw, 44vw"
+      />
+      <Reveal as="div" className="proof-copy">
+        <span className="marker">{recoveryProof.marker}</span>
+        <h2 id="proof-head" className="display">
+          {renderTitleParts(recoveryProof.headline)}
+        </h2>
+        <p>{recoveryProof.body}</p>
+        <dl className="proof-facts">
+          {recoveryProof.facts.map((fact) => (
+            <div key={fact.label}>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </Reveal>
+    </section>
+  );
+}
+
 function renderTitleParts(parts) {
   return parts.map((part, i) =>
     typeof part === "string" ? (
@@ -173,6 +235,30 @@ function About() {
   );
 }
 
+function VisualInterlude() {
+  return (
+    <Reveal
+      as="section"
+      className="visual-interlude"
+      aria-labelledby="visual-interlude-head"
+    >
+      <Image
+        className="visual-interlude-image"
+        src={visualInterlude.image.src}
+        alt={visualInterlude.image.alt}
+        fill
+        loading="eager"
+        sizes="100vw"
+      />
+      <div className="visual-interlude-copy">
+        <span className="marker on-dark">{visualInterlude.marker}</span>
+        <h2 id="visual-interlude-head">{visualInterlude.headline}</h2>
+        <p>{visualInterlude.body}</p>
+      </div>
+    </Reveal>
+  );
+}
+
 function Promise() {
   return (
     <section className="section why-band" id="why" aria-labelledby="why-head">
@@ -182,14 +268,26 @@ function Promise() {
           Four reasons people <em>stay.</em>
         </h2>
       </Reveal>
-      <StaggerGroup as="ul" className="promise-list">
-        {whyTripz.map((reason) => (
-          <StaggerItem as="li" key={reason.n}>
-            <span className="n">{reason.n}</span>
-            <span className="promise">{renderTitleParts(reason.title)}</span>
-          </StaggerItem>
-        ))}
-      </StaggerGroup>
+      <div className="promise-layout">
+        <StaggerGroup as="ul" className="promise-list">
+          {whyTripz.map((reason) => (
+            <StaggerItem as="li" key={reason.n}>
+              <span className="n">{reason.n}</span>
+              <span className="promise">{renderTitleParts(reason.title)}</span>
+            </StaggerItem>
+          ))}
+        </StaggerGroup>
+        <Reveal as="div" className="promise-visuals">
+          {promiseVisuals.map((image, i) => (
+            <MediaFigure
+              key={image.src}
+              image={image}
+              className={`promise-visual promise-visual-${i + 1}`}
+              sizes="(max-width: 920px) 100vw, 34vw"
+            />
+          ))}
+        </Reveal>
+      </div>
     </section>
   );
 }
@@ -214,7 +312,7 @@ function Pillar({ pillar }) {
       </Reveal>
       <StaggerGroup className="pillar-points">
         {pillar.points.map((point) => (
-          <StaggerItem key={point.n}>
+          <StaggerItem key={point.n} className="pillar-point-cell">
             <article className="pillar-point">
               <span className="n">— {point.n}</span>
               <h4>{point.title}</h4>
@@ -247,6 +345,11 @@ function Steps() {
             Three steps. <em>That is the product.</em>
           </h2>
         </Reveal>
+        <MediaFigure
+          image={stepsVisual}
+          className="steps-visual"
+          sizes="(max-width: 920px) 100vw, 36vw"
+        />
       </div>
       <StaggerGroup className="steps">
         {steps.map((step) => (
@@ -260,6 +363,30 @@ function Steps() {
         ))}
       </StaggerGroup>
     </section>
+  );
+}
+
+function OutcomeFeature() {
+  return (
+    <Reveal
+      as="section"
+      className="outcome-feature"
+      id="outcome"
+      aria-labelledby="outcome-head"
+    >
+      <Image
+        className="outcome-bg"
+        src={outcomeFeature.image.src}
+        alt={outcomeFeature.image.alt}
+        fill
+        sizes="100vw"
+      />
+      <div className="outcome-copy">
+        <span className="marker on-dark">{outcomeFeature.marker}</span>
+        <h2 id="outcome-head">{outcomeFeature.headline}</h2>
+        <p>{outcomeFeature.body}</p>
+      </div>
+    </Reveal>
   );
 }
 
@@ -289,31 +416,38 @@ function Desk() {
         </div>
         <LivePill onDark />
       </Reveal>
-      <StaggerGroup className="agent-grid">
-        {desk.map((agent) => (
-          <StaggerItem key={agent.initials}>
-            <article className="agent-tile">
-              <span className="online-dot" aria-label="Online" />
-              <div className="row">
-                <span className="avatar">{agent.initials}</span>
-                <div>
-                  <div className="name">{agent.name}</div>
-                  <div className="role">{agent.role}</div>
+      <div className="desk-showcase">
+        <MediaFigure
+          image={visualAssets.operatorRoster}
+          className="desk-visual"
+          sizes="(max-width: 920px) 100vw, 38vw"
+        />
+        <StaggerGroup className="agent-grid">
+          {desk.map((agent) => (
+            <StaggerItem key={agent.initials}>
+              <article className="agent-tile">
+                <span className="online-dot" aria-label="Online" />
+                <div className="row">
+                  <span className="avatar">{agent.initials}</span>
+                  <div>
+                    <div className="name">{agent.name}</div>
+                    <div className="role">{agent.role}</div>
+                  </div>
                 </div>
-              </div>
-              <blockquote>&ldquo;{agent.quote}&rdquo;</blockquote>
-              <div className="footer-row">
-                <span>
-                  <b>{agent.tenure}</b> · tenure
-                </span>
-                <span>
-                  <b>{agent.saves}</b>
-                </span>
-              </div>
-            </article>
-          </StaggerItem>
-        ))}
-      </StaggerGroup>
+                <blockquote>&ldquo;{agent.quote}&rdquo;</blockquote>
+                <div className="footer-row">
+                  <span>
+                    <b>{agent.tenure}</b> · tenure
+                  </span>
+                  <span>
+                    <b>{agent.saves}</b>
+                  </span>
+                </div>
+              </article>
+            </StaggerItem>
+          ))}
+        </StaggerGroup>
+      </div>
     </section>
   );
 }
@@ -336,6 +470,14 @@ function Metrics() {
 function Closing() {
   return (
     <Reveal as="section" className="closing" id="contact">
+      <Image
+        className="closing-bg"
+        src={visualAssets.postcards.src}
+        alt=""
+        aria-hidden="true"
+        fill
+        sizes="100vw"
+      />
       <span className="marker">End of issue</span>
       <h2 id="closing-head">
         Next trip,
@@ -416,11 +558,14 @@ export default function Home() {
       <main>
         <Hero />
         <About />
+        <VisualInterlude />
         <Services />
         <Promise />
         <PillarStack />
         <PullBand />
+        <ProofFeature />
         <Steps />
+        <OutcomeFeature />
         <Desk />
         <Metrics />
         <Closing />

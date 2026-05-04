@@ -1,9 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 import {
-  alsoOnline,
   heroQuotes,
   justInFeed,
   liveStatus,
@@ -12,6 +11,30 @@ import {
 } from "@/lib/site-data.mjs";
 
 const ease = [0.2, 0.7, 0.3, 1];
+const CARD_STEP_SECONDS = 5.2;
+const FEED_STEP_SECONDS = 4.3;
+const SLOT_STEP_SECONDS = 3.5;
+const SAVE_STEP_SECONDS = 4.5;
+
+function cycleStyle(index, length, stepSeconds, extra = {}) {
+  return {
+    "--cycle-delay": `${index * stepSeconds}s`,
+    "--cycle-total": `${length * stepSeconds}s`,
+    "--cycle-step": `${stepSeconds}s`,
+    ...extra
+  };
+}
+
+function parseAgeSeconds(ago) {
+  const value = Number.parseInt(ago, 10);
+  if (!Number.isFinite(value)) return 4;
+  return ago.includes("m") ? value * 60 : value;
+}
+
+function formatAge(seconds) {
+  if (seconds < 60) return `${seconds}s ago`;
+  return `${Math.floor(seconds / 60)}m ago`;
+}
 
 function useIstClock() {
   const [now, setNow] = useState(() => new Date());
@@ -29,89 +52,29 @@ function useIstClock() {
   });
 }
 
-function useRotatingIndex(length, intervalMs) {
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    if (!intervalMs || length <= 1) return;
-    const id = setInterval(() => setI((prev) => (prev + 1) % length), intervalMs);
-    return () => clearInterval(id);
-  }, [length, intervalMs]);
-  return i;
+function AgeStack({ ago }) {
+  const base = parseAgeSeconds(ago);
+  const ticks = [0, 1, 2, 3].map((n) => formatAge(base + n));
+
+  return (
+    <span className="ago" aria-label={ticks[0]}>
+      <span className="ops-age-stack" aria-hidden="true">
+        {ticks.map((tick) => (
+          <span key={tick}>{tick}</span>
+        ))}
+      </span>
+    </span>
+  );
 }
 
-function useTypewriter(text, { enabled = true, speedMs = 22, delayMs = 0 } = {}) {
-  const [shown, setShown] = useState(enabled ? "" : text);
-
-  useEffect(() => {
-    if (!enabled) return;
-
-    let timeoutId;
-    const startTimeout = setTimeout(() => {
-      let i = 0;
-      const tick = () => {
-        i += 1;
-        setShown(text.slice(0, i));
-        if (i < text.length) {
-          timeoutId = setTimeout(tick, speedMs);
-        }
-      };
-      tick();
-    }, delayMs);
-
-    return () => {
-      clearTimeout(startTimeout);
-      clearTimeout(timeoutId);
-    };
-  }, [text, enabled, speedMs, delayMs]);
-
-  return { shown, done: shown === text };
-}
-
-function useAlsoOnlineRotation(reduced) {
-  const [slots, setSlots] = useState(() => alsoOnline.slice(0, 3));
-  const cursorRef = useRef({ slotIdx: 0, poolNext: 3 });
-
-  useEffect(() => {
-    if (reduced) return;
-    const id = setInterval(() => {
-      const { slotIdx, poolNext } = cursorRef.current;
-      setSlots((prev) => {
-        const next = [...prev];
-        next[slotIdx] = onlinePool[poolNext % onlinePool.length];
-        return next;
-      });
-      cursorRef.current = {
-        slotIdx: (slotIdx + 1) % 3,
-        poolNext: poolNext + 1
-      };
-    }, 3500);
-    return () => clearInterval(id);
-  }, [reduced]);
-
-  return slots;
-}
-
-function AgentCardContent({ agent, ist, reduced }) {
-  const { shown, done } = useTypewriter(agent.quote, {
-    enabled: !reduced,
-    speedMs: 24,
-    delayMs: 350
-  });
-
+function AgentCardContent({ agent, ist }) {
   return (
     <article className="agent-card">
       <div className="meta">
         <span className="dot" aria-hidden="true" /> Live · {agent.name.split(" ")[0]} on the line · {ist} IST
       </div>
       <p className="quote" aria-label={agent.quote}>
-        &ldquo;{shown}
-        {!reduced && (
-          <span
-            className={`caret${done ? " caret-fade" : ""}`}
-            aria-hidden="true"
-          />
-        )}
-        {done ? "”" : ""}
+        &ldquo;{agent.quote}&rdquo;
       </p>
       <div className="who">
         <span className="avatar">{agent.initials}</span>
@@ -123,59 +86,56 @@ function AgentCardContent({ agent, ist, reduced }) {
   );
 }
 
-function AgentCardLive({ ist, reduced }) {
-  const idx = useRotatingIndex(heroQuotes.length, reduced ? null : 7000);
-  const agent = heroQuotes[idx];
-
+function AgentCardLive({ ist }) {
   return (
     <div className="agent-card-rotator">
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
+      {heroQuotes.map((agent, i) => (
+        <div
           key={agent.initials}
-          className="agent-card-frame"
-          initial={reduced ? false : { opacity: 0, x: 28, filter: "blur(4px)" }}
-          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-          exit={reduced ? { opacity: 0 } : { opacity: 0, x: -28, filter: "blur(4px)" }}
-          transition={{ duration: 0.45, ease }}
+          className="agent-card-frame live-card-frame"
+          style={cycleStyle(i, heroQuotes.length, CARD_STEP_SECONDS)}
+          aria-hidden={i === 0 ? undefined : true}
         >
-          <AgentCardContent agent={agent} ist={ist} reduced={reduced} />
-        </motion.div>
-      </AnimatePresence>
+          <AgentCardContent agent={agent} ist={ist} />
+          <span className="ops-card-progress" aria-hidden="true" />
+        </div>
+      ))}
     </div>
   );
 }
 
-function JustInFeed({ reduced }) {
-  const idx = useRotatingIndex(justInFeed.length, reduced ? null : 5000);
-  const update = justInFeed[idx];
-
+function JustInFeed() {
   return (
     <div className="ops-justin" aria-live="polite">
       <span className="ops-justin-label">
-        <span className="dot" aria-hidden="true" /> Just in
+        <span className="dot" aria-hidden="true" /> Mission
       </span>
       <div className="ops-justin-track">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={`${update.who}-${idx}`}
-            className="ops-justin-row"
-            initial={reduced ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, y: -14 }}
-            transition={{ duration: 0.36, ease }}
+        {justInFeed.map((update, i) => (
+          <div
+            key={`${update.who}-${update.subject}`}
+            className="ops-justin-row live-feed-row"
+            style={cycleStyle(i, justInFeed.length, FEED_STEP_SECONDS)}
+            aria-hidden={i === 0 ? undefined : true}
           >
             <b>{update.who}</b> {update.verb}{" "}
             <span className="subj">{update.subject}</span>
-            <span className="ago">{update.ago}</span>
-          </motion.div>
-        </AnimatePresence>
+            <AgeStack ago={update.ago} />
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-function AlsoOnlineList({ reduced }) {
-  const slots = useAlsoOnlineRotation(reduced);
+function slotGroups() {
+  return [0, 1, 2].map((slot) =>
+    onlinePool.filter((_, i) => i % 3 === slot)
+  );
+}
+
+function AlsoOnlineList() {
+  const groups = slotGroups();
 
   return (
     <div className="ops-online">
@@ -185,108 +145,74 @@ function AlsoOnlineList({ reduced }) {
         </span>
         <span>EN · HI · MR · TA · KN · TE</span>
       </div>
-      {slots.map((agent, i) => (
-        <div
-          key={`slot-${i}`}
-          className="ops-row ops-slot"
-          style={{ "--dot-delay": `${i * 0.6}s` }}
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.span
+      {groups.map((agents, slotIndex) => (
+        <div key={`slot-${slotIndex}`} className="ops-row ops-slot">
+          {agents.map((agent, i) => (
+            <div
               key={agent.initials}
-              className="mini-avatar"
-              aria-hidden="true"
-              initial={reduced ? false : { opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6 }}
-              transition={{ duration: 0.32, ease }}
+              className="ops-slot-agent"
+              style={cycleStyle(i, agents.length, SLOT_STEP_SECONDS, {
+                "--dot-delay": `${slotIndex * 0.6}s`
+              })}
+              aria-hidden={i === 0 ? undefined : true}
             >
-              {agent.initials}
-              <span className="mini-dot" aria-hidden="true" />
-            </motion.span>
-          </AnimatePresence>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.span
-              key={`${agent.initials}-name`}
-              className="name"
-              initial={reduced ? false : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
-              transition={{ duration: 0.32, ease }}
-            >
-              {agent.name}
-            </motion.span>
-          </AnimatePresence>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.span
-              key={`${agent.initials}-city`}
-              className="city"
-              initial={reduced ? false : { opacity: 0, x: 8 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={reduced ? { opacity: 0 } : { opacity: 0, x: -8 }}
-              transition={{ duration: 0.32, ease }}
-            >
-              {agent.city}
-            </motion.span>
-          </AnimatePresence>
+              <span className="mini-avatar" aria-hidden="true">
+                {agent.initials}
+                <span className="mini-dot" aria-hidden="true" />
+              </span>
+              <span className="name">{agent.name}</span>
+              <span className="city">{agent.city}</span>
+            </div>
+          ))}
         </div>
       ))}
     </div>
   );
 }
 
-function LastSaveBlock({ reduced }) {
-  const idx = useRotatingIndex(recentSaves.length, reduced ? null : 4500);
-  const save = recentSaves[idx];
-
+function LastSaveBlock() {
   return (
     <div className="ops-save" aria-live="polite">
       <span className="label">Last save</span>
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={save.route}
-          initial={reduced ? false : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={reduced ? { opacity: 0 } : { opacity: 0, y: -6 }}
-          transition={{ duration: 0.32, ease }}
-          className="save-body-wrap"
-        >
-          <span className="body">{save.route}</span>
-          <span className="detail">{save.detail}</span>
-        </motion.div>
-      </AnimatePresence>
+      <div className="ops-save-track">
+        {recentSaves.map((save, i) => (
+          <div
+            key={save.route}
+            className="save-body-wrap live-save-row"
+            style={cycleStyle(i, recentSaves.length, SAVE_STEP_SECONDS)}
+            aria-hidden={i === 0 ? undefined : true}
+          >
+            <span className="body">{save.route}</span>
+            <span className="detail">{save.detail}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
 export default function OperationsPanel() {
-  const reduced = useReducedMotion();
   const ist = useIstClock();
 
-  const container = reduced
-    ? { hidden: {}, visible: {} }
-    : {
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: { staggerChildren: 0.07, delayChildren: 0.12 }
-        }
-      };
+  const container = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.07, delayChildren: 0.12 }
+    }
+  };
 
-  const item = reduced
-    ? { hidden: { opacity: 1, y: 0 }, visible: { opacity: 1, y: 0 } }
-    : {
-        hidden: { opacity: 0, y: 12 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease } }
-      };
+  const item = {
+    hidden: { opacity: 1, y: 0 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease } }
+  };
 
   return (
     <motion.aside
       className="ops-panel"
       aria-label="Live operations"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-10% 0px -10% 0px", amount: 0.1 }}
+      initial={false}
+      animate="visible"
       variants={container}
     >
       <motion.div className="ops-strip" variants={item}>
@@ -300,19 +226,19 @@ export default function OperationsPanel() {
       </motion.div>
 
       <motion.div variants={item} className="ops-card-slot">
-        <AgentCardLive ist={ist} reduced={reduced} />
+        <AgentCardLive ist={ist} />
       </motion.div>
 
       <motion.div variants={item}>
-        <JustInFeed reduced={reduced} />
+        <JustInFeed />
       </motion.div>
 
       <motion.div variants={item}>
-        <AlsoOnlineList reduced={reduced} />
+        <AlsoOnlineList />
       </motion.div>
 
       <motion.div variants={item}>
-        <LastSaveBlock reduced={reduced} />
+        <LastSaveBlock />
       </motion.div>
     </motion.aside>
   );

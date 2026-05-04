@@ -38,7 +38,7 @@ export function Reveal({ as = "div", children, delay = 0, className, id }) {
     <Component
       className={className}
       id={id}
-      initial="hidden"
+      initial={false}
       whileInView="visible"
       viewport={VIEWPORT}
       variants={{
@@ -72,7 +72,7 @@ export function StaggerGroup({ as = "div", children, className, id }) {
     <Component
       className={className}
       id={id}
-      initial="hidden"
+      initial={false}
       whileInView="visible"
       viewport={VIEWPORT}
       variants={staggerParent}

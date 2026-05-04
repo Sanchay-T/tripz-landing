@@ -39,6 +39,105 @@ export const ctaActions = {
   }
 };
 
+export const visualAssets = {
+  nightDesk: {
+    src: "/images/tripz-night-desk.png",
+    alt: "A quiet airport desk at night with a passport, call handset, notebook, and runway lights beyond the window.",
+    caption: "Midnight desk · live route recovery"
+  },
+  heroExpert: {
+    src: "/images/tripz-hero-expert.png",
+    alt: "A senior TripZ travel expert at an airport desk at night with a headset, laptop, call phone, and runway lights behind him.",
+    caption: "A real expert, already on desk"
+  },
+  runwayDesk: {
+    src: "/images/tripz-runway-desk.png",
+    alt: "A passport, boarding pass, notebook, and call handset on a quiet airport desk overlooking a rain-lit runway at night.",
+    caption: "Gate, route, hotel · kept moving"
+  },
+  airportCorridor: {
+    src: "/images/tripz-airport-corridor.png",
+    alt: "A calm premium airport corridor with warm daylight, glass walls, and a green route line running through the space.",
+    caption: "Airport calm · routes kept moving"
+  },
+  handoff: {
+    src: "/images/tripz-handoff.png",
+    alt: "An envelope, boarding pass, and pen on a dark travel desk for a handled itinerary handoff.",
+    caption: "Paper trail handled"
+  },
+  whatsappDesk: {
+    src: "/images/tripz-whatsapp-desk.png",
+    alt: "A phone on a travel desk beside a passport wallet, pen, plant, and TripZ route card.",
+    caption: "Message the desk"
+  },
+  recoveryKit: {
+    src: "/images/tripz-recovery-kit.png",
+    alt: "A premium travel recovery kit with passport, phone, route map, cards, and desk stationery in morning light.",
+    caption: "Trip file · fares, routes, stays"
+  },
+  supportKit: {
+    src: "/images/tripz-support-kit.png",
+    alt: "A TripZ support kit with a passport wallet, phone, route card, notebook, and pen on a quiet desk.",
+    caption: "Ready before the call"
+  },
+  documentKit: {
+    src: "/images/tripz-document-kit.png",
+    alt: "A TripZ document kit with a passport wallet, itinerary paper, phone, route card, and pen in premium daylight.",
+    caption: "Visa, fare, route file"
+  },
+  baggageTag: {
+    src: "/images/tripz-baggage-tag.png",
+    alt: "A black suitcase with a TripZ luggage tag and boarding pass ready for route recovery.",
+    caption: "Bags, changes, handoffs"
+  },
+  operatorRoster: {
+    src: "/images/tripz-operator-roster.png",
+    alt: "Four TripZ travel experts on headsets in warm premium operations rooms.",
+    caption: "Ten experts online"
+  },
+  postcards: {
+    src: "/images/tripz-postcards.png",
+    alt: "A set of TripZ travel postcards and papers arranged as a premium travel stationery system.",
+    caption: "End of issue · next trip"
+  }
+};
+
+export const visualInterlude = {
+  marker: "Fig. 02 · Places",
+  headline: "Every delay has a quieter route.",
+  body:
+    "TripZ keeps the trip moving across airport desks, hotel counters, embassy windows, and late-night airline calls.",
+  image: visualAssets.airportCorridor
+};
+
+export const promiseVisuals = [
+  visualAssets.supportKit,
+  visualAssets.baggageTag
+];
+
+export const stepsVisual = visualAssets.whatsappDesk;
+
+export const recoveryProof = {
+  marker: "Case note",
+  headline: ["A recovery file, ", { it: "not a support ticket." }],
+  body:
+    "One expert keeps the trip thread together: fare rules, airline desk, hotel fallback, visa notes, and the next route.",
+  image: visualAssets.documentKit,
+  facts: [
+    { label: "Route", value: "AI 144 -> BLR" },
+    { label: "Desk", value: "One expert" },
+    { label: "Handoff", value: "Same thread" }
+  ]
+};
+
+export const outcomeFeature = {
+  marker: "Final mile",
+  headline: "The route reaches the gate, hotel, or embassy.",
+  body:
+    "TripZ stays with the practical handoff: boarding pass, room, refund, visa desk, or pickup timing.",
+  image: visualAssets.runwayDesk
+};
+
 export const heroAgent = {
   meta: "Live · Travel expert online · 03:47 IST",
   quote: "Hi — I've pulled up your booking. Tell me what happened.",

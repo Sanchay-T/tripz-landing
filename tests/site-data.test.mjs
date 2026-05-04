@@ -9,13 +9,19 @@ import {
   liveStatus,
   metrics,
   navLinks,
+  outcomeFeature,
   pillars,
   pullQuote,
+  recoveryProof,
   services,
   steps,
+  stepsVisual,
   supportEmail,
   supportPhoneDisplay,
   supportPhoneE164,
+  promiseVisuals,
+  visualAssets,
+  visualInterlude,
   whyTripz
 } from "../src/lib/site-data.mjs";
 
@@ -37,6 +43,13 @@ describe("TripZ landing content", () => {
     const live = services.filter((s) => s.live);
     assert.equal(live.length, 1, "exactly one service must be live");
     assert.equal(live[0].n, "No. 04");
+    services.forEach((service) => {
+      assert.equal(
+        "visual" in service,
+        false,
+        "service tiles should stay text-first to avoid repeated imagery"
+      );
+    });
   });
 
   it("keeps the editorial sections populated", () => {
@@ -85,5 +98,36 @@ describe("TripZ landing content", () => {
     assert.equal(typeof liveStatus.avgPickupSeconds, "number");
     assert.ok(liveStatus.expertsOnShift > 0);
     assert.ok(liveStatus.avgPickupSeconds > 0);
+  });
+
+  it("publishes the visual system assets used by the page", () => {
+    assert.equal(Object.keys(visualAssets).length >= 6, true);
+    Object.values(visualAssets).forEach((asset) => {
+      assert.match(asset.src, /^\/images\/tripz-[\w-]+\.png$/);
+      assert.ok(asset.alt.length > 16);
+      assert.ok(asset.caption.length > 0);
+    });
+    assert.ok(visualInterlude.image.src.startsWith("/images/"));
+    assert.ok(visualInterlude.headline.length > 0);
+    assert.ok(recoveryProof.image.src.startsWith("/images/"));
+    assert.equal(recoveryProof.facts.length, 3);
+    assert.ok(outcomeFeature.image.src.startsWith("/images/"));
+    assert.ok(outcomeFeature.headline.length > 0);
+    assert.equal(promiseVisuals.length, 2);
+    promiseVisuals.forEach((asset) => {
+      assert.ok(asset.src.startsWith("/images/"));
+    });
+    assert.ok(stepsVisual.src.startsWith("/images/"));
+    const majorImageFlow = [
+      visualAssets.nightDesk,
+      visualInterlude.image,
+      ...promiseVisuals,
+      recoveryProof.image,
+      stepsVisual,
+      outcomeFeature.image,
+      visualAssets.operatorRoster,
+      visualAssets.postcards
+    ].map((asset) => asset.src);
+    assert.equal(new Set(majorImageFlow).size, majorImageFlow.length);
   });
 });
