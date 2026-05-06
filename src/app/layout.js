@@ -1,10 +1,31 @@
 import "./globals.css";
+import { Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
+  display: "swap"
+});
+
+const instrument = Instrument_Serif({
+  subsets: ["latin"],
+  variable: "--font-instrument",
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap"
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  display: "swap"
+});
 
 export const metadata = {
   title: "TripZ — Travel help, without the hold music.",
   description:
     "Flights, hotels, group bookings, international trips — and a real travel expert on the line, 24/7. 10+ experts. 80% of bookings come with free cancellation and free date change.",
-  metadataBase: new URL("https://tripz.co.in"),
+  metadataBase: new URL("https://tripz-landing.vercel.app"),
   openGraph: {
     title: "TripZ — Travel help, without the hold music.",
     description:
@@ -29,7 +50,11 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body
+        className={`${geist.variable} ${instrument.variable} ${jetbrains.variable} min-h-screen overflow-x-hidden bg-paper text-ink`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

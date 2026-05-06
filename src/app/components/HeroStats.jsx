@@ -39,21 +39,27 @@ function useCountUp(target, decimals = 0, enabled = true, startDelayMs = 0) {
 function NumStat({ value, decimals = 0, suffix = "", label, animate = true, startDelayMs = 0 }) {
   const display = useCountUp(value, decimals, animate, startDelayMs);
   return (
-    <div>
-      <b>
+    <div className="min-w-0">
+      <b className="font-mono text-sm font-bold tracking-[0.08em] text-ink">
         {display}
         {suffix}
       </b>
-      <span>· {label}</span>
+      <span className="ml-2 font-mono text-[11px] uppercase tracking-[0.24em] text-ink/45">
+        · {label}
+      </span>
     </div>
   );
 }
 
 function StaticStat({ value, label }) {
   return (
-    <div>
-      <b>{value}</b>
-      <span>· {label}</span>
+    <div className="min-w-0">
+      <b className="font-mono text-sm font-bold tracking-[0.08em] text-ink">
+        {value}
+      </b>
+      <span className="ml-2 font-mono text-[11px] uppercase tracking-[0.24em] text-ink/45">
+        · {label}
+      </span>
     </div>
   );
 }
@@ -61,7 +67,7 @@ function StaticStat({ value, label }) {
 export default function HeroStats({ startDelayMs = 0 }) {
   const reduced = false;
   return (
-    <div className="hero-stats">
+    <div className="grid w-full grid-cols-1 gap-3 border-t border-ink/10 pt-5 sm:grid-cols-3 sm:gap-4">
       <NumStat
         value={38}
         suffix="s"

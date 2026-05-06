@@ -21,14 +21,14 @@ const itemFade = {
 
 const VIEWPORT = { once: true, margin: "-12% 0px -12% 0px", amount: 0.15 };
 
-export function Reveal({ as = "div", children, delay = 0, className, id }) {
+export function Reveal({ as = "div", children, delay = 0, className, id, ...props }) {
   const reduced = useReducedMotion();
   const Component = motion[as] || motion.div;
 
   if (reduced) {
     const Plain = as;
     return (
-      <Plain className={className} id={id}>
+      <Plain className={className} id={id} {...props}>
         {children}
       </Plain>
     );
@@ -38,6 +38,7 @@ export function Reveal({ as = "div", children, delay = 0, className, id }) {
     <Component
       className={className}
       id={id}
+      {...props}
       initial={false}
       whileInView="visible"
       viewport={VIEWPORT}
@@ -55,14 +56,14 @@ export function Reveal({ as = "div", children, delay = 0, className, id }) {
   );
 }
 
-export function StaggerGroup({ as = "div", children, className, id }) {
+export function StaggerGroup({ as = "div", children, className, id, ...props }) {
   const reduced = useReducedMotion();
   const Component = motion[as] || motion.div;
 
   if (reduced) {
     const Plain = as;
     return (
-      <Plain className={className} id={id}>
+      <Plain className={className} id={id} {...props}>
         {children}
       </Plain>
     );
@@ -72,6 +73,7 @@ export function StaggerGroup({ as = "div", children, className, id }) {
     <Component
       className={className}
       id={id}
+      {...props}
       initial={false}
       whileInView="visible"
       viewport={VIEWPORT}
@@ -82,17 +84,17 @@ export function StaggerGroup({ as = "div", children, className, id }) {
   );
 }
 
-export function StaggerItem({ as = "div", children, className }) {
+export function StaggerItem({ as = "div", children, className, ...props }) {
   const reduced = useReducedMotion();
   const Component = motion[as] || motion.div;
 
   if (reduced) {
     const Plain = as;
-    return <Plain className={className}>{children}</Plain>;
+    return <Plain className={className} {...props}>{children}</Plain>;
   }
 
   return (
-    <Component className={className} variants={itemFade}>
+    <Component className={className} variants={itemFade} {...props}>
       {children}
     </Component>
   );

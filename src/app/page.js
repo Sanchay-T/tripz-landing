@@ -20,190 +20,20 @@ import {
   visualInterlude,
   whyTripz
 } from "@/lib/site-data.mjs";
-import Image from "next/image";
+import { cn } from "@/lib/cn";
 import HeroLeft from "./components/HeroLeft";
 import OperationsPanel from "./components/OperationsPanel";
 import { Reveal, StaggerGroup, StaggerItem } from "./components/Reveal";
 import { Icons } from "./components/icons";
+import {
+  ButtonLink,
+  LivePill,
+  ResponsiveImage,
+  SectionLabel,
+  Wordmark
+} from "./components/ui";
 
-function Wordmark({ onDark = false, size = 22 }) {
-  return (
-    <span
-      className={`tz-wordmark${onDark ? " on-dark" : ""}`}
-      style={{ fontSize: size }}
-    >
-      Trip
-      <span className="z" style={{ fontSize: size * 1.18 }}>
-        Z
-      </span>
-    </span>
-  );
-}
-
-function LivePill({ onDark = false }) {
-  return (
-    <span
-      className={`live-pill${onDark ? " on-dark" : ""}`}
-      aria-label={`${liveStatus.expertsOnShift} travel experts online, average pickup ${liveStatus.avgPickupSeconds} seconds`}
-    >
-      <span className="dot" aria-hidden="true" />
-      {liveStatus.expertsOnShift} experts · {liveStatus.avgPickupSeconds}s pickup
-    </span>
-  );
-}
-
-function ClosingCtas() {
-  return (
-    <>
-      <a className="cta primary" href={ctaActions.call.href}>
-        <Icons.phone size={16} />
-        {ctaActions.call.label}
-        <span className="meta">{ctaActions.call.meta}</span>
-      </a>
-      <a
-        className="cta secondary"
-        href={ctaActions.whatsapp.href}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <Icons.whatsapp size={14} />
-        {ctaActions.whatsapp.label}
-      </a>
-    </>
-  );
-}
-
-function Nav() {
-  return (
-    <header className="nav" aria-label="Primary">
-      <a href="#top" aria-label="TripZ home">
-        <Wordmark size={22} />
-      </a>
-      <nav className="nav-links" aria-label="Sections">
-        {navLinks.map((link) => (
-          <a key={link.href} href={link.href}>
-            {link.label}
-          </a>
-        ))}
-      </nav>
-      <div className="nav-right">
-        <LivePill />
-        <a className="cta primary compact" href={ctaActions.call.href}>
-          <Icons.phone size={14} />
-          Call now
-        </a>
-      </div>
-    </header>
-  );
-}
-
-function Hero() {
-  return (
-    <section className="hero" id="top" aria-labelledby="hero-headline">
-      <HeroLeft />
-      <div className="hero-side">
-        <MediaFigure
-          image={visualAssets.nightDesk}
-          className="hero-mood"
-          loading="eager"
-        />
-        <OperationsPanel />
-      </div>
-    </section>
-  );
-}
-
-function MediaFigure({
-  image,
-  className = "",
-  caption = true,
-  loading = "lazy",
-  sizes = "(max-width: 920px) 100vw, 44vw"
-}) {
-  const preload = loading === "eager";
-  return (
-    <figure className={`media-figure ${className}`.trim()}>
-      <Image
-        src={image.src}
-        alt={image.alt}
-        fill
-        sizes={sizes}
-        preload={preload}
-        loading={loading}
-      />
-      {caption && image.caption && <figcaption>{image.caption}</figcaption>}
-    </figure>
-  );
-}
-
-function Services() {
-  return (
-    <StaggerGroup
-      as="section"
-      className="services"
-      id="services"
-    >
-      {services.map((service) => (
-        <StaggerItem key={service.n}>
-          <a
-            href={service.href}
-            className={`service${service.live ? " live" : ""}`}
-          >
-            <div className="num">{service.n}</div>
-            <h3>{service.title}</h3>
-            <p>{service.body}</p>
-            <span className="arrow">
-              {service.cta} <Icons.arrow size={13} />
-            </span>
-          </a>
-        </StaggerItem>
-      ))}
-    </StaggerGroup>
-  );
-}
-
-function PullBand() {
-  return (
-    <Reveal as="section" className="pullband" id="stories">
-      <div className="pullband-inner">
-        <div className="mark" aria-hidden="true">
-          &ldquo;
-        </div>
-        <div>
-          <p className="body">{pullQuote.body}</p>
-          <p className="attribution">— {pullQuote.attribution}</p>
-        </div>
-      </div>
-    </Reveal>
-  );
-}
-
-function ProofFeature() {
-  return (
-    <section className="proof-feature" id="proof" aria-labelledby="proof-head">
-      <MediaFigure
-        image={recoveryProof.image}
-        className="proof-visual"
-        sizes="(max-width: 920px) 100vw, 44vw"
-      />
-      <Reveal as="div" className="proof-copy">
-        <span className="marker">{recoveryProof.marker}</span>
-        <h2 id="proof-head" className="display">
-          {renderTitleParts(recoveryProof.headline)}
-        </h2>
-        <p>{recoveryProof.body}</p>
-        <dl className="proof-facts">
-          {recoveryProof.facts.map((fact) => (
-            <div key={fact.label}>
-              <dt>{fact.label}</dt>
-              <dd>{fact.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </Reveal>
-    </section>
-  );
-}
+const sectionShell = "mx-auto w-full max-w-7xl px-6 py-16 sm:px-8 sm:py-20 lg:px-12 xl:px-16";
 
 function renderTitleParts(parts) {
   return parts.map((part, i) =>
@@ -215,22 +45,125 @@ function renderTitleParts(parts) {
   );
 }
 
+function DisplayTitle({ children, id, onDark = false, className }) {
+  return (
+    <h2
+      id={id}
+      className={cn(
+        "text-balance font-sans text-4xl font-bold leading-[0.96] tracking-[-0.045em] sm:text-5xl lg:text-6xl",
+        onDark ? "text-white" : "text-ink",
+        className
+      )}
+    >
+      {children}
+    </h2>
+  );
+}
+
+function ClosingCtas() {
+  return (
+    <>
+      <ButtonLink href={ctaActions.call.href}>
+        <Icons.phone size={16} />
+        {ctaActions.call.label}
+        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/55">
+          {ctaActions.call.meta}
+        </span>
+      </ButtonLink>
+      <ButtonLink
+        href={ctaActions.whatsapp.href}
+        tone="light"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Icons.whatsapp size={14} />
+        {ctaActions.whatsapp.label}
+      </ButtonLink>
+    </>
+  );
+}
+
+function Nav() {
+  return (
+    <header className="sticky top-0 z-40 border-b border-ink/10 bg-white/92 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-8 lg:px-12 xl:px-16">
+        <a href="#top" aria-label="TripZ home">
+          <Wordmark />
+        </a>
+        <nav className="hidden items-center gap-8 text-sm text-ink/60 md:flex" aria-label="Sections">
+          {navLinks.map((link) => (
+            <a key={link.href} href={link.href} className="transition hover:text-ink">
+              {link.label}
+            </a>
+          ))}
+        </nav>
+        <div className="flex items-center gap-3">
+          <div className="hidden lg:block">
+            <LivePill
+              experts={liveStatus.expertsOnShift}
+              pickupSeconds={liveStatus.avgPickupSeconds}
+            />
+          </div>
+          <ButtonLink
+            href={ctaActions.call.href}
+            size="sm"
+            className="hidden shrink-0 sm:inline-flex"
+            aria-label="Call now"
+          >
+            <Icons.phone size={14} />
+            <span className="hidden sm:inline">Call now</span>
+          </ButtonLink>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <section
+      className="border-b border-ink/10 bg-white"
+      id="top"
+      aria-labelledby="hero-headline"
+    >
+      <div className="mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-7xl grid-cols-1 items-center gap-10 px-6 py-10 sm:px-8 lg:grid-cols-[minmax(0,0.86fr)_minmax(420px,1fr)] lg:px-12 xl:px-16">
+        <HeroLeft />
+        <div className="relative min-w-0 pb-0 lg:py-10">
+          <ResponsiveImage
+            image={visualAssets.nightDesk}
+            className="aspect-[4/5] w-full sm:aspect-[16/10] lg:min-h-[620px]"
+            objectPosition="center 55%"
+            sizes="(max-width: 1024px) 100vw, 48vw"
+            priority
+            overlay
+          />
+          <div className="mt-4 w-full lg:absolute lg:right-0 lg:top-1/2 lg:mt-0 lg:w-[84%] lg:-translate-y-1/2">
+            <OperationsPanel />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function About() {
   return (
-    <section className="section about-band" id="about" aria-labelledby="about-head">
-      <Reveal as="header" className="section-head about-head">
-        <span className="marker">{aboutBand.marker}</span>
-        <h2 id="about-head" className="display">
-          {renderTitleParts(aboutBand.headline)}
-        </h2>
-      </Reveal>
-      <Reveal as="div" className="about-prose">
-        {aboutBand.paragraphs.map((p, i) => (
-          <p key={i} className={i === aboutBand.paragraphs.length - 1 ? "kicker" : ""}>
-            {p}
-          </p>
-        ))}
-      </Reveal>
+    <section className={sectionShell} id="about" aria-labelledby="about-head">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start">
+        <Reveal as="header" className="min-w-0">
+          <SectionLabel>{aboutBand.marker}</SectionLabel>
+          <DisplayTitle id="about-head" className="mt-5 max-w-3xl">
+            {renderTitleParts(aboutBand.headline)}
+          </DisplayTitle>
+        </Reveal>
+        <Reveal as="div" className="grid gap-5 text-lg leading-8 text-ink/65">
+          {aboutBand.paragraphs.map((p, i) => (
+            <p key={p} className={cn(i === aboutBand.paragraphs.length - 1 && "font-medium text-ink")}>
+              {p}
+            </p>
+          ))}
+        </Reveal>
+      </div>
     </section>
   );
 }
@@ -239,51 +172,102 @@ function VisualInterlude() {
   return (
     <Reveal
       as="section"
-      className="visual-interlude"
+      className="relative isolate min-h-[460px] overflow-hidden sm:min-h-[560px]"
       aria-labelledby="visual-interlude-head"
     >
-      <Image
-        className="visual-interlude-image"
-        src={visualInterlude.image.src}
-        alt={visualInterlude.image.alt}
-        fill
-        loading="eager"
+      <ResponsiveImage
+        image={visualInterlude.image}
+        className="absolute inset-0 h-full w-full border-0"
+        caption={false}
         sizes="100vw"
+        priority
+        overlay
       />
-      <div className="visual-interlude-copy">
-        <span className="marker on-dark">{visualInterlude.marker}</span>
-        <h2 id="visual-interlude-head">{visualInterlude.headline}</h2>
-        <p>{visualInterlude.body}</p>
+      <div className="relative z-10 mx-auto flex min-h-[460px] w-full max-w-7xl items-end px-6 py-10 sm:min-h-[560px] sm:px-8 lg:px-12 xl:px-16">
+        <div className="max-w-2xl text-white">
+          <SectionLabel onDark>{visualInterlude.marker}</SectionLabel>
+          <h2
+            id="visual-interlude-head"
+            className="mt-5 text-balance font-sans text-4xl font-bold leading-[0.95] tracking-[-0.045em] sm:text-6xl"
+          >
+            {visualInterlude.headline}
+          </h2>
+          <p className="mt-5 max-w-xl text-lg leading-8 text-white/75">
+            {visualInterlude.body}
+          </p>
+        </div>
       </div>
     </Reveal>
   );
 }
 
+function Services() {
+  return (
+    <StaggerGroup
+      as="section"
+      className="grid w-full grid-cols-1 border-y border-ink/10 sm:grid-cols-2 lg:grid-cols-4"
+      id="services"
+    >
+      {services.map((service) => (
+        <StaggerItem key={service.n}>
+          <a
+            href={service.href}
+            className={cn(
+              "group flex min-h-64 flex-col border-b border-ink/10 p-6 transition hover:bg-accent-soft sm:border-r lg:border-b-0 lg:p-8",
+              service.live && "bg-accent text-white hover:bg-accent"
+            )}
+          >
+            <div className={cn("font-mono text-xs uppercase tracking-[0.24em]", service.live ? "text-white/65" : "text-ink/40")}>
+              {service.n}
+            </div>
+            <h3 className="mt-8 text-balance text-2xl font-bold leading-tight tracking-[-0.03em]">
+              {service.title}
+            </h3>
+            <p className={cn("mt-3 leading-7", service.live ? "text-white/70" : "text-ink/55")}>
+              {service.body}
+            </p>
+            <span className="mt-auto inline-flex items-center gap-2 pt-10 text-sm font-semibold">
+              {service.cta} <Icons.arrow size={13} />
+            </span>
+          </a>
+        </StaggerItem>
+      ))}
+    </StaggerGroup>
+  );
+}
+
 function Promise() {
   return (
-    <section className="section why-band" id="why" aria-labelledby="why-head">
-      <Reveal as="header" className="section-head">
-        <span className="marker">§ 01 · Promise</span>
-        <h2 id="why-head" className="display">
-          Four reasons people <em>stay.</em>
-        </h2>
-      </Reveal>
-      <div className="promise-layout">
-        <StaggerGroup as="ul" className="promise-list">
-          {whyTripz.map((reason) => (
-            <StaggerItem as="li" key={reason.n}>
-              <span className="n">{reason.n}</span>
-              <span className="promise">{renderTitleParts(reason.title)}</span>
-            </StaggerItem>
-          ))}
-        </StaggerGroup>
-        <Reveal as="div" className="promise-visuals">
-          {promiseVisuals.map((image, i) => (
-            <MediaFigure
+    <section className={sectionShell} id="why" aria-labelledby="why-head">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(340px,0.75fr)] lg:items-start">
+        <div className="min-w-0">
+          <Reveal as="header">
+            <SectionLabel>§ 01 · Promise</SectionLabel>
+            <DisplayTitle id="why-head" className="mt-5 max-w-3xl">
+              Four reasons people <em>stay.</em>
+            </DisplayTitle>
+          </Reveal>
+          <StaggerGroup as="ul" className="mt-10 grid gap-0 divide-y divide-ink/10">
+            {whyTripz.map((reason) => (
+              <StaggerItem as="li" key={reason.n} className="grid gap-4 py-6 sm:grid-cols-[80px_minmax(0,1fr)]">
+                <span className="font-mono text-xs uppercase tracking-[0.24em] text-ink/40">
+                  {reason.n}
+                </span>
+                <span className="text-balance text-3xl font-bold leading-tight tracking-[-0.035em] sm:text-4xl">
+                  {renderTitleParts(reason.title)}
+                </span>
+              </StaggerItem>
+            ))}
+          </StaggerGroup>
+        </div>
+        <Reveal as="div" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+          {promiseVisuals.map((image) => (
+            <ResponsiveImage
               key={image.src}
               image={image}
-              className={`promise-visual promise-visual-${i + 1}`}
-              sizes="(max-width: 920px) 100vw, 34vw"
+              className="aspect-[4/3] w-full lg:aspect-[4/5]"
+              sizes="(max-width: 1024px) 50vw, 32vw"
+              overlay
             />
           ))}
         </Reveal>
@@ -295,154 +279,37 @@ function Promise() {
 function Pillar({ pillar }) {
   return (
     <section
-      className={`pillar-band${pillar.tinted ? " tinted" : ""}`}
+      className={cn("border-t border-ink/10", pillar.tinted ? "bg-field" : "bg-white")}
       id={pillar.id}
       aria-labelledby={`${pillar.id}-head`}
     >
-      <Reveal as="header" className="pillar-head">
-        <span className="marker">{pillar.marker}</span>
-        <h2 id={`${pillar.id}-head`} className="display">
-          {renderTitleParts(pillar.headline)}
-        </h2>
-        <p className="lede">{pillar.lede}</p>
-        <div className="callout">
-          <span className="callout-value">{pillar.callout.value}</span>
-          <span className="callout-label">{pillar.callout.label}</span>
-        </div>
-      </Reveal>
-      <StaggerGroup className="pillar-points">
-        {pillar.points.map((point) => (
-          <StaggerItem key={point.n} className="pillar-point-cell">
-            <article className="pillar-point">
-              <span className="n">— {point.n}</span>
-              <h4>{point.title}</h4>
-              <p>{point.body}</p>
-            </article>
-          </StaggerItem>
-        ))}
-      </StaggerGroup>
-    </section>
-  );
-}
-
-function PillarStack() {
-  return (
-    <>
-      {pillars.map((pillar) => (
-        <Pillar key={pillar.id} pillar={pillar} />
-      ))}
-    </>
-  );
-}
-
-function Steps() {
-  return (
-    <section className="steps-section" id="how" aria-labelledby="steps-head">
-      <div className="steps-head">
-        <Reveal as="header" className="section-head">
-          <span className="marker">§ 02 · How it works</span>
-          <h2 id="steps-head" className="display">
-            Three steps. <em>That is the product.</em>
-          </h2>
-        </Reveal>
-        <MediaFigure
-          image={stepsVisual}
-          className="steps-visual"
-          sizes="(max-width: 920px) 100vw, 36vw"
-        />
-      </div>
-      <StaggerGroup className="steps">
-        {steps.map((step) => (
-          <StaggerItem key={step.n}>
-            <article className="step">
-              <span className="num">Step {step.n}</span>
-              <h3>{renderTitleParts(step.title)}</h3>
-              <p>{step.body}</p>
-            </article>
-          </StaggerItem>
-        ))}
-      </StaggerGroup>
-    </section>
-  );
-}
-
-function OutcomeFeature() {
-  return (
-    <Reveal
-      as="section"
-      className="outcome-feature"
-      id="outcome"
-      aria-labelledby="outcome-head"
-    >
-      <Image
-        className="outcome-bg"
-        src={outcomeFeature.image.src}
-        alt={outcomeFeature.image.alt}
-        fill
-        sizes="100vw"
-      />
-      <div className="outcome-copy">
-        <span className="marker on-dark">{outcomeFeature.marker}</span>
-        <h2 id="outcome-head">{outcomeFeature.headline}</h2>
-        <p>{outcomeFeature.body}</p>
-      </div>
-    </Reveal>
-  );
-}
-
-function Desk() {
-  return (
-    <section
-      className="section on-dark"
-      id="desk"
-      aria-labelledby="desk-head"
-    >
-      <Reveal as="header" className="section-head">
-        <div>
-          <span className="marker on-dark">§ 03 · The desk</span>
-          <h2
-            id="desk-head"
-            className="display on-dark"
-            style={{ marginTop: 14 }}
-          >
-            One of <em>ten travel experts</em> is already online.
-          </h2>
-          <p className="section-lede">
-            Travel agents book what you tell them. Travel experts <em>advise</em>
-            {" "}— they&rsquo;ve been there, they read the language, they know
-            which embassy desk to call. Tap a name and you&rsquo;re on a thread
-            with <em>them</em>, not a queue.
+      <div className={cn(sectionShell, "grid gap-12 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]")}>
+        <Reveal as="header" className="min-w-0">
+          <SectionLabel>{pillar.marker}</SectionLabel>
+          <DisplayTitle id={`${pillar.id}-head`} className="mt-5 max-w-3xl">
+            {renderTitleParts(pillar.headline)}
+          </DisplayTitle>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-ink/60">
+            {pillar.lede}
           </p>
-        </div>
-        <LivePill onDark />
-      </Reveal>
-      <div className="desk-showcase">
-        <MediaFigure
-          image={visualAssets.operatorRoster}
-          className="desk-visual"
-          sizes="(max-width: 920px) 100vw, 38vw"
-        />
-        <StaggerGroup className="agent-grid">
-          {desk.map((agent) => (
-            <StaggerItem key={agent.initials}>
-              <article className="agent-tile">
-                <span className="online-dot" aria-label="Online" />
-                <div className="row">
-                  <span className="avatar">{agent.initials}</span>
-                  <div>
-                    <div className="name">{agent.name}</div>
-                    <div className="role">{agent.role}</div>
-                  </div>
-                </div>
-                <blockquote>&ldquo;{agent.quote}&rdquo;</blockquote>
-                <div className="footer-row">
-                  <span>
-                    <b>{agent.tenure}</b> · tenure
-                  </span>
-                  <span>
-                    <b>{agent.saves}</b>
-                  </span>
-                </div>
+          <div className="mt-10 border-t border-ink/10 pt-8">
+            <span className="block text-5xl font-bold tracking-[-0.04em] text-accent sm:text-6xl">
+              {pillar.callout.value}
+            </span>
+            <span className="mt-2 block font-mono text-xs uppercase tracking-[0.28em] text-ink/45">
+              {pillar.callout.label}
+            </span>
+          </div>
+        </Reveal>
+        <StaggerGroup className="grid gap-px bg-ink/10 sm:grid-cols-2">
+          {pillar.points.map((point) => (
+            <StaggerItem key={point.n} className="bg-white p-6 sm:p-8">
+              <article>
+                <span className="font-serif text-3xl italic text-accent">— {point.n}</span>
+                <h4 className="mt-5 text-balance text-2xl font-bold leading-tight tracking-[-0.03em]">
+                  {point.title}
+                </h4>
+                <p className="mt-4 leading-7 text-ink/60">{point.body}</p>
               </article>
             </StaggerItem>
           ))}
@@ -452,14 +319,207 @@ function Desk() {
   );
 }
 
+function PillarStack() {
+  return pillars.map((pillar) => <Pillar key={pillar.id} pillar={pillar} />);
+}
+
+function PullBand() {
+  return (
+    <Reveal as="section" className="border-y border-ink/10 bg-field">
+      <div className={cn(sectionShell, "grid gap-8 lg:grid-cols-[120px_minmax(0,1fr)]")}>
+        <div className="font-serif text-8xl leading-none text-accent" aria-hidden="true">
+          &ldquo;
+        </div>
+        <div>
+          <p className="max-w-5xl text-balance font-serif text-4xl italic leading-tight text-ink sm:text-5xl">
+            {pullQuote.body}
+          </p>
+          <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.24em] text-ink/45">
+            — {pullQuote.attribution}
+          </p>
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
+function ProofFeature() {
+  return (
+    <section className={cn(sectionShell, "grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:items-center")} id="proof" aria-labelledby="proof-head">
+      <ResponsiveImage
+        image={recoveryProof.image}
+        className="aspect-[4/3] w-full lg:aspect-[5/6]"
+        sizes="(max-width: 1024px) 100vw, 42vw"
+        overlay
+      />
+      <Reveal as="div" className="min-w-0">
+        <SectionLabel>{recoveryProof.marker}</SectionLabel>
+        <DisplayTitle id="proof-head" className="mt-5">
+          {renderTitleParts(recoveryProof.headline)}
+        </DisplayTitle>
+        <p className="mt-6 max-w-xl text-lg leading-8 text-ink/60">
+          {recoveryProof.body}
+        </p>
+        <dl className="mt-10 grid gap-px overflow-hidden bg-ink/10 sm:grid-cols-3">
+          {recoveryProof.facts.map((fact) => (
+            <div key={fact.label} className="bg-white p-5">
+              <dt className="font-mono text-[11px] uppercase tracking-[0.24em] text-ink/40">
+                {fact.label}
+              </dt>
+              <dd className="mt-2 font-semibold text-ink">{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </Reveal>
+    </section>
+  );
+}
+
+function Steps() {
+  return (
+    <section className="border-t border-ink/10 bg-white" id="how" aria-labelledby="steps-head">
+      <div className={cn(sectionShell, "grid gap-12")}>
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.58fr)] lg:items-end">
+          <Reveal as="header">
+            <SectionLabel>§ 02 · How it works</SectionLabel>
+            <DisplayTitle id="steps-head" className="mt-5 max-w-3xl">
+              Three steps. <em>That is the product.</em>
+            </DisplayTitle>
+          </Reveal>
+          <ResponsiveImage
+            image={stepsVisual}
+            className="aspect-[16/10] w-full"
+            sizes="(max-width: 1024px) 100vw, 32vw"
+            overlay
+          />
+        </div>
+        <StaggerGroup className="grid gap-px bg-ink/10 md:grid-cols-3">
+          {steps.map((step) => (
+            <StaggerItem key={step.n} className="bg-white p-6 sm:p-8">
+              <article>
+                <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-ink/40">
+                  Step {step.n}
+                </span>
+                <h3 className="mt-8 text-balance text-3xl font-bold leading-tight tracking-[-0.035em]">
+                  {renderTitleParts(step.title)}
+                </h3>
+                <p className="mt-4 leading-7 text-ink/60">{step.body}</p>
+              </article>
+            </StaggerItem>
+          ))}
+        </StaggerGroup>
+      </div>
+    </section>
+  );
+}
+
+function OutcomeFeature() {
+  return (
+    <Reveal
+      as="section"
+      className="relative isolate min-h-[460px] overflow-hidden sm:min-h-[620px]"
+      id="outcome"
+      aria-labelledby="outcome-head"
+    >
+      <ResponsiveImage
+        image={outcomeFeature.image}
+        className="absolute inset-0 h-full w-full border-0"
+        caption={false}
+        sizes="100vw"
+        overlay
+      />
+      <div className="relative z-10 mx-auto flex min-h-[460px] w-full max-w-7xl items-end px-6 py-10 sm:min-h-[620px] sm:px-8 lg:px-12 xl:px-16">
+        <div className="max-w-2xl text-white">
+          <SectionLabel onDark>{outcomeFeature.marker}</SectionLabel>
+          <DisplayTitle id="outcome-head" onDark className="mt-5">
+            {outcomeFeature.headline}
+          </DisplayTitle>
+          <p className="mt-5 max-w-xl text-lg leading-8 text-white/75">
+            {outcomeFeature.body}
+          </p>
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
+function Desk() {
+  return (
+    <section className="bg-ink text-white" id="desk" aria-labelledby="desk-head">
+      <div className={cn(sectionShell, "grid gap-12")}>
+        <Reveal as="header" className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+          <div>
+            <SectionLabel onDark>§ 03 · The desk</SectionLabel>
+            <DisplayTitle id="desk-head" onDark className="mt-5 max-w-4xl">
+              One of <em className="text-accent-live">ten travel experts</em> is already online.
+            </DisplayTitle>
+            <p className="mt-6 max-w-3xl text-lg leading-8 text-white/65">
+              Travel agents book what you tell them. Travel experts <em>advise</em>{" "}
+              — they&rsquo;ve been there, they read the language, they know which
+              embassy desk to call. Tap a name and you&rsquo;re on a thread with{" "}
+              <em>them</em>, not a queue.
+            </p>
+          </div>
+          <LivePill
+            experts={liveStatus.expertsOnShift}
+            pickupSeconds={liveStatus.avgPickupSeconds}
+            onDark
+          />
+        </Reveal>
+        <div className="grid gap-6 lg:grid-cols-[minmax(280px,0.55fr)_minmax(0,1fr)]">
+          <ResponsiveImage
+            image={visualAssets.operatorRoster}
+            className="aspect-square w-full"
+            sizes="(max-width: 1024px) 100vw, 36vw"
+            overlay
+          />
+          <StaggerGroup className="grid gap-px bg-white/10 sm:grid-cols-2">
+            {desk.map((agent) => (
+              <StaggerItem key={agent.initials} className="bg-ink p-6 ring-1 ring-white/10 sm:p-7">
+                <article>
+                  <span className="inline-flex size-2 rounded-full bg-accent-live" aria-label="Online" />
+                  <div className="mt-5 flex items-center gap-3">
+                    <span className="inline-flex size-10 items-center justify-center rounded-full bg-white text-xs font-bold text-ink">
+                      {agent.initials}
+                    </span>
+                    <div>
+                      <div className="font-semibold">{agent.name}</div>
+                      <div className="text-sm text-white/50">{agent.role}</div>
+                    </div>
+                  </div>
+                  <blockquote className="mt-6 text-balance font-serif text-2xl italic leading-tight text-white">
+                    &ldquo;{agent.quote}&rdquo;
+                  </blockquote>
+                  <div className="mt-8 flex justify-between gap-4 border-t border-white/10 pt-4 text-sm text-white/55">
+                    <span>
+                      <b className="text-white">{agent.tenure}</b> · tenure
+                    </span>
+                    <span>
+                      <b className="text-white">{agent.saves}</b>
+                    </span>
+                  </div>
+                </article>
+              </StaggerItem>
+            ))}
+          </StaggerGroup>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Metrics() {
   return (
-    <StaggerGroup as="section" className="metrics">
+    <StaggerGroup as="section" className="grid border-y border-ink/10 sm:grid-cols-2">
       {metrics.map((m) => (
-        <StaggerItem key={m.label}>
-          <div className="metric">
-            <div className="value">{m.value}</div>
-            <div className="label">{m.label}</div>
+        <StaggerItem key={m.label} className="p-8 sm:p-10 lg:p-14">
+          <div>
+            <div className="text-6xl font-bold tracking-[-0.05em] text-accent sm:text-7xl">
+              {m.value}
+            </div>
+            <div className="mt-3 font-mono text-[11px] uppercase tracking-[0.26em] text-ink/45">
+              {m.label}
+            </div>
           </div>
         </StaggerItem>
       ))}
@@ -469,23 +529,31 @@ function Metrics() {
 
 function Closing() {
   return (
-    <Reveal as="section" className="closing" id="contact">
-      <Image
-        className="closing-bg"
-        src={visualAssets.postcards.src}
-        alt=""
-        aria-hidden="true"
-        fill
+    <Reveal
+      as="section"
+      className="relative isolate overflow-hidden bg-field"
+      id="contact"
+      aria-labelledby="closing-head"
+    >
+      <ResponsiveImage
+        image={visualAssets.postcards}
+        className="absolute inset-0 h-full w-full border-0 opacity-35"
+        caption={false}
         sizes="100vw"
       />
-      <span className="marker">End of issue</span>
-      <h2 id="closing-head">
-        Next trip,
-        <br />
-        <em>call a human.</em>
-      </h2>
-      <div className="ctas">
-        <ClosingCtas />
+      <div className={cn(sectionShell, "relative z-10 text-center")}>
+        <SectionLabel className="justify-center before:hidden">End of issue</SectionLabel>
+        <h2
+          id="closing-head"
+          className="mx-auto mt-6 max-w-3xl text-balance text-5xl font-bold leading-[0.95] tracking-[-0.05em] text-ink sm:text-7xl"
+        >
+          Next trip,
+          <br />
+          <em className="text-accent">call a human.</em>
+        </h2>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <ClosingCtas />
+        </div>
       </div>
     </Reveal>
   );
@@ -493,39 +561,48 @@ function Closing() {
 
 function Footer() {
   return (
-    <footer className="tz-footer">
-      <div className="footer-grid">
-        <div className="footer-brand">
-          <Wordmark onDark size={28} />
-          <p className="tagline">
-            TripZ — picked up{" "}
-            <em style={{ color: "var(--tz-accent-on-dark)" }}>by humans.</em>
-          </p>
-          <div className="footer-call" style={{ marginTop: 28 }}>
-            <span className="label">Call any hour</span>
-            <a className="number" href={`tel:${supportPhoneE164}`}>
-              {supportPhoneDisplay}
-            </a>
+    <footer className="bg-ink text-white">
+      <div className={cn(sectionShell, "pb-10")}>
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.3fr)_repeat(3,minmax(0,0.7fr))]">
+          <div>
+            <Wordmark onDark size="text-3xl" />
+            <p className="mt-5 max-w-sm text-lg text-white/60">
+              TripZ — picked up <em className="text-accent-live">by humans.</em>
+            </p>
+            <div className="mt-8">
+              <span className="block font-mono text-[11px] uppercase tracking-[0.26em] text-white/40">
+                Call any hour
+              </span>
+              <a className="mt-2 block text-2xl font-bold" href={`tel:${supportPhoneE164}`}>
+                {supportPhoneDisplay}
+              </a>
+            </div>
           </div>
+          {Object.entries(footerLinks).map(([title, links]) => (
+            <div key={title}>
+              <h4 className="font-mono text-[11px] uppercase tracking-[0.26em] text-white/40">
+                {title}
+              </h4>
+              <ul className="mt-5 grid gap-3 text-sm text-white/65">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <a className="transition hover:text-white" href={link.href}>
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
-        {Object.entries(footerLinks).map(([title, links]) => (
-          <div key={title} className="footer-col">
-            <h4>{title}</h4>
-            <ul>
-              {links.map((link) => (
-                <li key={link.label}>
-                  <a href={link.href}>{link.label}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <div className="footer-bottom">
-        <span>
-          © {new Date().getFullYear()} TripZ · Bengaluru / Mumbai / Bangkok
-        </span>
-        <LivePill onDark />
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm text-white/45">
+          <span>© 2026 TripZ · Bengaluru / Mumbai / Bangkok</span>
+          <LivePill
+            experts={liveStatus.expertsOnShift}
+            pickupSeconds={liveStatus.avgPickupSeconds}
+            onDark
+          />
+        </div>
       </div>
     </footer>
   );
@@ -533,13 +610,16 @@ function Footer() {
 
 function StickyMobile() {
   return (
-    <div className="sticky-mobile" aria-label="Quick contact">
-      <a className="primary" href={ctaActions.call.href}>
+    <div className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-2 gap-2 border-t border-white/10 bg-ink/95 p-3 backdrop-blur md:hidden">
+      <a
+        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-white px-3 text-sm font-semibold text-ink"
+        href={ctaActions.call.href}
+      >
         <Icons.phone size={15} />
         Call a human
       </a>
       <a
-        className="secondary"
+        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/20 px-3 text-sm font-semibold text-white"
         href={ctaActions.whatsapp.href}
         target="_blank"
         rel="noreferrer"
