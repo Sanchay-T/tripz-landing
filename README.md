@@ -80,6 +80,12 @@ Support number:
 +91 995 665 1212
 ```
 
+Support email:
+
+```text
+Booking@trips.co.in
+```
+
 WhatsApp links are generated from `supportPhoneE164` and `whatsappMessage` in
 `src/lib/site-data.mjs`.
 

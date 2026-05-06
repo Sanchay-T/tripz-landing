@@ -33,7 +33,7 @@ import {
   Wordmark
 } from "./components/ui";
 
-const sectionShell = "mx-auto w-full max-w-7xl px-6 py-16 sm:px-8 sm:py-20 lg:px-12 xl:px-16";
+const sectionShell = "mx-auto w-full max-w-7xl px-6 py-12 sm:px-8 sm:py-14 lg:px-12 xl:px-16";
 
 function renderTitleParts(parts) {
   return parts.map((part, i) =>
@@ -126,20 +126,18 @@ function Hero() {
       id="top"
       aria-labelledby="hero-headline"
     >
-      <div className="mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-7xl grid-cols-1 items-center gap-10 px-6 py-10 sm:px-8 lg:grid-cols-[minmax(0,0.86fr)_minmax(420px,1fr)] lg:px-12 xl:px-16">
+      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[minmax(0,0.86fr)_minmax(420px,1fr)] lg:gap-10 lg:px-12 lg:py-10 xl:px-16">
         <HeroLeft />
-        <div className="relative min-w-0 pb-0 lg:py-10">
+        <div className="grid min-w-0 gap-4">
           <ResponsiveImage
             image={visualAssets.nightDesk}
-            className="aspect-[4/5] w-full sm:aspect-[16/10] lg:min-h-[620px]"
+            className="aspect-[16/10] w-full sm:aspect-[16/9] lg:aspect-[16/10]"
             objectPosition="center 55%"
             sizes="(max-width: 1024px) 100vw, 48vw"
             priority
             overlay
           />
-          <div className="mt-4 w-full lg:absolute lg:right-0 lg:top-1/2 lg:mt-0 lg:w-[84%] lg:-translate-y-1/2">
-            <OperationsPanel />
-          </div>
+          <OperationsPanel />
         </div>
       </div>
     </section>
@@ -172,7 +170,7 @@ function VisualInterlude() {
   return (
     <Reveal
       as="section"
-      className="relative isolate min-h-[460px] overflow-hidden sm:min-h-[560px]"
+      className="relative isolate min-h-[380px] overflow-hidden sm:min-h-[460px]"
       aria-labelledby="visual-interlude-head"
     >
       <ResponsiveImage
@@ -183,7 +181,7 @@ function VisualInterlude() {
         priority
         overlay
       />
-      <div className="relative z-10 mx-auto flex min-h-[460px] w-full max-w-7xl items-end px-6 py-10 sm:min-h-[560px] sm:px-8 lg:px-12 xl:px-16">
+      <div className="relative z-10 mx-auto flex min-h-[380px] w-full max-w-7xl items-end px-6 py-10 sm:min-h-[460px] sm:px-8 lg:px-12 xl:px-16">
         <div className="max-w-2xl text-white">
           <SectionLabel onDark>{visualInterlude.marker}</SectionLabel>
           <h2
@@ -213,7 +211,7 @@ function Services() {
           <a
             href={service.href}
             className={cn(
-              "group flex min-h-64 flex-col border-b border-ink/10 p-6 transition hover:bg-accent-soft sm:border-r lg:border-b-0 lg:p-8",
+              "group flex min-h-56 flex-col border-b border-ink/10 p-6 transition hover:bg-accent-soft sm:border-r lg:border-b-0 lg:p-8",
               service.live && "bg-accent text-white hover:bg-accent"
             )}
           >
@@ -279,7 +277,7 @@ function Promise() {
 function Pillar({ pillar }) {
   return (
     <section
-      className={cn("border-t border-ink/10", pillar.tinted ? "bg-field" : "bg-white")}
+      className={cn("scroll-mt-20 border-t border-ink/10", pillar.tinted ? "bg-field" : "bg-white")}
       id={pillar.id}
       aria-labelledby={`${pillar.id}-head`}
     >
@@ -417,7 +415,7 @@ function OutcomeFeature() {
   return (
     <Reveal
       as="section"
-      className="relative isolate min-h-[460px] overflow-hidden sm:min-h-[620px]"
+      className="relative isolate min-h-[400px] overflow-hidden sm:min-h-[520px]"
       id="outcome"
       aria-labelledby="outcome-head"
     >
@@ -428,7 +426,7 @@ function OutcomeFeature() {
         sizes="100vw"
         overlay
       />
-      <div className="relative z-10 mx-auto flex min-h-[460px] w-full max-w-7xl items-end px-6 py-10 sm:min-h-[620px] sm:px-8 lg:px-12 xl:px-16">
+      <div className="relative z-10 mx-auto flex min-h-[400px] w-full max-w-7xl items-end px-6 py-10 sm:min-h-[520px] sm:px-8 lg:px-12 xl:px-16">
         <div className="max-w-2xl text-white">
           <SectionLabel onDark>{outcomeFeature.marker}</SectionLabel>
           <DisplayTitle id="outcome-head" onDark className="mt-5">
@@ -531,7 +529,7 @@ function Closing() {
   return (
     <Reveal
       as="section"
-      className="relative isolate overflow-hidden bg-field"
+      className="relative isolate scroll-mt-20 overflow-hidden bg-field"
       id="contact"
       aria-labelledby="closing-head"
     >

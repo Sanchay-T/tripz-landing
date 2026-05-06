@@ -1,6 +1,6 @@
 export const supportPhoneDisplay = "+91 995 665 1212";
 export const supportPhoneE164 = "+919956651212";
-export const supportEmail = "hello@tripz.co.in";
+export const supportEmail = "Booking@trips.co.in";
 
 const whatsappMessage =
   "Hi TripZ — I need a human on this. Can someone from the desk pick up?";

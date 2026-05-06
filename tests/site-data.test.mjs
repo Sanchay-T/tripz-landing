@@ -63,7 +63,7 @@ describe("TripZ landing content", () => {
 
   it("publishes the foreword and contact email", () => {
     assert.ok(aboutBand.paragraphs.length >= 3);
-    assert.match(supportEmail, /^[\w.+-]+@tripz\.co\.in$/);
+    assert.equal(supportEmail, "Booking@trips.co.in");
   });
 
   it("publishes four deep pillars with sub-points and callouts", () => {
