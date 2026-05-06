@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import {
   heroQuotes,
@@ -21,14 +21,15 @@ function nextIndex(length) {
   return (value) => (value + 1) % length;
 }
 
-function useRotator(length, intervalMs) {
+function useRotator(length, intervalMs, paused = false) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
+    if (paused) return undefined;
     if (length < 2) return undefined;
     const id = setInterval(() => setIndex(nextIndex(length)), intervalMs);
     return () => clearInterval(id);
-  }, [length, intervalMs]);
+  }, [length, intervalMs, paused]);
 
   return index;
 }
@@ -55,7 +56,11 @@ function useIstClock() {
   return ist;
 }
 
-function AnimatedSwap({ id, children, className }) {
+function AnimatedSwap({ id, children, className, reduced = false }) {
+  if (reduced) {
+    return <div className={cn("relative overflow-hidden", className)}>{children}</div>;
+  }
+
   return (
     <div className={cn("relative overflow-hidden", className)}>
       <AnimatePresence mode="wait" initial={false}>
@@ -163,11 +168,12 @@ function SaveBlock({ save }) {
 }
 
 export default function OperationsPanel() {
+  const reduced = useReducedMotion();
   const ist = useIstClock();
-  const cardIndex = useRotator(heroQuotes.length, CARD_MS);
-  const feedIndex = useRotator(justInFeed.length, FEED_MS);
-  const saveIndex = useRotator(recentSaves.length, SAVE_MS);
-  const rosterPage = useRotator(Math.ceil(onlinePool.length / 3), 3_700);
+  const cardIndex = useRotator(heroQuotes.length, CARD_MS, reduced);
+  const feedIndex = useRotator(justInFeed.length, FEED_MS, reduced);
+  const saveIndex = useRotator(recentSaves.length, SAVE_MS, reduced);
+  const rosterPage = useRotator(Math.ceil(onlinePool.length / 3), 3_700, reduced);
 
   return (
     <motion.aside
@@ -187,19 +193,19 @@ export default function OperationsPanel() {
         </span>
       </div>
 
-      <AnimatedSwap id={`card-${cardIndex}`} className="min-h-[230px]">
+      <AnimatedSwap id={`card-${cardIndex}`} className="min-h-[230px]" reduced={reduced}>
         <AgentCard agent={heroQuotes[cardIndex]} ist={ist} />
       </AnimatedSwap>
 
-      <AnimatedSwap id={`feed-${feedIndex}`} className="min-h-16">
+      <AnimatedSwap id={`feed-${feedIndex}`} className="min-h-16" reduced={reduced}>
         <MissionRow update={justInFeed[feedIndex]} />
       </AnimatedSwap>
 
-      <AnimatedSwap id={`roster-${rosterPage}`} className="min-h-[178px]">
+      <AnimatedSwap id={`roster-${rosterPage}`} className="min-h-[178px]" reduced={reduced}>
         <OnlineRoster page={rosterPage} />
       </AnimatedSwap>
 
-      <AnimatedSwap id={`save-${saveIndex}`} className="min-h-[92px]">
+      <AnimatedSwap id={`save-${saveIndex}`} className="min-h-[92px]" reduced={reduced}>
         <SaveBlock save={recentSaves[saveIndex]} />
       </AnimatedSwap>
     </motion.aside>
