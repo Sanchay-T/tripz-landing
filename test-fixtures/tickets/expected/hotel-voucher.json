@@ -1,0 +1,21 @@
+{
+  "documentType": "hotel_voucher",
+  "customerName": "Sony Kapoor",
+  "mobileNumber": "+91 90000 00005",
+  "email": "sony.fixture@example.com",
+  "bookingType": "hotel",
+  "market": "domestic",
+  "journeyType": "stay_only",
+  "departure": "Goa",
+  "arrival": "Goa",
+  "travelDate": "2026-06-21",
+  "returnDate": "2026-06-24",
+  "provider": "TripZ Hotels",
+  "pnrOrConfirmation": "HTL5GOA",
+  "baseCost": 4200,
+  "sellingPrice": 5000,
+  "currency": "INR",
+  "confidence": 0.86,
+  "missingFields": [],
+  "rawNotes": "Synthetic hotel voucher."
+}

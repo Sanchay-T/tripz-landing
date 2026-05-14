@@ -61,7 +61,7 @@ export default function HeroLeft() {
 
       <motion.h1
         id="hero-headline"
-        className="max-w-[9.8ch] text-balance font-sans text-5xl font-bold leading-[0.95] tracking-[-0.045em] text-ink sm:text-6xl lg:text-7xl xl:text-8xl"
+        className="max-w-[min(9.8ch,100%)] text-balance font-sans text-[clamp(3rem,9vw,6rem)] font-bold leading-[0.95] tracking-[-0.045em] text-ink"
         variants={HC}
       >
         <motion.span className="block" variants={HL}>
@@ -75,7 +75,7 @@ export default function HeroLeft() {
       </motion.h1>
 
       <motion.p
-        className="max-w-2xl text-pretty text-base leading-8 text-ink/65 sm:text-lg"
+        className="max-w-2xl text-pretty text-[clamp(1rem,1vw+0.75rem,1.125rem)] leading-[1.75] text-ink/65"
         variants={I}
       >
         We&rsquo;re <em>human-first</em>, not bot-first. Real travel experts —
@@ -94,7 +94,7 @@ export default function HeroLeft() {
       </motion.div>
 
       <motion.a
-        className="inline-flex min-h-10 items-center gap-3 border-b border-accent pr-1 font-serif text-xl italic text-ink transition hover:bg-accent-soft"
+        className="inline-flex min-h-10 max-w-full flex-wrap items-center gap-3 border-b border-accent pr-1 font-serif text-xl italic text-ink transition hover:bg-accent-soft"
         href={ctaActions.whatsapp.href}
         target="_blank"
         rel="noreferrer"

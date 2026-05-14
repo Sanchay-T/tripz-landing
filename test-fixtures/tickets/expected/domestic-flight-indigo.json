@@ -1,0 +1,21 @@
+{
+  "documentType": "flight_ticket",
+  "customerName": "Keya Sharma",
+  "mobileNumber": "+91 90000 00001",
+  "email": "keya.fixture@example.com",
+  "bookingType": "flight",
+  "market": "domestic",
+  "journeyType": "one_way",
+  "departure": "DEL",
+  "arrival": "BOM",
+  "travelDate": "2026-06-10",
+  "returnDate": null,
+  "provider": "IndiGo",
+  "pnrOrConfirmation": "TZ9K2A",
+  "baseCost": 4800,
+  "sellingPrice": 5000,
+  "currency": "INR",
+  "confidence": 0.92,
+  "missingFields": [],
+  "rawNotes": "Clean synthetic domestic flight ticket."
+}

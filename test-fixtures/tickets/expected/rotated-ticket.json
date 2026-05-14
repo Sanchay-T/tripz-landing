@@ -1,0 +1,21 @@
+{
+  "documentType": "flight_ticket",
+  "customerName": "Kabir Bose",
+  "mobileNumber": "+91 90000 00007",
+  "email": "kabir.fixture@example.com",
+  "bookingType": "flight",
+  "market": "domestic",
+  "journeyType": "one_way",
+  "departure": "CCU",
+  "arrival": "DEL",
+  "travelDate": "2026-08-05",
+  "returnDate": null,
+  "provider": "Vistara",
+  "pnrOrConfirmation": "UK5DEL",
+  "baseCost": 7900,
+  "sellingPrice": 8600,
+  "currency": "INR",
+  "confidence": 0.7,
+  "missingFields": [],
+  "rawNotes": "Rotated fixture should be reviewed for OCR confidence."
+}

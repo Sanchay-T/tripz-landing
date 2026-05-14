@@ -7,3 +7,5 @@ out/
 !.env.example
 *.log
 .vercel
+.mcp.json
+supabase/.temp/

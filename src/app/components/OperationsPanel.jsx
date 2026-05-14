@@ -85,7 +85,7 @@ function AgentCard({ agent, ist }) {
         <span className="size-2 rounded-full bg-accent ring-4 ring-accent/10" />
         Live · {agent.name.split(" ")[0]} on the line · {ist} IST
       </div>
-      <p className="mt-5 max-w-[24rem] text-balance font-serif text-3xl italic leading-tight text-ink sm:text-4xl">
+      <p className="mt-5 max-w-[24rem] text-balance font-serif text-[clamp(2rem,6vw,2.5rem)] italic leading-tight text-ink">
         &ldquo;{agent.quote}&rdquo;
       </p>
       <div className="mt-6 flex items-center gap-3 text-sm text-ink/60">
@@ -104,7 +104,7 @@ function MissionRow({ update }) {
   return (
     <div className="flex min-h-16 items-center justify-between gap-4 bg-ink px-5 py-4 text-sm text-white sm:px-6">
       <div className="min-w-0">
-        <div className="mb-2 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.28em] text-accent-live">
+        <div className="mb-2 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-accent-live sm:tracking-[0.28em]">
           <span className="size-2 rounded-full bg-accent-live" />
           Mission
         </div>
@@ -158,7 +158,7 @@ function OnlineRoster({ page }) {
 function SaveBlock({ save }) {
   return (
     <div className="bg-white px-5 py-4 sm:px-6">
-      <span className="font-mono text-[11px] uppercase tracking-[0.26em] text-ink/45">
+      <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink/45 sm:tracking-[0.26em]">
         Last save
       </span>
       <p className="mt-2 font-semibold text-ink">{save.route}</p>

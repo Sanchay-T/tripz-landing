@@ -1,0 +1,23 @@
+{
+  "documentType": "flight_ticket",
+  "customerName": "Tara Iyer",
+  "mobileNumber": "+91 90000 00008",
+  "email": "tara.fixture@example.com",
+  "bookingType": "flight",
+  "market": "domestic",
+  "journeyType": "one_way",
+  "departure": "AMD",
+  "arrival": "BOM",
+  "travelDate": "2026-08-25",
+  "returnDate": null,
+  "provider": "SpiceJet",
+  "pnrOrConfirmation": null,
+  "baseCost": 6100,
+  "sellingPrice": 6800,
+  "currency": "INR",
+  "confidence": 0.66,
+  "missingFields": [
+    "pnrOrConfirmation"
+  ],
+  "rawNotes": "PNR intentionally omitted."
+}

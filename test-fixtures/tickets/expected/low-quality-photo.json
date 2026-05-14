@@ -1,0 +1,25 @@
+{
+  "documentType": "flight_ticket",
+  "customerName": "Riya Sen",
+  "mobileNumber": null,
+  "email": null,
+  "bookingType": "flight",
+  "market": "domestic",
+  "journeyType": "one_way",
+  "departure": "PNQ",
+  "arrival": "DEL",
+  "travelDate": "2026-07-30",
+  "returnDate": null,
+  "provider": "Akasa Air",
+  "pnrOrConfirmation": "QP8DEL",
+  "baseCost": null,
+  "sellingPrice": 7200,
+  "currency": "INR",
+  "confidence": 0.62,
+  "missingFields": [
+    "mobileNumber",
+    "email",
+    "baseCost"
+  ],
+  "rawNotes": "Low-quality fixture should remain in human review."
+}

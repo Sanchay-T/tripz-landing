@@ -3,7 +3,7 @@ import Image from "next/image";
 import { cn } from "@/lib/cn";
 
 const buttonClass = cva(
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+  "inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
   {
     variants: {
       tone: {
@@ -68,7 +68,7 @@ export function SectionLabel({ children, onDark = false, className }) {
   return (
     <span
       className={cn(
-        "inline-flex max-w-full flex-wrap items-center gap-3 break-words font-mono text-[11px] uppercase leading-5 tracking-[0.18em] sm:tracking-[0.28em]",
+        "inline-flex max-w-full flex-wrap items-center gap-3 break-words font-mono text-[11px] uppercase leading-5 tracking-[0.14em] sm:tracking-[0.24em]",
         onDark ? "text-white/65" : "text-ink/50",
         "before:h-px before:w-7",
         onDark ? "before:bg-white/40" : "before:bg-accent",
@@ -84,7 +84,7 @@ export function LivePill({ experts, pickupSeconds, onDark = false }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-2 font-mono text-[12px] uppercase tracking-[0.2em]",
+        "inline-flex max-w-full items-center gap-2 whitespace-nowrap rounded-full px-3 py-2 font-mono text-[12px] uppercase tracking-[0.14em] sm:tracking-[0.2em]",
         onDark ? "bg-white/10 text-white" : "bg-accent-soft text-ink"
       )}
       aria-label={`${experts} travel experts online, average pickup ${pickupSeconds} seconds`}
@@ -129,7 +129,7 @@ export function ResponsiveImage({
         />
       )}
       {caption && image.caption && (
-        <figcaption className="absolute inset-x-4 bottom-4 z-10 font-mono text-[11px] uppercase tracking-[0.28em] text-white/75">
+        <figcaption className="absolute inset-x-4 bottom-4 z-10 font-mono text-[11px] uppercase tracking-[0.18em] text-white/75 sm:tracking-[0.28em]">
           {image.caption}
         </figcaption>
       )}

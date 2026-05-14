@@ -1,0 +1,21 @@
+{
+  "documentType": "flight_ticket",
+  "customerName": "Ira Khan",
+  "mobileNumber": "+91 90000 00004",
+  "email": "ira.fixture@example.com",
+  "bookingType": "flight",
+  "market": "international",
+  "journeyType": "return",
+  "departure": "DEL",
+  "arrival": "LHR",
+  "travelDate": "2026-09-02",
+  "returnDate": "2026-09-18",
+  "provider": "British Airways",
+  "pnrOrConfirmation": "BA9LHR",
+  "baseCost": 141000,
+  "sellingPrice": 152000,
+  "currency": "INR",
+  "confidence": 0.88,
+  "missingFields": [],
+  "rawNotes": "Synthetic international return ticket."
+}

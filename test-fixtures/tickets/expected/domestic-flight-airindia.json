@@ -1,0 +1,21 @@
+{
+  "documentType": "flight_ticket",
+  "customerName": "Aarav Rao",
+  "mobileNumber": "+91 90000 00002",
+  "email": "aarav.fixture@example.com",
+  "bookingType": "flight",
+  "market": "domestic",
+  "journeyType": "return",
+  "departure": "BLR",
+  "arrival": "DEL",
+  "travelDate": "2026-07-04",
+  "returnDate": "2026-07-11",
+  "provider": "Air India",
+  "pnrOrConfirmation": "AI7RT2",
+  "baseCost": 11200,
+  "sellingPrice": 12500,
+  "currency": "INR",
+  "confidence": 0.9,
+  "missingFields": [],
+  "rawNotes": "Synthetic return flight PDF."
+}

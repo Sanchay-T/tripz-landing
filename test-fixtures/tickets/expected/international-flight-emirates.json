@@ -1,0 +1,21 @@
+{
+  "documentType": "flight_ticket",
+  "customerName": "Sachay Mehta",
+  "mobileNumber": "+91 90000 00003",
+  "email": "sachay.fixture@example.com",
+  "bookingType": "flight",
+  "market": "international",
+  "journeyType": "one_way",
+  "departure": "BOM",
+  "arrival": "DXB",
+  "travelDate": "2026-08-14",
+  "returnDate": null,
+  "provider": "Emirates",
+  "pnrOrConfirmation": "EK4DXB",
+  "baseCost": 92000,
+  "sellingPrice": 100000,
+  "currency": "INR",
+  "confidence": 0.91,
+  "missingFields": [],
+  "rawNotes": "Synthetic international ticket."
+}

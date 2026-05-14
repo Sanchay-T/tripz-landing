@@ -1,0 +1,64 @@
+{
+  "fixtures": [
+    {
+      "file": "domestic-flight-indigo.png",
+      "kind": "domestic flight",
+      "difficulty": "clean",
+      "expected": "expected/domestic-flight-indigo.json"
+    },
+    {
+      "file": "domestic-flight-airindia.pdf",
+      "kind": "domestic flight",
+      "difficulty": "pdf",
+      "expected": "expected/domestic-flight-airindia.json"
+    },
+    {
+      "file": "international-flight-emirates.png",
+      "kind": "international flight",
+      "difficulty": "clean",
+      "expected": "expected/international-flight-emirates.json"
+    },
+    {
+      "file": "international-return-ticket.pdf",
+      "kind": "international return",
+      "difficulty": "pdf",
+      "expected": "expected/international-return-ticket.json"
+    },
+    {
+      "file": "hotel-voucher.png",
+      "kind": "hotel voucher",
+      "difficulty": "clean",
+      "expected": "expected/hotel-voucher.json"
+    },
+    {
+      "file": "boarding-pass.png",
+      "kind": "boarding pass",
+      "difficulty": "clean",
+      "expected": "expected/boarding-pass.json"
+    },
+    {
+      "file": "multi-city-flight.pdf",
+      "kind": "multi-city flight",
+      "difficulty": "pdf",
+      "expected": "expected/multi-city-flight.json"
+    },
+    {
+      "file": "low-quality-photo.jpg",
+      "kind": "low quality photo",
+      "difficulty": "low_quality",
+      "expected": "expected/low-quality-photo.json"
+    },
+    {
+      "file": "rotated-ticket.png",
+      "kind": "rotated flight",
+      "difficulty": "rotated",
+      "expected": "expected/rotated-ticket.json"
+    },
+    {
+      "file": "missing-pnr-ticket.png",
+      "kind": "missing PNR",
+      "difficulty": "missing_field",
+      "expected": "expected/missing-pnr-ticket.json"
+    }
+  ]
+}

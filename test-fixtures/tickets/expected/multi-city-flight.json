@@ -1,0 +1,21 @@
+{
+  "documentType": "flight_ticket",
+  "customerName": "Nikhil Jain",
+  "mobileNumber": "+91 90000 00006",
+  "email": "nikhil.fixture@example.com",
+  "bookingType": "flight",
+  "market": "international",
+  "journeyType": "multi_city",
+  "departure": "BOM",
+  "arrival": "SIN",
+  "travelDate": "2026-10-03",
+  "returnDate": "2026-10-15",
+  "provider": "Singapore Airlines",
+  "pnrOrConfirmation": "SQ3SIN",
+  "baseCost": 118000,
+  "sellingPrice": 130000,
+  "currency": "INR",
+  "confidence": 0.82,
+  "missingFields": [],
+  "rawNotes": "Synthetic multi-city ticket; segment detail should be reviewed."
+}

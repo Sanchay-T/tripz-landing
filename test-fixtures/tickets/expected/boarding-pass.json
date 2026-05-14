@@ -1,0 +1,23 @@
+{
+  "documentType": "boarding_pass",
+  "customerName": "Meera Shah",
+  "mobileNumber": null,
+  "email": null,
+  "bookingType": "flight",
+  "market": "domestic",
+  "journeyType": "one_way",
+  "departure": "HYD",
+  "arrival": "MAA",
+  "travelDate": "2026-07-20",
+  "returnDate": null,
+  "provider": "IndiGo",
+  "pnrOrConfirmation": "BP2MAA",
+  "baseCost": null,
+  "sellingPrice": null,
+  "currency": "INR",
+  "confidence": 0.84,
+  "missingFields": [
+    "sellingPrice"
+  ],
+  "rawNotes": "Boarding passes usually do not show commercial price."
+}

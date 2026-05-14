@@ -33,7 +33,10 @@ import {
   Wordmark
 } from "./components/ui";
 
-const sectionShell = "mx-auto w-full max-w-7xl px-6 py-12 sm:px-8 sm:py-14 lg:px-12 xl:px-16";
+const sectionShell = "mx-auto w-full max-w-7xl px-[clamp(1.5rem,4vw,4rem)] py-[clamp(3rem,7vw,5rem)]";
+const splitGrid = "grid grid-cols-1 gap-[clamp(1.5rem,4vw,3rem)] min-[1152px]:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]";
+const splitGridReverse = "grid grid-cols-1 gap-[clamp(1.5rem,4vw,3rem)] min-[1152px]:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]";
+const cardGrid = "grid grid-cols-[repeat(auto-fit,minmax(min(100%,17rem),1fr))] gap-px";
 
 function renderTitleParts(parts) {
   return parts.map((part, i) =>
@@ -50,7 +53,7 @@ function DisplayTitle({ children, id, onDark = false, className }) {
     <h2
       id={id}
       className={cn(
-        "text-balance font-sans text-4xl font-bold leading-[0.96] tracking-[-0.045em] sm:text-5xl lg:text-6xl",
+        "text-balance font-sans text-[clamp(2.25rem,6vw,3.75rem)] font-bold leading-[0.96] tracking-[-0.045em]",
         onDark ? "text-white" : "text-ink",
         className
       )}
@@ -86,7 +89,7 @@ function ClosingCtas() {
 function Nav() {
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-white/92 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-8 lg:px-12 xl:px-16">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-[clamp(1.5rem,4vw,4rem)]">
         <a href="#top" aria-label="TripZ home">
           <Wordmark />
         </a>
@@ -126,12 +129,12 @@ function Hero() {
       id="top"
       aria-labelledby="hero-headline"
     >
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[minmax(0,0.86fr)_minmax(420px,1fr)] lg:gap-10 lg:px-12 lg:py-10 xl:px-16">
+      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-[clamp(1.5rem,4vw,3rem)] px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2rem,5vw,3rem)] min-[1152px]:grid-cols-[minmax(0,0.86fr)_minmax(0,1fr)]">
         <HeroLeft />
         <div className="grid min-w-0 gap-4">
           <ResponsiveImage
             image={visualAssets.nightDesk}
-            className="aspect-[16/10] w-full sm:aspect-[16/9] lg:aspect-[16/10]"
+            className="aspect-[16/10] w-full sm:aspect-[16/9]"
             objectPosition="center 55%"
             sizes="(max-width: 1024px) 100vw, 48vw"
             priority
@@ -147,14 +150,14 @@ function Hero() {
 function About() {
   return (
     <section className={sectionShell} id="about" aria-labelledby="about-head">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start">
+      <div className={cn(splitGrid, "lg:items-start")}>
         <Reveal as="header" className="min-w-0">
           <SectionLabel>{aboutBand.marker}</SectionLabel>
           <DisplayTitle id="about-head" className="mt-5 max-w-3xl">
             {renderTitleParts(aboutBand.headline)}
           </DisplayTitle>
         </Reveal>
-        <Reveal as="div" className="grid gap-5 text-lg leading-8 text-ink/65">
+        <Reveal as="div" className="grid gap-5 text-[clamp(1rem,1vw+0.75rem,1.125rem)] leading-[1.75] text-ink/65">
           {aboutBand.paragraphs.map((p, i) => (
             <p key={p} className={cn(i === aboutBand.paragraphs.length - 1 && "font-medium text-ink")}>
               {p}
@@ -170,7 +173,7 @@ function VisualInterlude() {
   return (
     <Reveal
       as="section"
-      className="relative isolate min-h-[380px] overflow-hidden sm:min-h-[460px]"
+      className="relative isolate min-h-[clamp(24rem,48vw,32.5rem)] overflow-hidden"
       aria-labelledby="visual-interlude-head"
     >
       <ResponsiveImage
@@ -181,16 +184,16 @@ function VisualInterlude() {
         priority
         overlay
       />
-      <div className="relative z-10 mx-auto flex min-h-[380px] w-full max-w-7xl items-end px-6 py-10 sm:min-h-[460px] sm:px-8 lg:px-12 xl:px-16">
+      <div className="relative z-10 mx-auto flex min-h-[clamp(24rem,48vw,32.5rem)] w-full max-w-7xl items-end px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.5rem,6vw,4rem)]">
         <div className="max-w-2xl text-white">
           <SectionLabel onDark>{visualInterlude.marker}</SectionLabel>
           <h2
             id="visual-interlude-head"
-            className="mt-5 text-balance font-sans text-4xl font-bold leading-[0.95] tracking-[-0.045em] sm:text-6xl"
+            className="mt-5 text-balance font-sans text-[clamp(2.25rem,5.6vw,3.75rem)] font-bold leading-[0.95] tracking-[-0.045em]"
           >
             {visualInterlude.headline}
           </h2>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-white/75">
+          <p className="mt-5 max-w-xl text-[clamp(1rem,1vw+0.75rem,1.125rem)] leading-[1.75] text-white/75">
             {visualInterlude.body}
           </p>
         </div>
@@ -203,7 +206,7 @@ function Services() {
   return (
     <StaggerGroup
       as="section"
-      className="grid w-full grid-cols-1 border-y border-ink/10 sm:grid-cols-2 lg:grid-cols-4"
+      className="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-px border-y border-ink/10 bg-ink/10"
       id="services"
     >
       {services.map((service) => (
@@ -211,7 +214,7 @@ function Services() {
           <a
             href={service.href}
             className={cn(
-              "group flex min-h-56 flex-col border-b border-ink/10 p-6 transition hover:bg-accent-soft sm:border-r lg:border-b-0 lg:p-8",
+              "group flex min-h-56 flex-col bg-white p-6 transition hover:bg-accent-soft lg:p-8",
               service.live && "bg-accent text-white hover:bg-accent"
             )}
           >
@@ -237,7 +240,7 @@ function Services() {
 function Promise() {
   return (
     <section className={sectionShell} id="why" aria-labelledby="why-head">
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(340px,0.75fr)] lg:items-start">
+      <div className={cn(splitGridReverse, "lg:items-start")}>
         <div className="min-w-0">
           <Reveal as="header">
             <SectionLabel>§ 01 · Promise</SectionLabel>
@@ -258,12 +261,12 @@ function Promise() {
             ))}
           </StaggerGroup>
         </div>
-        <Reveal as="div" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+        <Reveal as="div" className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-4">
           {promiseVisuals.map((image) => (
             <ResponsiveImage
               key={image.src}
               image={image}
-              className="aspect-[4/3] w-full lg:aspect-[4/5]"
+              className="aspect-[4/3] w-full"
               sizes="(max-width: 1024px) 50vw, 32vw"
               overlay
             />
@@ -281,13 +284,13 @@ function Pillar({ pillar }) {
       id={pillar.id}
       aria-labelledby={`${pillar.id}-head`}
     >
-      <div className={cn(sectionShell, "grid gap-12 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]")}>
+      <div className={cn(sectionShell, splitGrid)}>
         <Reveal as="header" className="min-w-0">
           <SectionLabel>{pillar.marker}</SectionLabel>
           <DisplayTitle id={`${pillar.id}-head`} className="mt-5 max-w-3xl">
             {renderTitleParts(pillar.headline)}
           </DisplayTitle>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-ink/60">
+          <p className="mt-6 max-w-2xl text-[clamp(1rem,1vw+0.75rem,1.125rem)] leading-[1.75] text-ink/60">
             {pillar.lede}
           </p>
           <div className="mt-10 border-t border-ink/10 pt-8">
@@ -299,7 +302,7 @@ function Pillar({ pillar }) {
             </span>
           </div>
         </Reveal>
-        <StaggerGroup className="grid gap-px bg-ink/10 sm:grid-cols-2">
+        <StaggerGroup className={cn(cardGrid, "bg-ink/10")}>
           {pillar.points.map((point) => (
             <StaggerItem key={point.n} className="bg-white p-6 sm:p-8">
               <article>
@@ -324,12 +327,12 @@ function PillarStack() {
 function PullBand() {
   return (
     <Reveal as="section" className="border-y border-ink/10 bg-field">
-      <div className={cn(sectionShell, "grid gap-8 lg:grid-cols-[120px_minmax(0,1fr)]")}>
+      <div className={cn(sectionShell, "grid gap-8 lg:grid-cols-[minmax(0,7.5rem)_minmax(0,1fr)]")}>
         <div className="font-serif text-8xl leading-none text-accent" aria-hidden="true">
           &ldquo;
         </div>
         <div>
-          <p className="max-w-5xl text-balance font-serif text-4xl italic leading-tight text-ink sm:text-5xl">
+          <p className="max-w-5xl text-balance font-serif text-[clamp(2rem,5vw,3rem)] italic leading-tight text-ink">
             {pullQuote.body}
           </p>
           <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.24em] text-ink/45">
@@ -343,7 +346,7 @@ function PullBand() {
 
 function ProofFeature() {
   return (
-    <section className={cn(sectionShell, "grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:items-center")} id="proof" aria-labelledby="proof-head">
+    <section className={cn(sectionShell, splitGrid, "lg:items-center")} id="proof" aria-labelledby="proof-head">
       <ResponsiveImage
         image={recoveryProof.image}
         className="aspect-[4/3] w-full lg:aspect-[5/6]"
@@ -355,10 +358,10 @@ function ProofFeature() {
         <DisplayTitle id="proof-head" className="mt-5">
           {renderTitleParts(recoveryProof.headline)}
         </DisplayTitle>
-        <p className="mt-6 max-w-xl text-lg leading-8 text-ink/60">
+        <p className="mt-6 max-w-xl text-[clamp(1rem,1vw+0.75rem,1.125rem)] leading-[1.75] text-ink/60">
           {recoveryProof.body}
         </p>
-        <dl className="mt-10 grid gap-px overflow-hidden bg-ink/10 sm:grid-cols-3">
+        <dl className={cn(cardGrid, "mt-10 overflow-hidden bg-ink/10")}>
           {recoveryProof.facts.map((fact) => (
             <div key={fact.label} className="bg-white p-5">
               <dt className="font-mono text-[11px] uppercase tracking-[0.24em] text-ink/40">
@@ -377,7 +380,7 @@ function Steps() {
   return (
     <section className="border-t border-ink/10 bg-white" id="how" aria-labelledby="steps-head">
       <div className={cn(sectionShell, "grid gap-12")}>
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.58fr)] lg:items-end">
+        <div className={cn(splitGridReverse, "lg:items-end")}>
           <Reveal as="header">
             <SectionLabel>§ 02 · How it works</SectionLabel>
             <DisplayTitle id="steps-head" className="mt-5 max-w-3xl">
@@ -391,7 +394,7 @@ function Steps() {
             overlay
           />
         </div>
-        <StaggerGroup className="grid gap-px bg-ink/10 md:grid-cols-3">
+        <StaggerGroup className={cn(cardGrid, "bg-ink/10")}>
           {steps.map((step) => (
             <StaggerItem key={step.n} className="bg-white p-6 sm:p-8">
               <article>
@@ -415,7 +418,7 @@ function OutcomeFeature() {
   return (
     <Reveal
       as="section"
-      className="relative isolate min-h-[400px] overflow-hidden sm:min-h-[520px]"
+      className="relative isolate min-h-[clamp(24rem,48vw,32.5rem)] overflow-hidden"
       id="outcome"
       aria-labelledby="outcome-head"
     >
@@ -426,13 +429,13 @@ function OutcomeFeature() {
         sizes="100vw"
         overlay
       />
-      <div className="relative z-10 mx-auto flex min-h-[400px] w-full max-w-7xl items-end px-6 py-10 sm:min-h-[520px] sm:px-8 lg:px-12 xl:px-16">
+      <div className="relative z-10 mx-auto flex min-h-[clamp(24rem,48vw,32.5rem)] w-full max-w-7xl items-end px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.5rem,6vw,4rem)]">
         <div className="max-w-2xl text-white">
           <SectionLabel onDark>{outcomeFeature.marker}</SectionLabel>
           <DisplayTitle id="outcome-head" onDark className="mt-5">
             {outcomeFeature.headline}
           </DisplayTitle>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-white/75">
+          <p className="mt-5 max-w-xl text-[clamp(1rem,1vw+0.75rem,1.125rem)] leading-[1.75] text-white/75">
             {outcomeFeature.body}
           </p>
         </div>
@@ -445,13 +448,13 @@ function Desk() {
   return (
     <section className="bg-ink text-white" id="desk" aria-labelledby="desk-head">
       <div className={cn(sectionShell, "grid gap-12")}>
-        <Reveal as="header" className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+        <Reveal as="header" className={cn(splitGridReverse, "lg:items-start")}>
           <div>
             <SectionLabel onDark>§ 03 · The desk</SectionLabel>
             <DisplayTitle id="desk-head" onDark className="mt-5 max-w-4xl">
               One of <em className="text-accent-live">ten travel experts</em> is already online.
             </DisplayTitle>
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-white/65">
+            <p className="mt-6 max-w-3xl text-[clamp(1rem,1vw+0.75rem,1.125rem)] leading-[1.75] text-white/65">
               Travel agents book what you tell them. Travel experts <em>advise</em>{" "}
               — they&rsquo;ve been there, they read the language, they know which
               embassy desk to call. Tap a name and you&rsquo;re on a thread with{" "}
@@ -464,14 +467,14 @@ function Desk() {
             onDark
           />
         </Reveal>
-        <div className="grid gap-6 lg:grid-cols-[minmax(280px,0.55fr)_minmax(0,1fr)]">
+        <div className={cn(splitGrid, "lg:items-start")}>
           <ResponsiveImage
             image={visualAssets.operatorRoster}
             className="aspect-square w-full"
             sizes="(max-width: 1024px) 100vw, 36vw"
             overlay
           />
-          <StaggerGroup className="grid gap-px bg-white/10 sm:grid-cols-2">
+          <StaggerGroup className={cn(cardGrid, "bg-white/10")}>
             {desk.map((agent) => (
               <StaggerItem key={agent.initials} className="bg-ink p-6 ring-1 ring-white/10 sm:p-7">
                 <article>
@@ -508,11 +511,11 @@ function Desk() {
 
 function Metrics() {
   return (
-    <StaggerGroup as="section" className="grid border-y border-ink/10 sm:grid-cols-2">
+    <StaggerGroup as="section" className={cn(cardGrid, "border-y border-ink/10 bg-ink/10")}>
       {metrics.map((m) => (
-        <StaggerItem key={m.label} className="p-8 sm:p-10 lg:p-14">
+        <StaggerItem key={m.label} className="bg-white p-8 sm:p-10 lg:p-14">
           <div>
-            <div className="text-6xl font-bold tracking-[-0.05em] text-accent sm:text-7xl">
+            <div className="font-bold text-[clamp(3.75rem,8vw,4.5rem)] leading-none tracking-[-0.05em] text-accent">
               {m.value}
             </div>
             <div className="mt-3 font-mono text-[11px] uppercase tracking-[0.26em] text-ink/45">
@@ -543,7 +546,7 @@ function Closing() {
         <SectionLabel className="justify-center before:hidden">End of issue</SectionLabel>
         <h2
           id="closing-head"
-          className="mx-auto mt-6 max-w-3xl text-balance text-5xl font-bold leading-[0.95] tracking-[-0.05em] text-ink sm:text-7xl"
+          className="mx-auto mt-6 max-w-3xl text-balance text-[clamp(2.5rem,8vw,4.5rem)] font-bold leading-[0.95] tracking-[-0.05em] text-ink"
         >
           Next trip,
           <br />
@@ -561,7 +564,7 @@ function Footer() {
   return (
     <footer className="bg-ink text-white">
       <div className={cn(sectionShell, "pb-10")}>
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.3fr)_repeat(3,minmax(0,0.7fr))]">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[minmax(0,1.3fr)_repeat(3,minmax(0,0.7fr))]">
           <div>
             <Wordmark onDark size="text-3xl" />
             <p className="mt-5 max-w-sm text-lg text-white/60">
