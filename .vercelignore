@@ -1,3 +1,7 @@
-.DS_Store
-.playwright-mcp/
-scripts/
+.env*
+.mcp.json
+exports/
+supabase/.temp/
+node_modules/
+.next/
+*.log
