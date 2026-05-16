@@ -494,17 +494,17 @@ function Desk() {
             onDark
           />
         </Reveal>
-        <div className={cn(splitGrid, "lg:items-start")}>
+        <div className={cn(splitGrid, "lg:items-stretch")}>
           <ResponsiveImage
             image={visualAssets.operatorRoster}
-            className="aspect-square w-full"
+            className="aspect-square w-full min-[1152px]:h-full min-[1152px]:min-h-[44rem] min-[1152px]:aspect-auto"
             sizes="(max-width: 1024px) 100vw, 36vw"
             overlay
           />
-          <StaggerGroup className={cn(cardGrid, "bg-white/10")}>
+          <StaggerGroup className="grid grid-cols-1 bg-white/10 sm:grid-cols-2 min-[1152px]:auto-rows-fr">
             {desk.map((agent) => (
-              <StaggerItem key={agent.initials} className="bg-ink p-6 ring-1 ring-white/10 sm:p-7">
-                <article>
+              <StaggerItem key={agent.initials} className="flex bg-ink p-6 ring-1 ring-white/10 sm:p-7">
+                <article className="flex h-full min-h-[22rem] flex-col">
                   <span className="inline-flex size-2 rounded-full bg-accent-live" aria-label="Online" />
                   <div className="mt-5 flex items-center gap-3">
                     <span className="inline-flex size-10 items-center justify-center rounded-full bg-white text-xs font-bold text-ink">
@@ -518,7 +518,7 @@ function Desk() {
                   <blockquote className="mt-6 text-balance font-serif text-2xl italic leading-tight text-white">
                     &ldquo;{agent.quote}&rdquo;
                   </blockquote>
-                  <div className="mt-8 flex justify-between gap-4 border-t border-white/10 pt-4 text-sm text-white/55">
+                  <div className="mt-auto flex justify-between gap-4 border-t border-white/10 pt-4 text-sm text-white/55">
                     <span>
                       <b className="text-white">{agent.tenure}</b> · tenure
                     </span>

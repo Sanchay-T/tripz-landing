@@ -92,7 +92,7 @@ export const visualAssets = {
   },
   operatorRoster: {
     src: "/images/tripz-operator-roster.png",
-    alt: "Four TripZ travel experts on headsets in warm premium operations rooms.",
+    alt: "Four Indian TripZ travel experts on headsets in warm premium operations rooms.",
     caption: "Ten experts online"
   },
   postcards: {
