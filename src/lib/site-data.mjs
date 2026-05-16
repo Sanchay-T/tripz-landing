@@ -187,6 +187,33 @@ export const onlinePool = [
 
 export const alsoOnline = onlinePool.slice(0, 3);
 
+export const indianBases = [
+  {
+    code: "BOM",
+    city: "Mumbai",
+    line: "Visa, groups, long-haul fares",
+    detail: "3 experts awake now"
+  },
+  {
+    code: "DEL",
+    city: "Delhi NCR",
+    line: "Embassy windows and student routes",
+    detail: "2 experts on desk"
+  },
+  {
+    code: "BLR",
+    city: "Bengaluru",
+    line: "Corporate travel and late changes",
+    detail: "3 experts live"
+  },
+  {
+    code: "HYD",
+    city: "Hyderabad",
+    line: "Family trips, US/EU departures",
+    detail: "2 experts live"
+  }
+];
+
 export const justInFeed = [
   { who: "Asha", verb: "confirmed", subject: "AI 144 boarding pass", ago: "4s ago" },
   { who: "Ravi", verb: "rebooked", subject: "JL 412 → HND", ago: "12s ago" },

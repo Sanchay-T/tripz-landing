@@ -3,6 +3,7 @@ import {
   ctaActions,
   desk,
   footerLinks,
+  indianBases,
   liveStatus,
   metrics,
   navLinks,
@@ -89,7 +90,7 @@ function ClosingCtas() {
 function Nav() {
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-white/92 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-[clamp(1.5rem,4vw,4rem)]">
+      <div className="mx-auto flex h-16 w-full max-w-none items-center justify-between gap-4 px-[clamp(1.25rem,3.5vw,3rem)]">
         <a href="#top" aria-label="TripZ home">
           <Wordmark />
         </a>
@@ -122,25 +123,51 @@ function Nav() {
   );
 }
 
+function IndianBases() {
+  return (
+    <aside
+      className="overflow-hidden border border-ink/10 bg-white shadow-xl shadow-ink/5"
+      aria-label="Indian TripZ bases"
+    >
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 px-5 py-4 font-mono text-[10px] uppercase leading-5 tracking-[0.16em] text-ink/50 sm:px-6 sm:tracking-[0.24em]">
+        <span>India bases online</span>
+        <span className="text-ink/35">BOM · DEL · BLR · HYD</span>
+      </div>
+      <div className="grid bg-ink/10 sm:grid-cols-2 xl:grid-cols-4">
+        {indianBases.map((base) => (
+          <article key={base.code} className="min-h-36 bg-field p-5 sm:p-6">
+            <div className="flex items-center justify-between gap-4">
+              <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink/45">
+                {base.code}
+              </span>
+              <span className="size-2 rounded-full bg-accent-live ring-4 ring-accent-live/20" />
+            </div>
+            <h3 className="mt-5 text-2xl font-bold leading-none text-ink">
+              {base.city}
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-ink/60">{base.line}</p>
+            <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
+              {base.detail}
+            </p>
+          </article>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
 function Hero() {
   return (
     <section
-      className="border-b border-ink/10 bg-white"
+      className="min-h-[calc(100svh-4rem)] border-b border-ink/10 bg-white"
       id="top"
       aria-labelledby="hero-headline"
     >
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-[clamp(1.5rem,4vw,3rem)] px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2rem,5vw,3rem)] min-[1152px]:grid-cols-[minmax(0,0.86fr)_minmax(0,1fr)]">
+      <div className="mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-none grid-cols-1 items-start gap-[clamp(1.5rem,4vw,3rem)] px-[clamp(1.25rem,3.5vw,3rem)] py-[clamp(1.5rem,4vw,3rem)] min-[1152px]:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
         <HeroLeft />
         <div className="grid min-w-0 gap-4">
-          <ResponsiveImage
-            image={visualAssets.nightDesk}
-            className="aspect-[16/10] w-full sm:aspect-[16/9]"
-            objectPosition="center 55%"
-            sizes="(max-width: 1024px) 100vw, 48vw"
-            priority
-            overlay
-          />
           <OperationsPanel />
+          <IndianBases />
         </div>
       </div>
     </section>

@@ -6,6 +6,7 @@ import {
   desk,
   heroAgent,
   heroStats,
+  indianBases,
   liveStatus,
   metrics,
   navLinks,
@@ -55,6 +56,7 @@ describe("TripZ landing content", () => {
   it("keeps the editorial sections populated", () => {
     assert.equal(navLinks.length >= 3, true);
     assert.equal(heroStats.length, 3);
+    assert.equal(indianBases.length, 4);
     assert.equal(whyTripz.length, 4);
     assert.equal(steps.length, 3);
     assert.equal(desk.length, 4);

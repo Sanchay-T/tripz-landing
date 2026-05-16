@@ -48,7 +48,7 @@ export default function HeroLeft() {
 
   return (
     <motion.div
-      className="flex min-w-0 flex-col items-start gap-6 lg:gap-7"
+      className="flex min-w-0 flex-col items-start gap-5 lg:gap-6"
       initial={false}
       animate="visible"
       variants={C}
@@ -61,7 +61,7 @@ export default function HeroLeft() {
 
       <motion.h1
         id="hero-headline"
-        className="max-w-[min(9.8ch,100%)] text-balance font-sans text-[clamp(3rem,9vw,6rem)] font-bold leading-[0.95] tracking-[-0.045em] text-ink"
+        className="max-w-[min(14.8ch,100%)] text-balance font-sans text-[clamp(2.85rem,5.8vw,5rem)] font-bold leading-[0.94] tracking-normal text-ink"
         variants={HC}
       >
         <motion.span className="block" variants={HL}>
