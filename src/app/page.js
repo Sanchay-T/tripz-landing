@@ -90,7 +90,7 @@ function ClosingCtas() {
 function Nav() {
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-white/92 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 w-full max-w-none items-center justify-between gap-4 px-[clamp(1.25rem,3.5vw,3rem)]">
+      <div className="mx-auto flex h-[var(--nav-height)] w-full max-w-none items-center justify-between gap-4 px-[var(--site-pad-x)]">
         <a href="#top" aria-label="TripZ home">
           <Wordmark />
         </a>
@@ -159,11 +159,11 @@ function IndianBases() {
 function Hero() {
   return (
     <section
-      className="min-h-[calc(100svh-4rem)] border-b border-ink/10 bg-white"
+      className="min-h-[calc(100svh-var(--nav-height))] border-b border-ink/10 bg-white"
       id="top"
       aria-labelledby="hero-headline"
     >
-      <div className="mx-auto grid min-h-[calc(100svh-4rem)] w-full max-w-none grid-cols-1 items-start gap-[clamp(1.5rem,4vw,3rem)] px-[clamp(1.25rem,3.5vw,3rem)] py-[clamp(1.5rem,4vw,3rem)] min-[1152px]:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+      <div className="mx-auto grid min-h-[calc(100svh-var(--nav-height))] w-full max-w-none grid-cols-1 items-start gap-[clamp(1.5rem,4vw,3rem)] px-[var(--site-pad-x)] py-[clamp(1.5rem,4vw,3rem)] min-[1152px]:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
         <HeroLeft />
         <div className="grid min-w-0 gap-4">
           <OperationsPanel />
@@ -473,15 +473,23 @@ function OutcomeFeature() {
 
 function Desk() {
   return (
-    <section className="bg-ink text-white" id="desk" aria-labelledby="desk-head">
-      <div className={cn(sectionShell, "grid gap-12")}>
-        <Reveal as="header" className={cn(splitGridReverse, "lg:items-start")}>
+    <section
+      className="bg-ink text-white"
+      id="desk"
+      aria-labelledby="desk-head"
+    >
+      <div className="mx-auto grid min-h-[calc(100svh-var(--nav-height))] w-full max-w-7xl grid-rows-[auto_minmax(0,1fr)] gap-[var(--desk-section-gap)] px-[var(--site-pad-x)] py-[var(--desk-section-pad-y)]">
+        <Reveal as="header" className="grid gap-4 min-[900px]:grid-cols-[minmax(0,1fr)_minmax(16rem,0.52fr)] min-[900px]:items-start">
           <div>
             <SectionLabel onDark>§ 03 · The desk</SectionLabel>
-            <DisplayTitle id="desk-head" onDark className="mt-5 max-w-4xl">
+            <DisplayTitle
+              id="desk-head"
+              onDark
+              className="mt-3 max-w-4xl text-[length:var(--desk-title-size)] tracking-normal"
+            >
               One of <em className="text-accent-live">ten travel experts</em> is already online.
             </DisplayTitle>
-            <p className="mt-6 max-w-3xl text-[clamp(1rem,1vw+0.75rem,1.125rem)] leading-[1.75] text-white/65">
+            <p className="mt-4 max-w-3xl text-[length:var(--desk-copy-size)] leading-[1.6] text-white/65">
               Travel agents book what you tell them. Travel experts <em>advise</em>{" "}
               — they&rsquo;ve been there, they read the language, they know which
               embassy desk to call. Tap a name and you&rsquo;re on a thread with{" "}
@@ -492,33 +500,35 @@ function Desk() {
             experts={liveStatus.expertsOnShift}
             pickupSeconds={liveStatus.avgPickupSeconds}
             onDark
+            className="min-[900px]:justify-self-end"
           />
         </Reveal>
-        <div className={cn(splitGrid, "lg:items-stretch")}>
+        <div className="grid min-h-0 gap-[var(--desk-section-gap)] min-[900px]:grid-cols-[minmax(18rem,0.82fr)_minmax(0,1.18fr)] min-[900px]:items-start">
           <ResponsiveImage
             image={visualAssets.operatorRoster}
-            className="aspect-square w-full min-[1152px]:h-full min-[1152px]:min-h-[44rem] min-[1152px]:aspect-auto"
+            className="aspect-square h-[var(--desk-media-height)] w-full border-white/10 bg-ink/70 min-[900px]:aspect-auto"
+            imgClassName="object-contain"
+            caption={false}
             sizes="(max-width: 1024px) 100vw, 36vw"
-            overlay
           />
-          <StaggerGroup className="grid grid-cols-1 bg-white/10 sm:grid-cols-2 min-[1152px]:auto-rows-fr">
+          <StaggerGroup className="grid h-auto grid-cols-1 bg-white/10 sm:h-[var(--desk-media-height)] sm:grid-cols-2 sm:auto-rows-fr">
             {desk.map((agent) => (
-              <StaggerItem key={agent.initials} className="flex bg-ink p-6 ring-1 ring-white/10 sm:p-7">
-                <article className="flex h-full min-h-[22rem] flex-col">
+              <StaggerItem key={agent.initials} className="flex min-h-0 bg-ink p-[var(--desk-card-pad)] ring-1 ring-white/10">
+                <article className="flex h-full min-h-0 flex-col">
                   <span className="inline-flex size-2 rounded-full bg-accent-live" aria-label="Online" />
-                  <div className="mt-5 flex items-center gap-3">
-                    <span className="inline-flex size-10 items-center justify-center rounded-full bg-white text-xs font-bold text-ink">
+                  <div className="mt-3 flex items-center gap-3">
+                    <span className="inline-flex size-8 items-center justify-center rounded-full bg-white text-[11px] font-bold text-ink">
                       {agent.initials}
                     </span>
                     <div>
-                      <div className="font-semibold">{agent.name}</div>
-                      <div className="text-sm text-white/50">{agent.role}</div>
+                      <div className="text-sm font-semibold">{agent.name}</div>
+                      <div className="text-xs leading-5 text-white/50">{agent.role}</div>
                     </div>
                   </div>
-                  <blockquote className="mt-6 text-balance font-serif text-2xl italic leading-tight text-white">
+                  <blockquote className="desk-quote mt-4 text-balance font-serif text-[length:var(--desk-quote-size)] italic leading-tight text-white">
                     &ldquo;{agent.quote}&rdquo;
                   </blockquote>
-                  <div className="mt-auto flex justify-between gap-4 border-t border-white/10 pt-4 text-sm text-white/55">
+                  <div className="mt-auto flex justify-between gap-4 border-t border-white/10 pt-3 text-xs text-white/55">
                     <span>
                       <b className="text-white">{agent.tenure}</b> · tenure
                     </span>

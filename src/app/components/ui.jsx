@@ -80,12 +80,13 @@ export function SectionLabel({ children, onDark = false, className }) {
   );
 }
 
-export function LivePill({ experts, pickupSeconds, onDark = false }) {
+export function LivePill({ experts, pickupSeconds, onDark = false, className }) {
   return (
     <span
       className={cn(
         "inline-flex max-w-full items-center gap-2 whitespace-nowrap rounded-full px-3 py-2 font-mono text-[12px] uppercase tracking-[0.14em] sm:tracking-[0.2em]",
-        onDark ? "bg-white/10 text-white" : "bg-accent-soft text-ink"
+        onDark ? "bg-white/10 text-white" : "bg-accent-soft text-ink",
+        className
       )}
       aria-label={`${experts} travel experts online, average pickup ${pickupSeconds} seconds`}
     >

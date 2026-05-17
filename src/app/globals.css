@@ -15,7 +15,36 @@
 }
 
 @layer base {
+  :root {
+    --nav-height: 4rem;
+    --site-pad-x: clamp(1.25rem, 3.5vw, 3rem);
+    --desk-section-pad-y: clamp(1rem, 2.3svh, 2rem);
+    --desk-section-gap: clamp(1rem, 2.6svh, 1.75rem);
+    --desk-media-height: clamp(22rem, 48svh, 30rem);
+    --desk-title-size: 2.85rem;
+    --desk-copy-size: 1rem;
+    --desk-card-pad: clamp(0.875rem, 1.2vw, 1.25rem);
+    --desk-quote-size: 1.12rem;
+  }
+
+  @media (min-width: 900px) {
+    :root {
+      --desk-title-size: 3.35rem;
+      --desk-copy-size: 1.03rem;
+      --desk-quote-size: 1.2rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    :root {
+      --desk-title-size: 2.35rem;
+      --desk-copy-size: 0.96rem;
+      --desk-quote-size: 1.04rem;
+    }
+  }
+
   html {
+    scroll-padding-top: var(--nav-height);
     scroll-behavior: smooth;
   }
 
@@ -46,5 +75,12 @@
 
   .scrollbar-none::-webkit-scrollbar {
     display: none;
+  }
+
+  .desk-quote {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
   }
 }
