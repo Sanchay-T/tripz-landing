@@ -35,8 +35,11 @@ import {
 } from "./components/ui";
 
 const sectionShell = "mx-auto w-full max-w-7xl px-[clamp(1.5rem,4vw,4rem)] py-[clamp(3rem,7vw,5rem)]";
+const compactSectionShell = "mx-auto w-full max-w-7xl px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2.25rem,5vw,3.75rem)]";
+const pillarSectionShell = "mx-auto w-full max-w-7xl px-[clamp(1.5rem,4vw,4rem)] py-[clamp(2rem,4.25vw,3.25rem)]";
 const splitGrid = "grid grid-cols-1 gap-[clamp(1.5rem,4vw,3rem)] min-[1152px]:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]";
 const splitGridReverse = "grid grid-cols-1 gap-[clamp(1.5rem,4vw,3rem)] min-[1152px]:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]";
+const balancedGrid = "grid grid-cols-1 gap-[clamp(1.5rem,4vw,3rem)] min-[1152px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]";
 const cardGrid = "grid grid-cols-[repeat(auto-fit,minmax(min(100%,17rem),1fr))] gap-px";
 
 function renderTitleParts(parts) {
@@ -266,8 +269,8 @@ function Services() {
 
 function Promise() {
   return (
-    <section className={sectionShell} id="why" aria-labelledby="why-head">
-      <div className={cn(splitGridReverse, "lg:items-start")}>
+    <section className={compactSectionShell} id="why" aria-labelledby="why-head">
+      <div className={cn(balancedGrid, "items-center")}>
         <div className="min-w-0">
           <Reveal as="header">
             <SectionLabel>§ 01 · Promise</SectionLabel>
@@ -288,13 +291,13 @@ function Promise() {
             ))}
           </StaggerGroup>
         </div>
-        <Reveal as="div" className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-4">
+        <Reveal as="div" className="h-full min-h-[clamp(29rem,48vw,42rem)]">
           {promiseVisuals.map((image) => (
             <ResponsiveImage
               key={image.src}
               image={image}
-              className="aspect-[4/3] w-full"
-              sizes="(max-width: 1024px) 50vw, 32vw"
+              className="h-full min-h-[clamp(29rem,48vw,42rem)] w-full"
+              sizes="(max-width: 1024px) 100vw, 40vw"
               overlay
             />
           ))}
@@ -311,16 +314,16 @@ function Pillar({ pillar }) {
       id={pillar.id}
       aria-labelledby={`${pillar.id}-head`}
     >
-      <div className={cn(sectionShell, splitGrid)}>
+      <div className={cn(pillarSectionShell, splitGrid)}>
         <Reveal as="header" className="min-w-0">
           <SectionLabel>{pillar.marker}</SectionLabel>
           <DisplayTitle id={`${pillar.id}-head`} className="mt-5 max-w-3xl">
             {renderTitleParts(pillar.headline)}
           </DisplayTitle>
-          <p className="mt-6 max-w-2xl text-[clamp(1rem,1vw+0.75rem,1.125rem)] leading-[1.75] text-ink/60">
+          <p className="mt-5 max-w-2xl text-[clamp(1rem,1vw+0.75rem,1.125rem)] leading-[1.65] text-ink/60">
             {pillar.lede}
           </p>
-          <div className="mt-10 border-t border-ink/10 pt-8">
+          <div className="mt-8 border-t border-ink/10 pt-6">
             <span className="block text-5xl font-bold tracking-[-0.04em] text-accent sm:text-6xl">
               {pillar.callout.value}
             </span>
@@ -406,9 +409,9 @@ function ProofFeature() {
 function Steps() {
   return (
     <section className="border-t border-ink/10 bg-white" id="how" aria-labelledby="steps-head">
-      <div className={cn(sectionShell, "grid gap-12")}>
-        <div className={cn(splitGridReverse, "lg:items-end")}>
-          <Reveal as="header">
+      <div className={cn(compactSectionShell, "grid gap-[clamp(1.5rem,3vw,2.5rem)]")}>
+        <div className={cn(balancedGrid, "items-center")}>
+          <Reveal as="header" className="min-w-0">
             <SectionLabel>§ 02 · How it works</SectionLabel>
             <DisplayTitle id="steps-head" className="mt-5 max-w-3xl">
               Three steps. <em>That is the product.</em>
@@ -416,8 +419,8 @@ function Steps() {
           </Reveal>
           <ResponsiveImage
             image={stepsVisual}
-            className="aspect-[16/10] w-full"
-            sizes="(max-width: 1024px) 100vw, 32vw"
+            className="aspect-[16/9] w-full"
+            sizes="(max-width: 1024px) 100vw, 40vw"
             overlay
           />
         </div>

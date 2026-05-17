@@ -115,7 +115,7 @@ describe("TripZ landing content", () => {
     assert.equal(recoveryProof.facts.length, 3);
     assert.ok(outcomeFeature.image.src.startsWith("/images/"));
     assert.ok(outcomeFeature.headline.length > 0);
-    assert.equal(promiseVisuals.length, 2);
+    assert.equal(promiseVisuals.length, 1);
     promiseVisuals.forEach((asset) => {
       assert.ok(asset.src.startsWith("/images/"));
     });

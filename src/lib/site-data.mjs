@@ -80,6 +80,11 @@ export const visualAssets = {
     alt: "A TripZ support kit with a passport wallet, phone, route card, notebook, and pen on a quiet desk.",
     caption: "Ready before the call"
   },
+  promiseKit: {
+    src: "/images/tripz-promise-kit-vertical.png",
+    alt: "A premium TripZ travel support kit arranged on a warm desk with a passport wallet, phone, route folder, pen, luggage tag, and plant.",
+    caption: "Ready before the call"
+  },
   documentKit: {
     src: "/images/tripz-document-kit.png",
     alt: "A TripZ document kit with a passport wallet, itinerary paper, phone, route card, and pen in premium daylight.",
@@ -111,8 +116,7 @@ export const visualInterlude = {
 };
 
 export const promiseVisuals = [
-  visualAssets.supportKit,
-  visualAssets.baggageTag
+  visualAssets.promiseKit
 ];
 
 export const stepsVisual = visualAssets.whatsappDesk;
