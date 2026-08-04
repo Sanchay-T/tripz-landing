@@ -1,7 +1,11 @@
 // k6 load test for the TripZ admin surface.
 //
-//   BASE_URL=http://127.0.0.1:3300 k6 run scripts/load-test.js
-//   BASE_URL=https://tripz-landing-pi.vercel.app k6 run scripts/load-test.js
+//   BASE_URL=http://127.0.0.1:3300 k6 run scripts/k6-admin-load.js
+//   BASE_URL=https://tripz-landing-pi.vercel.app k6 run scripts/k6-admin-load.js
+//
+// Named `k6-admin-load.js`, NOT `load-test.js`: Node's test runner globs
+// `**/*-test.js`, so the original name made `npm test` try to execute this file and
+// fail on `import ... from "k6/http"`, which only exists inside the k6 runtime.
 //
 // The `zeroed_pages` check is the one that matters most here. Every admin page
 // coalesces a failed Supabase query to an empty array, so a page that has lost its
@@ -72,7 +76,9 @@ function visit(path, kind) {
   return res;
 }
 
-export default function () {
+// Named rather than anonymous so `import/no-anonymous-default-export` stays quiet;
+// k6 only requires that the default export be a function.
+export default function adminLoadScenario() {
   for (const route of STATIC_ROUTES) {
     visit(route, "static");
   }
