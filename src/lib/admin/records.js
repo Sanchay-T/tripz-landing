@@ -41,6 +41,10 @@ export async function fetchAdminDashboardData() {
             select id, name, mobile_number, location, created_at
             from customers order by created_at desc limit 10
           `,
+          // Internal bookings are excluded here for the same reason /admin/margin
+          // excludes them: they carry no margin, and counting them made the dashboard
+          // report a different revenue figure from the margin page for the same
+          // period. Two screens disagreeing about revenue is worse than either number.
           sql`
             select b.id, b.booking_code, b.booking_type, b.market, b.departure, b.arrival,
                    b.travel_date, b.selling_price, b.margin, b.booking_status,
@@ -48,6 +52,7 @@ export async function fetchAdminDashboardData() {
                    json_build_object('name', c.name) as customers
             from bookings b
             left join customers c on c.id = b.customer_id
+            where not coalesce(c.is_internal, false)
             order by b.created_at desc limit 20
           `,
           sql`
