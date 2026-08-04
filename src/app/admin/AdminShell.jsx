@@ -13,6 +13,7 @@ import {
   Search,
   Settings,
   Sparkles,
+  TrendingUp,
   UploadCloud,
   Users,
   WalletCards
@@ -28,6 +29,7 @@ const navItems = [
   { label: "Tasks", shortLabel: "Tasks", href: "/admin/tasks", icon: ClipboardList },
   { label: "Documents", shortLabel: "Docs", href: "/admin/documents", icon: FileStack },
   { label: "Finance", shortLabel: "Finance", href: "/admin/finance", icon: BarChart3 },
+  { label: "Margin", shortLabel: "Margin", href: "/admin/margin", icon: TrendingUp },
   { label: "Expenses", shortLabel: "Expenses", href: "/admin/expenses", icon: WalletCards },
   { label: "Templates", shortLabel: "Templates", href: "/admin/templates", icon: BookOpen },
   { label: "Providers", shortLabel: "Providers", href: "/admin/providers", icon: ReceiptText },
