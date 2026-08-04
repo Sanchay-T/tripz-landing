@@ -9,6 +9,7 @@ import {
   FileStack,
   LayoutDashboard,
   Plane,
+  PlusCircle,
   ReceiptText,
   Search,
   Settings,
@@ -24,6 +25,7 @@ const navItems = [
   { label: "Dashboard", shortLabel: "Dash", href: "/admin", icon: LayoutDashboard },
   { label: "Upload", shortLabel: "Upload", href: "/admin/intake", icon: UploadCloud },
   { label: "Bookings", shortLabel: "Bookings", href: "/admin/bookings", icon: Plane },
+  { label: "Add booking", shortLabel: "Add", href: "/admin/bookings/new", icon: PlusCircle },
   { label: "Customers", shortLabel: "Customers", href: "/admin/customers", icon: Users },
   { label: "Tasks", shortLabel: "Tasks", href: "/admin/tasks", icon: ClipboardList },
   { label: "Documents", shortLabel: "Docs", href: "/admin/documents", icon: FileStack },
@@ -38,12 +40,29 @@ const navItems = [
 
 const mobilePrimaryItems = navItems.slice(0, 5);
 
+/**
+ * Active when this is the closest nav entry to the current path.
+ *
+ * A plain prefix match lit up both "Bookings" and "Add booking" on
+ * /admin/bookings/new, because the first is a prefix of the second. Whichever entry
+ * matches with the longest href wins, so a child route with its own nav item takes
+ * precedence over its parent.
+ */
 function isActivePath(pathname, href) {
   if (href === "/admin") {
     return pathname === "/admin";
   }
 
-  return pathname === href || pathname.startsWith(`${href}/`);
+  const matches = (candidate) =>
+    pathname === candidate || pathname.startsWith(`${candidate}/`);
+
+  if (!matches(href)) {
+    return false;
+  }
+
+  return !navItems.some(
+    (item) => item.href !== href && item.href.length > href.length && matches(item.href)
+  );
 }
 
 function NavLink({ item, active, compact = false }) {
@@ -113,11 +132,11 @@ export default function AdminShell({ children }) {
               <span className="truncate">Search customers, bookings, PNRs...</span>
             </div>
             <Link
-              href="/admin/intake"
+              href="/admin/bookings/new"
               className="ml-auto hidden min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-ink px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-accent md:inline-flex"
             >
-              <UploadCloud size={16} />
-              Upload tickets
+              <PlusCircle size={16} />
+              Add booking
             </Link>
           </div>
 

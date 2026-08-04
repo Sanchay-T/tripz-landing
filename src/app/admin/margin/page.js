@@ -218,8 +218,8 @@ export default async function MarginPage() {
             <p className="mt-1 text-sm leading-6 text-ink/60">
               Once bookings carry a selling price and a base cost, this page shows what
               each line earns. Import Rao&apos;s workbook from{" "}
-              <a className="font-semibold text-accent underline" href="/admin/imports">
-                Imports
+              <a className="font-semibold text-accent underline" href="/admin/bookings/new">
+                Add booking
               </a>{" "}
               to populate it.
             </p>

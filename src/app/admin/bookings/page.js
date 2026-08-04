@@ -1,4 +1,4 @@
-import { AdminBadge, AdminCard, AdminTable, PageHeader } from "../components";
+import { AdminBadge, AdminButton, AdminCard, AdminTable, PageHeader } from "../components";
 import { fetchAdminDashboardData } from "@/lib/admin/records";
 
 export const dynamic = "force-dynamic";
@@ -41,6 +41,7 @@ export default async function BookingsPage() {
   return (
     <>
       <PageHeader
+        action={<AdminButton href="/admin/bookings/new">Add booking</AdminButton>}
         eyebrow="Operations"
         title="Bookings"
         body="Search and manage travel bookings by customer, market, type, status, payment, price, and margin."
