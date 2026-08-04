@@ -1,5 +1,6 @@
-import { createSupabaseServiceClient } from "@/lib/supabase/server";
 import { randomUUID } from "node:crypto";
+
+import { getDb, safeQuery } from "@/lib/db";
 
 export function buildCustomerCode() {
   return `CUST-${Date.now().toString(36).toUpperCase()}-${randomUUID().slice(0, 4).toUpperCase()}`;
@@ -18,63 +19,118 @@ export function toNumberOrNull(value) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+/**
+ * Dashboard data.
+ *
+ * Previously six PostgREST calls; now six SQL queries. One shape detail worth
+ * knowing: PostgREST returned an embedded object (`customers: { name }`) and the
+ * pages read `row.customers?.name`. The SQL reproduces that with json_build_object,
+ * so no page had to change.
+ *
+ * `error` is now returned alongside the data. Callers that ignore it behave exactly
+ * as before; the difference is that a page CAN now distinguish "no rows" from "no
+ * database", which it previously could not - that ambiguity hid a long outage behind
+ * a screen full of confident zeros.
+ */
 export async function fetchAdminDashboardData() {
-  const supabase = createSupabaseServiceClient();
+  const { data, error } = await safeQuery(
+    async (sql) => {
+      const [customers, bookings, documents, tasks, expenses, extractions] =
+        await Promise.all([
+          sql`
+            select id, name, mobile_number, location, created_at
+            from customers order by created_at desc limit 10
+          `,
+          sql`
+            select b.id, b.booking_code, b.booking_type, b.market, b.departure, b.arrival,
+                   b.travel_date, b.selling_price, b.margin, b.booking_status,
+                   b.payment_status, b.created_at,
+                   json_build_object('name', c.name) as customers
+            from bookings b
+            left join customers c on c.id = b.customer_id
+            order by b.created_at desc limit 20
+          `,
+          sql`
+            select d.id, d.file_name, d.document_type, d.status, d.uploaded_at,
+                   json_build_object('name', c.name) as customers
+            from booking_documents d
+            left join customers c on c.id = d.customer_id
+            order by d.uploaded_at desc limit 20
+          `,
+          sql`
+            select t.id, t.task_type, t.priority, t.status, t.due_at,
+                   json_build_object('name', c.name) as customers
+            from tasks t
+            left join customers c on c.id = t.customer_id
+            order by t.due_at asc limit 20
+          `,
+          sql`
+            select id, category, name_or_vendor, amount, expense_date, payment_status
+            from expenses order by expense_date desc limit 50
+          `,
+          sql`
+            select id, status, confidence, created_at
+            from ticket_extractions order by created_at desc limit 20
+          `
+        ]);
 
-  const [
-    customers,
-    bookings,
-    documents,
-    tasks,
-    expenses,
-    extractions
-  ] = await Promise.all([
-    supabase.from("customers").select("id, name, mobile_number, location, created_at").order("created_at", { ascending: false }).limit(10),
-    supabase.from("bookings").select("id, booking_code, booking_type, market, departure, arrival, travel_date, selling_price, margin, booking_status, payment_status, created_at, customers(name)").order("created_at", { ascending: false }).limit(20),
-    supabase.from("booking_documents").select("id, file_name, document_type, status, uploaded_at, customers(name)").order("uploaded_at", { ascending: false }).limit(20),
-    supabase.from("tasks").select("id, task_type, priority, status, due_at, customers(name)").order("due_at", { ascending: true }).limit(20),
-    supabase.from("expenses").select("id, category, name_or_vendor, amount, expense_date, payment_status").order("expense_date", { ascending: false }).limit(50),
-    supabase.from("ticket_extractions").select("id, status, confidence, created_at").order("created_at", { ascending: false }).limit(20)
-  ]);
+      return { customers, bookings, documents, tasks, expenses, extractions };
+    },
+    { customers: [], bookings: [], documents: [], tasks: [], expenses: [], extractions: [] }
+  );
 
-  const bookingRows = bookings.data ?? [];
-  const expenseRows = expenses.data ?? [];
+  const bookingRows = data.bookings ?? [];
+  const expenseRows = data.expenses ?? [];
   const totalBooked = bookingRows.reduce((sum, row) => sum + Number(row.selling_price ?? 0), 0);
   const totalMargin = bookingRows.reduce((sum, row) => sum + Number(row.margin ?? 0), 0);
   const totalExpenses = expenseRows.reduce((sum, row) => sum + Number(row.amount ?? 0), 0);
 
   return {
-    customers: customers.data ?? [],
+    customers: data.customers ?? [],
     bookings: bookingRows,
-    documents: documents.data ?? [],
-    tasks: tasks.data ?? [],
+    documents: data.documents ?? [],
+    tasks: data.tasks ?? [],
     expenses: expenseRows,
-    extractions: extractions.data ?? [],
+    extractions: data.extractions ?? [],
+    error,
     metrics: {
       totalBooked,
       totalMargin,
       totalExpenses,
       netProfit: totalMargin - totalExpenses,
-      customerCount: customers.data?.length ?? 0,
-      openTasks: (tasks.data ?? []).filter((task) => task.status !== "done").length,
-      pendingDocuments: (documents.data ?? []).filter((doc) => doc.status !== "verified" && doc.status !== "sent_to_customer").length,
-      pendingExtractions: (extractions.data ?? []).filter((row) => row.status === "needs_review" || row.status === "ready_to_review").length
+      customerCount: data.customers?.length ?? 0,
+      openTasks: (data.tasks ?? []).filter((task) => task.status !== "done").length,
+      pendingDocuments: (data.documents ?? []).filter(
+        (doc) => doc.status !== "verified" && doc.status !== "sent_to_customer"
+      ).length,
+      pendingExtractions: (data.extractions ?? []).filter(
+        (row) => row.status === "needs_review" || row.status === "ready_to_review"
+      ).length
     }
   };
 }
 
 export async function fetchAdminReferenceData() {
-  const supabase = createSupabaseServiceClient();
+  const { data, error } = await safeQuery(
+    async (sql) => {
+      const [providers, templates, imports] = await Promise.all([
+        sql`select id, name, type, support_contact, is_active from providers order by created_at desc limit 50`,
+        sql`select id, name, type, is_active from templates order by name asc limit 50`,
+        sql`select id, file_name, status, created_at from import_batches order by created_at desc limit 50`
+      ]);
 
-  const [providers, templates, imports] = await Promise.all([
-    supabase.from("providers").select("id, name, type, support_contact, is_active").order("created_at", { ascending: false }).limit(50),
-    supabase.from("templates").select("id, name, type, is_active").order("name", { ascending: true }).limit(50),
-    supabase.from("import_batches").select("id, file_name, status, created_at").order("created_at", { ascending: false }).limit(50)
-  ]);
+      return { providers, templates, imports };
+    },
+    { providers: [], templates: [], imports: [] }
+  );
 
   return {
-    providers: providers.data ?? [],
-    templates: templates.data ?? [],
-    imports: imports.data ?? []
+    providers: data.providers ?? [],
+    templates: data.templates ?? [],
+    imports: data.imports ?? [],
+    error
   };
 }
+
+/** Re-exported for the write routes, which need the client directly. */
+export { getDb };

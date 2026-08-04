@@ -1,13 +1,17 @@
 import { NextResponse } from "next/server";
-import { extractTicketFromFile } from "@/lib/anthropic/ticket-extraction";
-import { createSupabaseServiceClient } from "@/lib/supabase/server";
 import { randomUUID } from "node:crypto";
+import { put } from "@vercel/blob";
+
+import { extractTicketFromFile } from "@/lib/anthropic/ticket-extraction";
+import { getDb } from "@/lib/db";
 
 export const runtime = "nodejs";
 
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
-const STORAGE_BUCKET = "tripz-documents";
 
+// Ticket files live in Vercel Blob rather than Supabase Storage. `booking_documents.file_url`
+// now holds the returned blob URL instead of a bucket-relative path, which is a
+// superset of what it held before - the value is still opaque to every reader.
 function getStoragePath(fileName) {
   const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, "-");
   return `ticket-intake/${new Date().toISOString().slice(0, 10)}/${randomUUID()}-${safeName}`;
@@ -15,8 +19,7 @@ function getStoragePath(fileName) {
 
 export async function POST(request) {
   let extractionId = null;
-  let documentId = null;
-  const supabase = createSupabaseServiceClient();
+  const sql = getDb();
 
   try {
     const formData = await request.formData();
@@ -37,105 +40,87 @@ export async function POST(request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const storagePath = getStoragePath(file.name);
     const mimeType = file.type || "application/octet-stream";
 
-    const upload = await supabase.storage
-      .from(STORAGE_BUCKET)
-      .upload(storagePath, buffer, {
-        contentType: mimeType,
-        upsert: false
-      });
-
-    if (upload.error) {
-      throw upload.error;
-    }
-
-    const documentInsert = await supabase
-      .from("booking_documents")
-      .insert({
-        document_type: "unknown",
-        file_url: storagePath,
-        file_name: file.name,
-        mime_type: mimeType,
-        status: "uploaded"
-      })
-      .select("id")
-      .single();
-
-    if (documentInsert.error) {
-      throw documentInsert.error;
-    }
-
-    documentId = documentInsert.data.id;
-
-    const extractionInsert = await supabase
-      .from("ticket_extractions")
-      .insert({
-        document_id: documentId,
-        status: "extracting",
-        model: process.env.TRIPZ_ANTHROPIC_MODEL || "claude-haiku-4-5-20251001"
-      })
-      .select("id")
-      .single();
-
-    if (extractionInsert.error) {
-      throw extractionInsert.error;
-    }
-
-    extractionId = extractionInsert.data.id;
-
-    const result = await extractTicketFromFile({
-      buffer,
-      mimeType
+    const blob = await put(getStoragePath(file.name), buffer, {
+      access: "public",
+      contentType: mimeType,
+      addRandomSuffix: false
     });
 
-    const updateExtraction = await supabase
-      .from("ticket_extractions")
-      .update({
-        status: result.status,
-        raw_response: result.rawJson,
-        normalized_json: result.extraction,
-        confidence: result.extraction.confidence,
-        model: result.model
-      })
-      .eq("id", extractionId);
+    // The document and its extraction row are created together: an uploaded file with
+    // no extraction row is invisible to the intake queue and effectively lost.
+    const { documentId, id } = await sql.begin(async (tx) => {
+      const [document] = await tx`
+        insert into booking_documents ${tx({
+          document_type: "unknown",
+          file_url: blob.url,
+          file_name: file.name,
+          mime_type: mimeType,
+          status: "uploaded"
+        })}
+        returning id
+      `;
 
-    if (updateExtraction.error) {
-      throw updateExtraction.error;
-    }
+      const [extraction] = await tx`
+        insert into ticket_extractions ${tx({
+          document_id: document.id,
+          status: "extracting",
+          model: process.env.TRIPZ_ANTHROPIC_MODEL || "claude-haiku-4-5-20251001"
+        })}
+        returning id
+      `;
 
-    await supabase
-      .from("booking_documents")
-      .update({
-        document_type: result.extraction.documentType,
-        status: "uploaded"
-      })
-      .eq("id", documentId);
+      return { documentId: document.id, id: extraction.id };
+    });
+
+    extractionId = id;
+
+    const result = await extractTicketFromFile({ buffer, mimeType });
+
+    await sql.begin(async (tx) => {
+      await tx`
+        update ticket_extractions
+        set status = ${result.status},
+            raw_response = ${tx.json(result.rawJson)},
+            normalized_json = ${tx.json(result.extraction)},
+            confidence = ${result.extraction.confidence},
+            model = ${result.model}
+        where id = ${extractionId}
+      `;
+      await tx`
+        update booking_documents
+        set document_type = ${result.extraction.documentType}, status = 'uploaded'
+        where id = ${documentId}
+      `;
+    });
 
     return NextResponse.json({
       fileName: file.name,
       documentId,
       extractionId,
-      storagePath,
+      storagePath: blob.url,
       ...result
     });
   } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+
     if (extractionId) {
-      await supabase
-        .from("ticket_extractions")
-        .update({
-          status: "failed",
-          error_message: error instanceof Error ? error.message : "Unknown error"
-        })
-        .eq("id", extractionId);
+      // Best effort: if the database is what failed, this will fail too, and the
+      // original error is the one worth returning.
+      try {
+        await sql`
+          update ticket_extractions
+          set status = 'failed', error_message = ${detail}
+          where id = ${extractionId}
+        `;
+      } catch {
+        // swallowed deliberately - see above
+      }
     }
 
     return NextResponse.json(
-      {
-        error: "Ticket extraction failed.",
-        detail: error instanceof Error ? error.message : "Unknown error"
-      },
+      { error: "Ticket extraction failed.", detail },
       { status: 500 }
     );
   }

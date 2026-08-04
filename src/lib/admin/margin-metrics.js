@@ -33,6 +33,22 @@ export function labelForType(type) {
   return TYPE_LABELS[type] ?? (type ? `${type[0].toUpperCase()}${type.slice(1)}` : "Unknown");
 }
 
+/**
+ * Bookings that represent customer business.
+ *
+ * Rao books his own travel through the same system. Those rows are real, but they
+ * carry no margin, so counting them understates the take rate (5.29% → 5.08%) and
+ * overstates domestic booking value by the cost of his own tickets. Reporting always
+ * runs on this filtered set; the raw rows stay available for the booking table.
+ */
+export function customerBookings(rows) {
+  return rows.filter((row) => !row.is_internal);
+}
+
+export function internalBookings(rows) {
+  return rows.filter((row) => row.is_internal);
+}
+
 function num(value) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;

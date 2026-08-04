@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSupabaseServiceClient } from "@/lib/supabase/server";
+import { getDb } from "@/lib/db";
 import { buildBookingCode, buildCustomerCode, toNumberOrNull } from "@/lib/admin/records";
 import { ticketExtractionZodSchema } from "@/lib/gemini/ticket-extraction-schema";
 
@@ -14,16 +14,37 @@ export async function POST(request) {
     const body = await request.json();
     const extractionId = body.extractionId;
     const documentId = body.documentId;
-    const extraction = ticketExtractionZodSchema.parse({
-      ...body.extraction,
-      baseCost: toNumberOrNull(body.extraction?.baseCost),
-      sellingPrice: toNumberOrNull(body.extraction?.sellingPrice),
-      confidence: Number(body.extraction?.confidence ?? 0)
-    });
 
+    // Presence checks BEFORE schema parsing. Parsing first meant a malformed payload
+    // threw a Zod error and surfaced as a 500, when the intended answer was a 400
+    // naming the missing field.
     if (!extractionId || !documentId) {
       return NextResponse.json(
         { error: "extractionId and documentId are required." },
+        { status: 400 }
+      );
+    }
+
+    let extraction;
+    try {
+      extraction = ticketExtractionZodSchema.parse({
+        ...body.extraction,
+        baseCost: toNumberOrNull(body.extraction?.baseCost),
+        sellingPrice: toNumberOrNull(body.extraction?.sellingPrice),
+        confidence: Number(body.extraction?.confidence ?? 0)
+      });
+    } catch (validationError) {
+      // The review form's bookingType / market / journeyType are free-text inputs
+      // parsed by z.enum, so an off-enum value is a user mistake, not a server fault.
+      return NextResponse.json(
+        {
+          error: "Extraction fields are not valid.",
+          detail: validationError?.issues
+            ? validationError.issues
+                .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+                .join("; ")
+            : String(validationError)
+        },
         { status: 400 }
       );
     }
@@ -35,126 +56,132 @@ export async function POST(request) {
       );
     }
 
-    const supabase = createSupabaseServiceClient();
+    const sql = getDb();
 
-    const customerInsert = await supabase
-      .from("customers")
-      .insert({
-        customer_code: buildCustomerCode(),
-        name: extraction.customerName,
-        mobile_number: extraction.mobileNumber,
-        email: extraction.email,
-        location: extraction.departure,
-        source: "ticket_upload",
-        remarks: extraction.rawNotes
-      })
-      .select("id, name")
-      .single();
-
-    if (customerInsert.error) {
-      throw customerInsert.error;
-    }
-
-    const bookingInsert = await supabase
-      .from("bookings")
-      .insert({
-        booking_code: buildBookingCode(),
-        customer_id: customerInsert.data.id,
-        booking_type: extraction.bookingType,
-        market: extraction.market,
-        journey_type: extraction.journeyType,
-        departure: extraction.departure,
-        arrival: extraction.arrival,
-        travel_date: normalizeDate(extraction.travelDate),
-        return_date: normalizeDate(extraction.returnDate),
-        pnr_or_confirmation: extraction.pnrOrConfirmation,
-        base_cost: extraction.baseCost,
-        selling_price: extraction.sellingPrice,
-        payment_status: "unpaid",
-        booking_status: extraction.documentType === "boarding_pass" ? "in_travel" : "ticketed",
-        notes: extraction.rawNotes
-      })
-      .select("id, booking_code")
-      .single();
-
-    if (bookingInsert.error) {
-      throw bookingInsert.error;
-    }
-
-    await supabase
-      .from("booking_documents")
-      .update({
-        booking_id: bookingInsert.data.id,
-        customer_id: customerInsert.data.id,
-        document_type: extraction.documentType,
-        status: "verified",
-        verified_at: new Date().toISOString()
-      })
-      .eq("id", documentId);
-
-    await supabase
-      .from("ticket_extractions")
-      .update({
-        status: "saved",
-        normalized_json: extraction,
-        reviewed_at: new Date().toISOString(),
-        created_booking_id: bookingInsert.data.id
-      })
-      .eq("id", extractionId);
-
-    const dueAt = extraction.travelDate
-      ? new Date(`${extraction.travelDate}T09:00:00.000Z`)
-      : new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-    const tasks = [
-      {
-        booking_id: bookingInsert.data.id,
-        customer_id: customerInsert.data.id,
-        task_type: "24-hour travel reminder",
-        priority: "high",
-        status: "open",
-        due_at: dueAt.toISOString(),
-        description: `Send travel reminder for ${extraction.customerName}.`
-      },
-      {
-        booking_id: bookingInsert.data.id,
-        customer_id: customerInsert.data.id,
-        task_type: "payment follow-up",
-        priority: "normal",
-        status: "open",
-        due_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-        description: `Confirm payment status for ${bookingInsert.data.booking_code}.`
+    // One transaction for all five writes. Previously each was a separate call, so a
+    // failure partway through could leave a customer with no booking, or a booking
+    // whose document was never marked verified.
+    const result = await sql.begin(async (tx) => {
+      // Reuse an existing customer when the mobile number matches.
+      //
+      // This route used to insert a customer unconditionally, so confirming the same
+      // extraction twice silently produced two customers, two bookings and up to six
+      // tasks, with nothing to distinguish the duplicates afterwards.
+      let customer = null;
+      if (extraction.mobileNumber) {
+        const [existing] = await tx`
+          select id, name from customers
+          where mobile_number = ${extraction.mobileNumber}
+          limit 1
+        `;
+        customer = existing ?? null;
       }
-    ];
 
-    if (extraction.bookingType === "flight") {
-      tasks.push({
-        booking_id: bookingInsert.data.id,
-        customer_id: customerInsert.data.id,
-        task_type: "upload boarding pass",
-        priority: "high",
-        status: "open",
-        due_at: dueAt.toISOString(),
-        description: "Upload and verify boarding pass before travel."
-      });
-    }
+      if (!customer) {
+        [customer] = await tx`
+          insert into customers ${tx({
+            customer_code: buildCustomerCode(),
+            name: extraction.customerName,
+            mobile_number: extraction.mobileNumber,
+            email: extraction.email,
+            location: extraction.departure,
+            source: "ticket_upload",
+            remarks: extraction.rawNotes
+          })}
+          returning id, name
+        `;
+      }
 
-    const taskInsert = await supabase.from("tasks").insert(tasks);
+      const [booking] = await tx`
+        insert into bookings ${tx({
+          booking_code: buildBookingCode(),
+          customer_id: customer.id,
+          booking_type: extraction.bookingType,
+          market: extraction.market,
+          journey_type: extraction.journeyType,
+          departure: extraction.departure,
+          arrival: extraction.arrival,
+          travel_date: normalizeDate(extraction.travelDate),
+          return_date: normalizeDate(extraction.returnDate),
+          pnr_or_confirmation: extraction.pnrOrConfirmation,
+          // margin is generated by the database from these two.
+          base_cost: extraction.baseCost,
+          selling_price: extraction.sellingPrice,
+          payment_status: "unpaid",
+          booking_status:
+            extraction.documentType === "boarding_pass" ? "in_travel" : "ticketed",
+          notes: extraction.rawNotes
+        })}
+        returning id, booking_code
+      `;
 
-    if (taskInsert.error) {
-      throw taskInsert.error;
-    }
+      await tx`
+        update booking_documents
+        set booking_id = ${booking.id},
+            customer_id = ${customer.id},
+            document_type = ${extraction.documentType},
+            status = 'verified',
+            verified_at = now()
+        where id = ${documentId}
+      `;
 
-    return NextResponse.json({
-      customer: customerInsert.data,
-      booking: bookingInsert.data,
-      tasksCreated: tasks.length
+      await tx`
+        update ticket_extractions
+        set status = 'saved',
+            normalized_json = ${tx.json(extraction)},
+            reviewed_at = now(),
+            created_booking_id = ${booking.id}
+        where id = ${extractionId}
+      `;
+
+      const dueAt = extraction.travelDate
+        ? new Date(`${extraction.travelDate}T09:00:00.000Z`)
+        : new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+      const tasks = [
+        {
+          booking_id: booking.id,
+          customer_id: customer.id,
+          task_type: "24-hour travel reminder",
+          priority: "high",
+          status: "open",
+          due_at: dueAt.toISOString(),
+          description: `Send travel reminder for ${extraction.customerName}.`
+        },
+        {
+          booking_id: booking.id,
+          customer_id: customer.id,
+          task_type: "payment follow-up",
+          priority: "normal",
+          status: "open",
+          due_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+          description: `Confirm payment status for ${booking.booking_code}.`
+        }
+      ];
+
+      if (extraction.bookingType === "flight") {
+        tasks.push({
+          booking_id: booking.id,
+          customer_id: customer.id,
+          task_type: "upload boarding pass",
+          priority: "high",
+          status: "open",
+          due_at: dueAt.toISOString(),
+          description: "Upload and verify boarding pass before travel."
+        });
+      }
+
+      await tx`insert into tasks ${tx(tasks)}`;
+
+      return { customer, booking, tasksCreated: tasks.length };
     });
+
+    return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(
       {
         error: "Could not confirm extraction.",
-        detail: error instanceof Error ? error.message : "Unknown error"
+        detail: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
     );

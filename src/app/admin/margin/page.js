@@ -4,8 +4,10 @@ import { AdminBadge, AdminButton, AdminCard, AdminTable, PageHeader } from "../c
 import {
   byCustomer,
   byType,
+  customerBookings,
   fetchMarginRows,
   grossOf,
+  internalBookings,
   marginOf,
   requestedFigures,
   summarise,
@@ -142,12 +144,18 @@ const bookingColumns = [
 export default async function MarginPage() {
   const { rows, error } = await fetchMarginRows();
 
-  const total = summarise(rows);
-  const types = byType(rows);
-  const zero = zeroMargin(rows);
-  const customers = byCustomer(rows);
+  // Every reported figure runs on customer business only. Rao's own travel is real
+  // but carries no margin, so including it understates the take rate and inflates
+  // domestic booking value. The full row set is still used for the table below.
+  const billable = customerBookings(rows);
+  const internal = internalBookings(rows);
+
+  const total = summarise(billable);
+  const types = byType(billable);
+  const zero = zeroMargin(billable);
+  const customers = byCustomer(billable);
   const packages = customers.filter((customer) => customer.types.length > 1);
-  const asked = requestedFigures(rows);
+  const asked = requestedFigures(billable);
 
   // Rao's list, in the order he wrote it, so the page can be checked against the
   // message rather than against someone's memory of it.
@@ -285,6 +293,16 @@ export default async function MarginPage() {
               </span>
             </div>
           </div>
+
+          {internal.length > 0 && (
+            <p className="border-t border-ink/10 px-4 py-3 text-xs leading-5 text-ink/55 sm:px-5">
+              Excludes {internal.length} internal booking
+              {internal.length === 1 ? "" : "s"} worth{" "}
+              {formatCurrency(internal.reduce((sum, row) => sum + grossOf(row), 0))} made on
+              the company&apos;s own account. They are real bookings but not customer
+              business, and counting them would drag the take rate down.
+            </p>
+          )}
 
           {asked.unclassified > 0 && (
             <p className="border-t border-ink/10 bg-amber-50/70 px-4 py-3 text-xs leading-5 text-amber-900 sm:px-5">
