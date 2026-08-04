@@ -16,8 +16,15 @@
 import http from "k6/http";
 import { check } from "k6";
 import { Rate, Trend } from "k6/metrics";
+import encoding from "k6/encoding";
 
 const BASE = __ENV.BASE_URL || "http://127.0.0.1:3300";
+// /admin is password-gated, so the load test has to authenticate or it just measures
+// how fast the app can return 401.
+const ADMIN_PASSWORD = __ENV.ADMIN_PASSWORD || "";
+const AUTH_HEADERS = ADMIN_PASSWORD
+  ? { Authorization: `Basic ${encoding.b64encode(`admin:${ADMIN_PASSWORD}`)}` }
+  : {};
 
 const zeroedPages = new Rate("zeroed_pages");
 const dbPageDuration = new Trend("db_page_duration", true);
@@ -53,16 +60,22 @@ export const options = {
 };
 
 function visit(path, kind) {
-  const res = http.get(`${BASE}${path}`, { tags: { kind, route: path } });
+  const res = http.get(`${BASE}${path}`, { tags: { kind, route: path }, headers: AUTH_HEADERS });
 
   if (kind === "db") {
     dbPageDuration.add(res.timings.duration);
-    // "₹0" next to a metric label, or the table's empty-state string, both mean the
-    // page rendered without data.
+    // A page is "empty" when it says so, or when it contains no substantial rupee
+    // figure at all.
+    //
+    // NOT "contains ₹0": /admin/margin legitimately shows ₹0 for International hotel
+    // booking, because there genuinely are none. Testing for ₹0 flagged every healthy
+    // response and reported a 100% failure rate against a perfectly working system.
+    // The signal is the ABSENCE of a real number, not the presence of a zero.
     const looksEmpty =
       res.body === null ||
       res.body.includes("No records yet") ||
-      /₹0(?![0-9,])/.test(res.body);
+      res.body.includes("could not be loaded") ||
+      !/₹[1-9][0-9,]{3,}/.test(res.body);
     zeroedPages.add(looksEmpty);
   } else {
     staticPageDuration.add(res.timings.duration);
