@@ -52,3 +52,17 @@ describe("Booking extraction schema", () => {
     assert.equal(getExtractionReviewStatus(clean), "ready_to_review");
   });
 });
+
+describe("manual extraction placeholder", () => {
+  it("is valid against the schema and lands in needs_review", async () => {
+    const { buildManualExtraction } = await import("../src/lib/manual-extraction.js");
+    const result = buildManualExtraction();
+
+    // Regression: bookingType was "unknown", which is not a member of
+    // ticketBookingTypes, so every upload 500'd on the Zod parse.
+    assert.equal(result.extraction.bookingType, "other");
+    assert.equal(result.status, "needs_review");
+    assert.equal(result.model, "manual");
+    assert.doesNotThrow(() => ticketExtractionZodSchema.parse(result.extraction));
+  });
+});

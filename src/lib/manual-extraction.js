@@ -1,7 +1,9 @@
+// Relative, not the `@/` alias: this module is covered by `node --test`, which does
+// not resolve Next's path aliases. Same directory, so nothing is lost.
 import {
   getExtractionReviewStatus,
   ticketExtractionZodSchema
-} from "@/lib/booking-extraction-schema";
+} from "./booking-extraction-schema.js";
 
 /**
  * The no-AI path for ticket intake.
@@ -35,7 +37,10 @@ export function buildManualExtraction() {
     customerName: null,
     mobileNumber: null,
     email: null,
-    bookingType: "unknown",
+    // `bookingType` has no "unknown" member - unlike market and journeyType - so the
+    // neutral placeholder is "other". The reviewer picks the real one before
+    // confirming, and `missingFields` below keeps the row in needs_review until then.
+    bookingType: "other",
     market: "unknown",
     journeyType: "unknown",
     departure: null,

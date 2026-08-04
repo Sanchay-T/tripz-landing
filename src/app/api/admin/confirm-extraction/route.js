@@ -61,6 +61,30 @@ export async function POST(request) {
     // One transaction for all five writes. Previously each was a separate call, so a
     // failure partway through could leave a customer with no booking, or a booking
     // whose document was never marked verified.
+    // Refuse to confirm an extraction that has already produced a booking.
+    //
+    // Deduping the customer was not enough: confirming twice still created a second
+    // booking against the same ticket, which double-counts revenue and margin - the
+    // exact figures this system exists to report. The extraction's own status is the
+    // record of whether it has been confirmed, so it is the right thing to guard on.
+    const [already] = await sql`
+      select created_booking_id from ticket_extractions
+      where id = ${extractionId} and status = 'saved' and created_booking_id is not null
+    `;
+
+    if (already) {
+      const [booking] = await sql`
+        select booking_code from bookings where id = ${already.created_booking_id}
+      `;
+      return NextResponse.json(
+        {
+          error: "This ticket has already been confirmed.",
+          detail: `It created booking ${booking?.booking_code ?? already.created_booking_id}. Confirming again would double-count its revenue.`
+        },
+        { status: 409 }
+      );
+    }
+
     const result = await sql.begin(async (tx) => {
       // Reuse an existing customer when the mobile number matches.
       //
