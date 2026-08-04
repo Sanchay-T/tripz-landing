@@ -3,36 +3,13 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { describe, it } from "node:test";
 import {
-  anthropicTicketExtractionInputSchema,
   getExtractionReviewStatus,
-  ticketExtractionSchema,
   ticketExtractionZodSchema
-} from "../src/lib/gemini/ticket-extraction-schema.js";
+} from "../src/lib/booking-extraction-schema.js";
 
 const fixtureDir = path.join(process.cwd(), "test-fixtures", "tickets");
 
-describe("Gemini ticket extraction schema", () => {
-  it("uses structured output schema fields expected by the SDK", () => {
-    assert.equal(ticketExtractionSchema.type, "OBJECT");
-    assert.equal(ticketExtractionSchema.properties.documentType.type, "STRING");
-    assert.deepEqual(
-      ticketExtractionSchema.required.includes("confidence"),
-      true
-    );
-    assert.deepEqual(
-      ticketExtractionSchema.propertyOrdering.includes("pnrOrConfirmation"),
-      true
-    );
-  });
-
-  it("exposes an Anthropic tool schema for forced structured extraction", () => {
-    assert.equal(anthropicTicketExtractionInputSchema.type, "object");
-    assert.equal(anthropicTicketExtractionInputSchema.properties.documentType.type, "string");
-    assert.equal(
-      anthropicTicketExtractionInputSchema.required.includes("pnrOrConfirmation"),
-      true
-    );
-  });
+describe("Booking extraction schema", () => {
 
   it("validates every expected fixture JSON", async () => {
     const manifest = JSON.parse(

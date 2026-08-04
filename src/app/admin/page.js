@@ -83,7 +83,7 @@ export default async function AdminDashboard() {
       <PageHeader
         eyebrow="TripZ operating system"
         title="Dashboard"
-        body="Booking revenue, margin, documents, reminders, and Claude extraction work from one operating surface."
+        body="Booking revenue, margin, documents, and reminders work from one operating surface."
         action={
           <AdminButton href="/admin/intake">
             <UploadCloud size={16} />

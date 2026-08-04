@@ -399,7 +399,7 @@ export default function TicketIntakeClient() {
             <UploadCloud size={38} className="text-accent" />
             <h2 className="mt-4 text-xl font-semibold">Upload ticket files</h2>
             <p className="mt-2 max-w-xl text-sm leading-6 text-ink/60">
-              PDF, PNG, JPG, and WEBP uploads are stored in Supabase, extracted through Claude Haiku, and held for human review before booking creation.
+              PDF, PNG, JPG, and WEBP uploads are stored in Vercel Blob and queued for review. Enter the booking details, then confirm to create the booking.
             </p>
             <label className="mt-5 inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-deep">
               {isUploading ? <Loader2 size={16} className="animate-spin" /> : <UploadCloud size={16} />}

@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
 
-import { extractTicketFromFile } from "@/lib/anthropic/ticket-extraction";
 import { getDb } from "@/lib/db";
+import { buildManualExtraction, isAiExtractionEnabled } from "@/lib/manual-extraction";
 
 export const runtime = "nodejs";
 
@@ -66,7 +66,9 @@ export async function POST(request) {
         insert into ticket_extractions ${tx({
           document_id: document.id,
           status: "extracting",
-          model: process.env.TRIPZ_ANTHROPIC_MODEL || "claude-haiku-4-5-20251001"
+          model: isAiExtractionEnabled()
+            ? process.env.TRIPZ_ANTHROPIC_MODEL || "claude-haiku-4-5-20251001"
+            : "manual"
         })}
         returning id
       `;
@@ -76,7 +78,11 @@ export async function POST(request) {
 
     extractionId = id;
 
-    const result = await extractTicketFromFile({ buffer, mimeType });
+    // Automatic extraction is off: no model is called and no AI SDK is installed.
+    // The file is still stored and queued, and the reviewer types the booking details
+    // in. `buildManualExtraction` returns the same shape a model would have, so the
+    // review form, validation and status derivation are all unchanged.
+    const result = buildManualExtraction();
 
     await sql.begin(async (tx) => {
       await tx`

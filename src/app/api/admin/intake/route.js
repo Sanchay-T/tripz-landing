@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { toNumberOrNull } from "@/lib/admin/records";
-import { ticketExtractionZodSchema } from "@/lib/gemini/ticket-extraction-schema";
+import { ticketExtractionZodSchema } from "@/lib/booking-extraction-schema";
 
 export const runtime = "nodejs";
 

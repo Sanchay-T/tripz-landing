@@ -10,3 +10,4 @@ out/
 .mcp.json
 supabase/.temp/
 exports/
+.env*.local

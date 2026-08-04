@@ -16,8 +16,6 @@
   "license": "UNLICENSED",
   "type": "module",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.96.0",
-    "@google/genai": "^2.2.0",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/postcss": "^4.2.4",
     "@tanstack/react-table": "^8.21.3",

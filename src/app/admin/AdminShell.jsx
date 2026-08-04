@@ -12,7 +12,6 @@ import {
   ReceiptText,
   Search,
   Settings,
-  Sparkles,
   TrendingUp,
   UploadCloud,
   Users,
@@ -90,14 +89,14 @@ export default function AdminShell({ children }) {
         <div className="border-t border-white/10 p-4">
           <div className="rounded-2xl border border-white/10 bg-white/8 p-4">
             <div className="flex items-center gap-2">
-              <Sparkles size={15} className="text-accent-live" />
+              <TrendingUp size={15} className="text-accent-live" />
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/45">
-                Claude
+                Margin
               </p>
             </div>
-            <p className="mt-2 text-sm font-semibold text-white">Haiku 4.5</p>
+            <p className="mt-2 text-sm font-semibold text-white">Where profit comes from</p>
             <p className="mt-1 text-xs leading-5 text-white/55">
-              Structured ticket extraction with human review.
+              Recomputed from selling price minus cost on every booking.
             </p>
           </div>
         </div>
