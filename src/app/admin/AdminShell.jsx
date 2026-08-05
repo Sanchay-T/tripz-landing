@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   BarChart3,
   BookOpen,
+  ChevronsUpDown,
   ClipboardList,
   FileStack,
   LayoutDashboard,
@@ -18,28 +19,69 @@ import {
   Users,
   WalletCards
 } from "lucide-react";
+
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger
+} from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Wordmark } from "../components/ui";
 import { authClient } from "@/lib/auth-client";
-import { cn } from "@/lib/cn";
+
+/**
+ * The admin shell.
+ *
+ * This file used to contain THREE separate navigations: a fixed `<aside>` for xl
+ * and up, a horizontally scrolling 14-item chip strip, and a fixed 5-item bottom
+ * tab bar. The strip and the bar were both `xl:hidden`, so below 1280px they were
+ * on screen simultaneously and the first five destinations appeared twice. Between
+ * 768 and 1279px there was no sidebar at all, meaning an iPad in landscape got
+ * phone chrome. Each of the three had its own copy of the link markup.
+ *
+ * All of that is now one `Sidebar` from the component library, which already
+ * handles the desktop rail and swaps itself for a `Sheet` on mobile via
+ * `useIsMobile`. There is one link implementation, one active state, and no
+ * breakpoint where the navigation is missing or doubled.
+ *
+ * The dark colour comes from the `--sidebar` tokens in globals.css, so the look is
+ * unchanged — it is the markup underneath that stopped being hand-rolled.
+ */
 
 const navItems = [
-  { label: "Dashboard", shortLabel: "Dash", href: "/admin", icon: LayoutDashboard },
-  { label: "Upload", shortLabel: "Upload", href: "/admin/intake", icon: UploadCloud },
-  { label: "Bookings", shortLabel: "Bookings", href: "/admin/bookings", icon: Plane },
-  { label: "Add booking", shortLabel: "Add", href: "/admin/bookings/new", icon: PlusCircle },
-  { label: "Customers", shortLabel: "Customers", href: "/admin/customers", icon: Users },
-  { label: "Tasks", shortLabel: "Tasks", href: "/admin/tasks", icon: ClipboardList },
-  { label: "Documents", shortLabel: "Docs", href: "/admin/documents", icon: FileStack },
-  { label: "Finance", shortLabel: "Finance", href: "/admin/finance", icon: BarChart3 },
-  { label: "Margin", shortLabel: "Margin", href: "/admin/margin", icon: TrendingUp },
-  { label: "Expenses", shortLabel: "Expenses", href: "/admin/expenses", icon: WalletCards },
-  { label: "Templates", shortLabel: "Templates", href: "/admin/templates", icon: BookOpen },
-  { label: "Providers", shortLabel: "Providers", href: "/admin/providers", icon: ReceiptText },
-  { label: "Imports", shortLabel: "Imports", href: "/admin/imports", icon: UploadCloud },
-  { label: "Settings", shortLabel: "Settings", href: "/admin/settings", icon: Settings }
+  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { label: "Upload", href: "/admin/intake", icon: UploadCloud },
+  { label: "Bookings", href: "/admin/bookings", icon: Plane },
+  { label: "Add booking", href: "/admin/bookings/new", icon: PlusCircle },
+  { label: "Customers", href: "/admin/customers", icon: Users },
+  { label: "Tasks", href: "/admin/tasks", icon: ClipboardList },
+  { label: "Documents", href: "/admin/documents", icon: FileStack },
+  { label: "Finance", href: "/admin/finance", icon: BarChart3 },
+  { label: "Margin", href: "/admin/margin", icon: TrendingUp },
+  { label: "Expenses", href: "/admin/expenses", icon: WalletCards },
+  { label: "Templates", href: "/admin/templates", icon: BookOpen },
+  { label: "Providers", href: "/admin/providers", icon: ReceiptText },
+  { label: "Imports", href: "/admin/imports", icon: UploadCloud },
+  { label: "Settings", href: "/admin/settings", icon: Settings }
 ];
-
-const mobilePrimaryItems = navItems.slice(0, 5);
 
 /**
  * Active when this is the closest nav entry to the current path.
@@ -66,156 +108,127 @@ function isActivePath(pathname, href) {
   );
 }
 
-function NavLink({ item, active, compact = false }) {
-  const Icon = item.icon;
+function initialsOf(user) {
+  const source = user?.name || user?.username || user?.email || "";
+  const parts = source.trim().split(/\s+/).filter(Boolean);
 
-  return (
-    <Link
-      href={item.href}
-      className={cn(
-        "flex items-center gap-3 rounded-md text-[13.5px] font-medium transition-colors",
-        compact ? "min-w-max px-3 py-2" : "px-3 py-2.5",
-        active
-          ? "bg-white/10 text-white"
-          : "text-white/55 hover:bg-white/6 hover:text-white"
-      )}
-    >
-      {/* The active item is marked twice: a lifted fill and a live-green icon. A
-          full white block was the old treatment and it punched a hole in the
-          sidebar — the loudest thing on screen was a nav item rather than a
-          figure. */}
-      <Icon size={16} className={active ? "text-brand-live" : undefined} />
-      <span>{compact ? item.shortLabel : item.label}</span>
-    </Link>
-  );
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
 export default function AdminShell({ children, user }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  // No login special-case any more. Sign-in used to live at /admin/login, inside
-  // this shell, so the shell had to detect that path and bail out or it would have
-  // shown an unauthenticated visitor a sidebar full of gated dead ends. The page
-  // moved to /login, outside /admin entirely, and the branch went with it.
-
   async function handleSignOut() {
-    // Revokes the session row server-side, not just the cookie. The scheme this
-    // replaced was stateless, so signing out could only expire the browser's copy —
-    // a leaked token stayed valid for its full seven days with no way to kill it.
+    // Revokes the session row server-side, not just the cookie.
     await authClient.signOut();
     router.replace("/login");
     router.refresh();
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-base text-ink">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 bg-ink text-white xl:flex xl:flex-col">
-        <div className="flex h-16 items-center px-5">
-          <Link href="/admin" aria-label="TripZ Admin home">
-            <Wordmark onDark />
-          </Link>
-        </div>
-        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-3">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.href}
-              item={item}
-              active={isActivePath(pathname, item.href)}
-            />
-          ))}
-        </nav>
-        <div className="p-3">
-          {/* Who is signed in. With one shared password there was nothing to show;
-              now that sessions belong to a person, not knowing which account you are
-              in is a real way to attribute work to the wrong person. */}
-          {user && (
-            <div className="mb-1 px-3 py-2">
-              <p className="truncate text-[13px] font-medium text-white/80">
-                {user.name || user.displayUsername || user.username}
-              </p>
-              <p className="truncate font-mono text-[10px] uppercase tracking-[0.12em] text-white/35">
-                {user.username ?? user.email}
-              </p>
-            </div>
-          )}
-          <button
-            className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-[13.5px] font-medium text-white/55 transition-colors hover:bg-white/6 hover:text-white"
-            onClick={handleSignOut}
-            type="button"
-          >
-            <LogOut size={16} />
-            Sign out
-          </button>
-        </div>
-      </aside>
-
-      <div className="min-w-0 xl:pl-72">
-        {/* Below xl only. On a wide screen the sidebar already carries the wordmark
-            and an "Add booking" nav entry, which left this bar holding nothing but a
-            duplicate of that button — 64px of empty chrome above every page, pushing
-            the figures down for no reason. Pages put their primary action in
-            PageHeader instead, where it sits beside the title it belongs to.
-            Tinted glass rather than a white bar, so on the sizes that do show it the
-            page reads through and only the hairline marks the edge. */}
-        <header className="sticky top-0 z-20 border-b border-ink/8 bg-base/80 backdrop-blur-md xl:hidden">
-          {/* Wordmark only. The "Add booking" button that used to sit here now lives
-              in PageHeader, and keeping both meant it rendered twice on tablet. */}
-          <div className="flex h-16 items-center gap-3 px-4 sm:px-5 lg:px-6">
-            <Link href="/admin" className="shrink-0" aria-label="TripZ Admin home">
-              <Wordmark size="text-xl" />
+    // TooltipProvider is required, not optional. SidebarMenuButton renders a
+    // Tooltip whenever it is given a `tooltip` prop, and this version of
+    // SidebarProvider does not include the provider itself, so the whole admin
+    // threw "`Tooltip` must be used within `TooltipProvider`" at runtime. The build
+    // does not catch that — it is a render-time error, not a type error.
+    <TooltipProvider delayDuration={300}>
+      <SidebarProvider>
+        <Sidebar collapsible="offcanvas">
+          <SidebarHeader>
+            <Link href="/admin" aria-label="TripZ Admin home" className="px-2 py-1.5">
+              <Wordmark onDark />
             </Link>
-          </div>
+          </SidebarHeader>
 
-          <nav className="scrollbar-none flex max-w-full gap-1.5 overflow-x-auto border-t border-ink/8 px-4 py-2.5 xl:hidden">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActivePath(pathname, item.href);
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {navItems.map((item) => {
+                    const active = isActivePath(pathname, item.href);
+                    return (
+                      <SidebarMenuItem key={item.href}>
+                        <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
+                          <Link href={item.href}>
+                            <item.icon />
+                            <span>{item.label}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
 
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "inline-flex min-h-9 shrink-0 items-center gap-2 rounded-md px-3 text-[12px] font-medium transition-colors",
-                    active
-                      ? "bg-ink text-white"
-                      : "bg-paper text-ink/60 shadow-card hover:text-ink"
-                  )}
-                >
-                  <Icon size={15} />
-                  {item.shortLabel}
-                </Link>
-              );
-            })}
-          </nav>
-        </header>
+          <SidebarFooter>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <SidebarMenuButton size="lg">
+                      <Avatar className="size-8 rounded-md">
+                        <AvatarFallback className="rounded-md text-xs">
+                          {initialsOf(user)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="grid flex-1 text-left leading-tight">
+                        <span className="truncate font-medium">
+                          {user?.name || user?.username}
+                        </span>
+                        <span className="truncate text-xs opacity-60">
+                          {user?.username ?? user?.email}
+                        </span>
+                      </div>
+                      <ChevronsUpDown className="ml-auto size-4" />
+                    </SidebarMenuButton>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" side="top" className="w-56">
+                    <DropdownMenuLabel className="font-normal">
+                      <span className="block truncate text-sm font-medium">
+                        {user?.name || user?.username}
+                      </span>
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {user?.email}
+                      </span>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin/settings">
+                        <Settings />
+                        Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={handleSignOut}>
+                      <LogOut />
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarFooter>
+        </Sidebar>
 
-        <main className="min-w-0 pb-24 xl:pb-0">{children}</main>
+        <SidebarInset className="bg-base">
+          {/* The only chrome above the page. On desktop the trigger collapses the
+              rail; on mobile it opens the sheet. `overflow-x-hidden` used to sit on
+              the root here, which clipped any overflow rather than preventing it and
+              hid every responsive bug underneath it. */}
+          <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-ink/8 bg-base/80 px-4 backdrop-blur-md">
+            <SidebarTrigger className="-ml-1" />
+            <Link href="/admin" className="md:hidden" aria-label="TripZ Admin home">
+              <Wordmark size="text-lg" />
+            </Link>
+          </header>
 
-        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-ink/8 bg-paper/90 px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 backdrop-blur-md sm:px-4 xl:hidden">
-          <div className="mx-auto grid max-w-xl grid-cols-5 gap-1">
-            {mobilePrimaryItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActivePath(pathname, item.href);
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex min-h-12 flex-col items-center justify-center gap-1 rounded-md text-[10px] font-medium transition-colors",
-                    active ? "bg-ink text-white" : "text-ink/55 hover:bg-ink/5 hover:text-ink"
-                  )}
-                >
-                  <Icon size={16} />
-                  {item.shortLabel}
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
-      </div>
-    </div>
+          <main className="min-w-0 flex-1">{children}</main>
+        </SidebarInset>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 }

@@ -97,7 +97,7 @@ export function AdminBadge({ children, tone = "default" }) {
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.1em]",
+        "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-mono text-xs uppercase tracking-widest",
         text
       )}
     >
@@ -120,14 +120,14 @@ export function AdminBadge({ children, tone = "default" }) {
 export function AdminTable({ columns, rows }) {
   return (
     <div className="w-full overflow-x-auto">
-      <table className="w-full min-w-[680px] border-collapse text-left text-[13px]">
+      <table className="w-full min-w-170 border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-ink/10">
             {columns.map((column) => (
               <th
                 key={column.key}
                 className={cn(
-                  "px-4 py-3 font-mono text-[10px] font-normal uppercase tracking-[0.14em] text-ink/45",
+                  "px-4 py-3 font-mono text-xs font-normal uppercase tracking-widest text-ink/45",
                   column.numeric && "text-right"
                 )}
                 scope="col"
@@ -151,7 +151,7 @@ export function AdminTable({ columns, rows }) {
           {rows.map((row) => (
             <tr
               key={row.id ?? row.booking ?? row.file ?? row.task}
-              className="border-b border-ink/6 transition-colors last:border-0 hover:bg-ink/[0.025]"
+              className="border-b border-ink/6 transition-colors last:border-0 hover:bg-ink/5"
             >
               {columns.map((column) => (
                 <td
@@ -197,13 +197,13 @@ export function PageHeader({ title, body, action }) {
           magazine furniture: it spent the first line of every page on something
           nobody needs told twice, and delayed the title. */}
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-        <h1 className="min-w-0 text-balance font-sans text-[clamp(1.375rem,2vw,1.625rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-ink">
+        <h1 className="min-w-0 text-balance font-sans text-xl font-semibold leading-tight tracking-tight text-ink">
           {title}
         </h1>
         {action && <div className="shrink-0">{action}</div>}
       </div>
       {body && (
-        <p className="mt-2.5 max-w-2xl text-[14px] leading-[1.65] text-ink/55">{body}</p>
+        <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-ink/55">{body}</p>
       )}
     </div>
   );
@@ -219,18 +219,18 @@ export function PageHeader({ title, body, action }) {
 export function Figure({ label, value, detail, accent = false, className }) {
   return (
     <div className={cn("min-w-0", className)}>
-      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
+      <p className="font-mono text-xs uppercase tracking-widest text-ink/45">
         {label}
       </p>
       <p
         className={cn(
-          "mt-2.5 font-mono text-[clamp(1.5rem,2.4vw,2rem)] font-medium leading-none tabular-nums tracking-[-0.02em]",
+          "mt-2.5 font-mono text-2xl sm:text-3xl font-medium leading-none tabular-nums tracking-tight",
           accent ? "text-brand-vivid" : "text-ink"
         )}
       >
         {value}
       </p>
-      {detail && <p className="mt-2.5 text-[12.5px] leading-5 text-ink/50">{detail}</p>}
+      {detail && <p className="mt-2.5 text-xs leading-5 text-ink/50">{detail}</p>}
     </div>
   );
 }
@@ -278,11 +278,11 @@ export function Panel({ title, meta, action, children, className }) {
         <div className="flex flex-wrap items-start justify-between gap-3 px-6 pb-5 pt-6">
           <div className="min-w-0">
             {title && (
-              <h2 className="text-[15px] font-semibold leading-tight tracking-[-0.01em] text-ink">
+              <h2 className="text-base font-semibold leading-tight tracking-tight text-ink">
                 {title}
               </h2>
             )}
-            {meta && <p className="mt-1.5 text-[12.5px] leading-5 text-ink/50">{meta}</p>}
+            {meta && <p className="mt-1.5 text-xs leading-5 text-ink/50">{meta}</p>}
           </div>
           {action}
         </div>
@@ -310,7 +310,7 @@ export function Notice({ tone = "default", title, children }) {
   return (
     <div className={cn("rounded-lg px-5 py-4", surface)}>
       {title && (
-        <p className="flex items-center gap-2 text-[13.5px] font-semibold text-ink">
+        <p className="flex items-center gap-2 text-sm font-semibold text-ink">
           <span
             className={cn(
               "size-1.5 shrink-0 rounded-full",
@@ -320,7 +320,7 @@ export function Notice({ tone = "default", title, children }) {
           {title}
         </p>
       )}
-      <div className={cn("text-[13px] leading-[1.65] text-ink/65", title && "mt-2")}>
+      <div className={cn("text-sm leading-relaxed text-ink/65", title && "mt-2")}>
         {children}
       </div>
     </div>

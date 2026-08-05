@@ -62,7 +62,7 @@ export function ShareBar({ segments, className }) {
       {/* Direct labels, always. Identity is never carried by colour alone. */}
       <ul className="mt-2.5 flex flex-wrap gap-x-5 gap-y-1">
         {shown.map((segment) => (
-          <li key={segment.label} className="flex items-center gap-1.5 text-[12px] text-ink/60">
+          <li key={segment.label} className="flex items-center gap-1.5 text-xs text-ink/60">
             <span
               className="inline-block size-2 shrink-0"
               style={{ backgroundColor: segment.color }}
@@ -93,7 +93,7 @@ export function RevenueVersusProfit({ types, formatCurrency }) {
   return (
     <div className="space-y-6">
       <div>
-        <p className="mb-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
+        <p className="mb-2.5 font-mono text-xs uppercase tracking-widest text-ink/45">
           Share of revenue
         </p>
         <ShareBar
@@ -105,7 +105,7 @@ export function RevenueVersusProfit({ types, formatCurrency }) {
         />
       </div>
       <div>
-        <p className="mb-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
+        <p className="mb-2.5 font-mono text-xs uppercase tracking-widest text-ink/45">
           Share of profit
         </p>
         {withMargin.length > 0 ? (
@@ -122,7 +122,7 @@ export function RevenueVersusProfit({ types, formatCurrency }) {
       </div>
 
       {top && totalMargin > 0 && totalGross > 0 && (
-        <p className="border-t border-ink/8 pt-5 text-[13.5px] leading-[1.65] text-ink/75">
+        <p className="border-t border-ink/8 pt-5 text-sm leading-relaxed text-ink/75">
           <strong className="font-semibold text-ink">{top.label}</strong> are{" "}
           {Math.round((top.gross / totalGross) * 100)}% of revenue but{" "}
           {Math.round((top.margin / totalMargin) * 100)}% of profit —{" "}
@@ -148,14 +148,14 @@ export function TakeRateBars({ types, formatCurrency, formatPct }) {
       {shown.map((type) => (
         <li key={type.type}>
           <div className="flex items-baseline justify-between gap-3">
-            <span className="flex items-center gap-2 text-[13.5px] text-ink/75">
+            <span className="flex items-center gap-2 text-sm text-ink/75">
               <span
                 className="inline-block size-2 shrink-0"
                 style={{ backgroundColor: colorForType(type.type) }}
               />
               {type.label}
             </span>
-            <span className="font-mono text-[13.5px] tabular-nums text-ink">
+            <span className="font-mono text-sm tabular-nums text-ink">
               {formatPct(type.takePct, 2)}
             </span>
           </div>
@@ -172,7 +172,7 @@ export function TakeRateBars({ types, formatCurrency, formatPct }) {
               }}
             />
           </div>
-          <p className={cn("mt-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-ink/40")}>
+          <p className={cn("mt-1.5 font-mono text-xs uppercase tracking-widest text-ink/40")}>
             {formatCurrency(type.margin)} on {formatCurrency(type.gross)} · {type.count} booking
             {type.count === 1 ? "" : "s"}
           </p>

@@ -232,7 +232,7 @@ export default async function AdminDashboard() {
 
         <SectionCards cards={cards} />
 
-        <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+        <div className="grid items-start gap-5 xl:grid-cols-2">
           <Panel
             title="Where the revenue comes from, and where the profit does"
             meta="Same colours, two bars. A line that is wide on top and narrow below is turning revenue into no profit."
@@ -247,7 +247,7 @@ export default async function AdminDashboard() {
                   key={row.label}
                   className="flex items-baseline justify-between gap-4 py-2.5 first:pt-0"
                 >
-                  <dt className="flex items-center gap-2 text-[13px] text-ink/75">
+                  <dt className="flex items-center gap-2 text-sm text-ink/75">
                     <span
                       className="inline-block size-2 shrink-0"
                       style={{ backgroundColor: colorForType(row.type) }}
@@ -255,42 +255,42 @@ export default async function AdminDashboard() {
                     {row.label}
                   </dt>
                   <dd className="flex shrink-0 items-baseline gap-4">
-                    <span className="font-mono text-[11px] tabular-nums text-ink/40">
+                    <span className="font-mono text-xs tabular-nums text-ink/40">
                       {row.cut.count}
                     </span>
-                    <span className="min-w-[6.5rem] text-right font-mono text-[14px] tabular-nums text-ink">
+                    <span className="min-w-26 text-right font-mono text-sm tabular-nums text-ink">
                       {formatCurrency(row.cut.value)}
                     </span>
                   </dd>
                 </div>
               ))}
               <div className="flex items-baseline justify-between gap-4 py-2.5">
-                <dt className="text-[13px] font-semibold text-ink">Total booking value</dt>
-                <dd className="font-mono text-[15px] font-medium tabular-nums text-ink">
+                <dt className="text-sm font-semibold text-ink">Total booking value</dt>
+                <dd className="font-mono text-base font-medium tabular-nums text-ink">
                   {formatCurrency(asked.totalBookingValue)}
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-4 py-2.5">
-                <dt className="text-[13px] font-semibold text-ink">Total margin earned</dt>
-                <dd className="font-mono text-[15px] font-medium tabular-nums text-ink">
+                <dt className="text-sm font-semibold text-ink">Total margin earned</dt>
+                <dd className="font-mono text-base font-medium tabular-nums text-ink">
                   {formatCurrency(asked.totalMarginEarned)}
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-4 pt-2.5">
-                <dt className="flex items-center gap-2 text-[13px] text-ink/75">
+                <dt className="flex items-center gap-2 text-sm text-ink/75">
                   <span
                     className="inline-block size-2 shrink-0"
                     style={{ backgroundColor: colorForType("package") }}
                   />
                   Package vendor booking value
                 </dt>
-                <dd className="font-mono text-[14px] tabular-nums text-ink">
+                <dd className="font-mono text-sm tabular-nums text-ink">
                   {formatCurrency(asked.packageVendorValue)}
                 </dd>
               </div>
             </dl>
             {internal.length > 0 && (
-              <p className="mt-4 border-t border-ink/8 pt-3 text-[11.5px] leading-5 text-ink/50">
+              <p className="mt-4 border-t border-ink/8 pt-3 text-xs leading-5 text-ink/50">
                 Excludes {internal.length} internal booking{internal.length === 1 ? "" : "s"} worth{" "}
                 {formatCurrency(
                   internal.reduce((sum, row) => sum + Number(row.selling_price ?? 0), 0)
@@ -323,7 +323,7 @@ export default async function AdminDashboard() {
                   {zero.rows.map((row, index) => (
                     <li
                       key={row.id ?? index}
-                      className="flex items-center justify-between gap-3 text-[13px]"
+                      className="flex items-center justify-between gap-3 text-sm"
                     >
                       <span className="flex min-w-0 items-center gap-2">
                         <span
@@ -361,11 +361,11 @@ export default async function AdminDashboard() {
                     key={task.id}
                     className="flex items-baseline justify-between gap-3 py-2.5 first:pt-0"
                   >
-                    <span className="min-w-0 truncate text-[13px] text-ink/75">
+                    <span className="min-w-0 truncate text-sm text-ink/75">
                       {task.task_type}
                       <span className="text-ink/40"> · {task.customers?.name ?? "Unknown"}</span>
                     </span>
-                    <span className="shrink-0 font-mono text-[11px] tabular-nums text-ink/45">
+                    <span className="shrink-0 font-mono text-xs tabular-nums text-ink/45">
                       {formatDate(task.due_at)}
                     </span>
                   </li>
@@ -386,8 +386,8 @@ export default async function AdminDashboard() {
                   key={label}
                   className="flex items-baseline justify-between gap-3 py-2.5 first:pt-0"
                 >
-                  <dt className="text-[13px] text-ink/60">{label}</dt>
-                  <dd className="font-mono text-[13.5px] tabular-nums text-ink">{value}</dd>
+                  <dt className="text-sm text-ink/60">{label}</dt>
+                  <dd className="font-mono text-sm tabular-nums text-ink">{value}</dd>
                 </div>
               ))}
             </dl>

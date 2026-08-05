@@ -97,7 +97,7 @@ export function BookingsTable({ rows }) {
         cell: ({ row }) => (
           <span className="inline-flex items-center gap-2 capitalize">
             <span
-              className="inline-block size-2 shrink-0 rounded-[2px]"
+              className="inline-block size-2 shrink-0 rounded-xs"
               style={{ backgroundColor: row.original.color }}
             />
             {row.original.type}
@@ -112,7 +112,7 @@ export function BookingsTable({ rows }) {
         accessorKey: "customer",
         header: "Customer",
         cell: ({ row }) => (
-          <div className="max-w-[180px] truncate" title={row.original.customer}>
+          <div className="max-w-44 truncate" title={row.original.customer}>
             {row.original.customer}
           </div>
         )
@@ -121,7 +121,7 @@ export function BookingsTable({ rows }) {
         accessorKey: "route",
         header: "Route / Stay",
         cell: ({ row }) => (
-          <div className="max-w-[220px] truncate" title={row.original.route}>
+          <div className="max-w-56 truncate" title={row.original.route}>
             {row.original.route}
           </div>
         )

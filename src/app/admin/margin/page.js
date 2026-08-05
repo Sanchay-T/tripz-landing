@@ -102,7 +102,7 @@ function ShareBar({ segments }) {
         {shown.map((segment) => (
           <li key={segment.label} className="flex items-center gap-1.5 text-xs text-ink/60">
             <span
-              className="inline-block size-2 shrink-0 rounded-[2px]"
+              className="inline-block size-2 shrink-0 rounded-xs"
               style={{ backgroundColor: segment.color }}
             />
             <span>{segment.label}</span>
@@ -123,7 +123,7 @@ const bookingColumns = [
     render: (row) => (
       <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
         <span
-          className="inline-block size-2 shrink-0 rounded-[2px]"
+          className="inline-block size-2 shrink-0 rounded-xs"
           style={{ backgroundColor: row.color }}
         />
         {row.type}
@@ -241,7 +241,7 @@ export default async function MarginPage() {
               >
                 <span className="flex items-center gap-2 text-sm text-ink/75">
                   <span
-                    className="inline-block size-2 shrink-0 rounded-[2px]"
+                    className="inline-block size-2 shrink-0 rounded-xs"
                     style={{ backgroundColor: colorForType(row.type) }}
                   />
                   {row.label}
@@ -250,7 +250,7 @@ export default async function MarginPage() {
                   <span className="text-sm tabular-nums text-ink/50">
                     {row.cut.count} booking{row.cut.count === 1 ? "" : "s"}
                   </span>
-                  <span className="min-w-[7.5rem] text-right text-lg font-bold tabular-nums text-ink">
+                  <span className="min-w-30 text-right text-lg font-bold tabular-nums text-ink">
                     {formatCurrency(row.cut.value)}
                   </span>
                 </span>
@@ -272,7 +272,7 @@ export default async function MarginPage() {
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-4 py-3 sm:px-5">
               <span className="flex items-center gap-2 text-sm text-ink/75">
                 <span
-                  className="inline-block size-2 shrink-0 rounded-[2px]"
+                  className="inline-block size-2 shrink-0 rounded-xs"
                   style={{ backgroundColor: colorForType("package") }}
                 />
                 Package vendor booking value
@@ -282,7 +282,7 @@ export default async function MarginPage() {
                   {asked.packageVendorCount} booking
                   {asked.packageVendorCount === 1 ? "" : "s"}
                 </span>
-                <span className="min-w-[7.5rem] text-right text-lg font-bold tabular-nums text-ink">
+                <span className="min-w-30 text-right text-lg font-bold tabular-nums text-ink">
                   {formatCurrency(asked.packageVendorValue)}
                 </span>
               </span>
@@ -300,7 +300,7 @@ export default async function MarginPage() {
           )}
 
           {asked.unclassified > 0 && (
-            <p className="border-t border-ink/8 px-4 py-3 text-[12px] leading-5 text-warn sm:px-5">
+            <p className="border-t border-ink/8 px-4 py-3 text-xs leading-5 text-warn sm:px-5">
               {asked.unclassified} booking{asked.unclassified === 1 ? " has" : "s have"} no
               market recorded, so {asked.unclassified === 1 ? "it is" : "they are"} counted
               in the totals but in neither the domestic nor the international line. The
@@ -336,7 +336,7 @@ export default async function MarginPage() {
 
           <div className="mt-5 space-y-5">
             <div>
-              <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/45">
+              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-ink/45">
                 Share of revenue
               </p>
               <ShareBar
@@ -348,7 +348,7 @@ export default async function MarginPage() {
               />
             </div>
             <div>
-              <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-ink/45">
+              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-ink/45">
                 Share of profit
               </p>
               <ShareBar
@@ -429,7 +429,7 @@ export default async function MarginPage() {
 
             {zero.count > 0 ? (
               <>
-                <p className="mt-4 font-mono text-[clamp(1.75rem,3vw,2.4rem)] font-medium leading-none tabular-nums text-critical">
+                <p className="mt-4 font-mono text-2xl sm:text-3xl font-medium leading-none tabular-nums text-critical">
                   {formatPct(zero.shareOfGrossPct, 0)}
                 </p>
                 <p className="mt-1 text-sm text-ink/60">
@@ -445,7 +445,7 @@ export default async function MarginPage() {
                     >
                       <span className="flex min-w-0 items-center gap-1.5">
                         <span
-                          className="inline-block size-2 shrink-0 rounded-[2px]"
+                          className="inline-block size-2 shrink-0 rounded-xs"
                           style={{ backgroundColor: colorForType(row.booking_type) }}
                         />
                         <span className="truncate text-ink/75">
@@ -485,7 +485,7 @@ export default async function MarginPage() {
                     {customer.types.map((type) => (
                       <span
                         key={type}
-                        className="inline-block size-2 shrink-0 rounded-[2px]"
+                        className="inline-block size-2 shrink-0 rounded-xs"
                         style={{ backgroundColor: colorForType(type) }}
                       />
                     ))}

@@ -45,7 +45,7 @@ export default async function TasksPage() {
               {/* Recessed, not raised. These sit inside an AdminCard, and a second
                   elevated surface on top of the first reads as a card in a card. */}
               {tasks.map((task) => (
-                <div key={task.id} className="rounded-md bg-ink/[0.035] p-3.5">
+                <div key={task.id} className="rounded-md bg-ink/5 p-3.5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-medium">{task.task_type}</p>

@@ -31,12 +31,12 @@ export function SectionCards({ cards }) {
       {cards.map((card) => (
         <Card className="@container/card" key={card.label}>
           <CardHeader>
-            <CardDescription className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
+            <CardDescription className="font-mono text-xs uppercase tracking-widest text-ink/45">
               {card.label}
             </CardDescription>
             <CardTitle
               className={cn(
-                "font-mono text-[clamp(1.5rem,2.2vw,1.875rem)] font-medium leading-none tracking-[-0.02em] tabular-nums",
+                "font-mono text-2xl sm:text-3xl font-medium leading-none tracking-tight tabular-nums",
                 card.tone === "critical" && "text-critical",
                 card.tone === "accent" && "text-brand-vivid",
                 !card.tone && "text-ink"
@@ -46,7 +46,7 @@ export function SectionCards({ cards }) {
             </CardTitle>
             {card.delta && (
               <CardAction>
-                <Badge variant="outline" className="gap-1 font-mono text-[11px]">
+                <Badge variant="outline" className="gap-1 font-mono text-xs">
                   {card.delta.direction === "up" ? (
                     <TrendingUpIcon className="size-3" />
                   ) : (
@@ -58,7 +58,7 @@ export function SectionCards({ cards }) {
             )}
           </CardHeader>
           <CardFooter>
-            <p className="text-[12.5px] leading-[1.5] text-ink/50">
+            <p className="text-xs leading-normal text-ink/50">
               {card.detail}
               {card.delta?.caption && (
                 <span className="text-ink/35"> · {card.delta.caption}</span>

@@ -393,9 +393,9 @@ export default function TicketIntakeClient() {
         </div>
       )}
 
-      <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_19rem] xl:grid-cols-[minmax(0,1fr)_20rem]">
+      <section className="grid gap-4 lg:grid-cols-3">
         <AdminCard className="p-3 sm:p-5">
-          <div className="flex min-h-48 flex-col items-center justify-center rounded-lg border border-dashed border-ink/15 bg-ink/[0.02] p-4 text-center sm:min-h-56 sm:p-6">
+          <div className="flex min-h-48 flex-col items-center justify-center rounded-lg border border-dashed border-ink/15 bg-ink/5 p-4 text-center sm:min-h-56 sm:p-6">
             <UploadCloud size={38} className="text-brand" />
             <h2 className="mt-4 text-xl font-semibold">Upload ticket files</h2>
             <p className="mt-2 max-w-xl text-sm leading-6 text-ink/60">
@@ -415,7 +415,7 @@ export default function TicketIntakeClient() {
           </div>
         </AdminCard>
         <AdminCard className="p-4 sm:p-5">
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink/45">
+          <p className="font-mono text-xs uppercase tracking-widest text-ink/45">
             Batch status
           </p>
           <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
@@ -434,7 +434,7 @@ export default function TicketIntakeClient() {
         </AdminCard>
       </section>
 
-      <section className="grid gap-4 2xl:grid-cols-[minmax(0,0.9fr)_minmax(24rem,1.1fr)]">
+      <section className="grid gap-4 2xl:grid-cols-2">
         <AdminCard>
           <div className="border-b border-ink/10 p-4 sm:p-5">
             <h2 className="text-lg font-semibold">Upload queue</h2>

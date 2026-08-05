@@ -31,7 +31,7 @@ export default async function FinancePage() {
         {financeRows.map(([label, value]) => (
           <AdminCard key={label} className="p-5">
             <p className="text-sm text-ink/55">{label}</p>
-            <p className="mt-2 text-3xl font-bold tracking-[-0.04em]">{value}</p>
+            <p className="mt-2 text-3xl font-bold tracking-tighter">{value}</p>
           </AdminCard>
         ))}
       </div>

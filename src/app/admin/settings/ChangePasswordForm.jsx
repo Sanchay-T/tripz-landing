@@ -30,9 +30,9 @@ export default function ChangePasswordForm() {
   const [submitting, setSubmitting] = useState(false);
 
   const inputClass =
-    "w-full rounded-md border border-ink/12 bg-paper px-3.5 py-2.5 text-[14px] text-ink outline-none transition focus:border-brand-vivid focus:ring-2 focus:ring-brand-vivid/20";
+    "w-full rounded-md border border-ink/12 bg-paper px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-brand-vivid focus:ring-2 focus:ring-brand-vivid/20";
   const labelClass =
-    "mb-2 block font-mono text-[10px] uppercase tracking-[0.14em] text-ink/50";
+    "mb-2 block font-mono text-xs uppercase tracking-widest text-ink/50";
 
   async function submit(event) {
     event.preventDefault();

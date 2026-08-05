@@ -118,10 +118,10 @@ export function ChartAreaInteractive({ data = [] }) {
             is which. That is also why margin is drawn in `--chart-3` here rather than
             the UI accent — a headline figure in a different green from its own line
             is worse than no colour at all. */}
-        <CardDescription className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
+        <CardDescription className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-ink/45">
           <span
             aria-hidden
-            className="inline-block size-2 shrink-0 rounded-[2px]"
+            className="inline-block size-2 shrink-0 rounded-xs"
             style={{ backgroundColor: "var(--chart-1)" }}
           />
           Revenue
@@ -132,14 +132,14 @@ export function ChartAreaInteractive({ data = [] }) {
             · {RANGES[range].label.toLowerCase()}
           </span>
         </CardDescription>
-        <CardTitle className="font-mono text-[clamp(2rem,4.5vw,2.75rem)] font-medium leading-none tracking-[-0.03em] tabular-nums text-ink">
+        <CardTitle className="font-mono text-3xl sm:text-4xl font-medium leading-none tracking-tighter tabular-nums text-ink">
           {inrFull(total.revenue)}
         </CardTitle>
         <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2">
-          <span className="flex items-center gap-2 text-[13px] text-ink/55">
+          <span className="flex items-center gap-2 text-sm text-ink/55">
             <span
               aria-hidden
-              className="inline-block size-2 shrink-0 rounded-[2px]"
+              className="inline-block size-2 shrink-0 rounded-xs"
               style={{ backgroundColor: "var(--chart-3)" }}
             />
             <span className="font-mono tabular-nums" style={{ color: "var(--chart-3)" }}>
@@ -148,7 +148,7 @@ export function ChartAreaInteractive({ data = [] }) {
             margin
           </span>
           {takePct !== null && (
-            <span className="text-[13px] text-ink/55">
+            <span className="text-sm text-ink/55">
               <span className="font-mono tabular-nums text-ink">
                 {takePct.toFixed(2)}%
               </span>{" "}
@@ -194,7 +194,7 @@ export function ChartAreaInteractive({ data = [] }) {
             No bookings in this range.
           </p>
         ) : (
-          <ChartContainer config={chartConfig} className="aspect-auto h-[260px] w-full">
+          <ChartContainer config={chartConfig} className="aspect-auto h-64 w-full">
             <AreaChart data={filtered}>
               <defs>
                 <linearGradient id="fillRevenue" x1="0" y1="0" x2="0" y2="1">
