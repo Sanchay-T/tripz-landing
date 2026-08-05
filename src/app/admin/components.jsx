@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { cva } from "class-variance-authority";
 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
 import { cn } from "@/lib/cn";
 
 /**
@@ -119,60 +127,61 @@ export function AdminBadge({ children, tone = "default" }) {
  * hairline is actually for. What went away is the outline around the whole thing,
  * because the card underneath already establishes the edge.
  *
+ * Built on the library `Table` rather than raw `<table>` markup. That wrapper
+ * already provides the `overflow-x-auto` scroll container, which is why this
+ * returns a fragment — a second wrapper would nest two scroll containers.
+ *
  * Pass `numeric: true` on a column to right-align it.
  */
 export function AdminTable({ columns, rows }) {
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="w-full border-collapse text-left text-sm">
-        <thead>
-          <tr className="border-b border-ink/10">
+    <>
+      <Table>
+        <TableHeader>
+          <TableRow>
             {columns.map((column) => (
-              <th
+              <TableHead
                 key={column.key}
                 className={cn(
-                  "px-4 py-3 font-mono text-xs font-normal uppercase tracking-widest text-ink/45",
+                  "font-mono text-xs font-normal uppercase tracking-widest text-ink/45",
                   column.numeric && "text-right"
                 )}
                 scope="col"
               >
                 {column.label}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {rows.length === 0 && (
-            <tr>
-              <td
-                className="px-4 py-12 text-center text-sm text-ink/45"
+            <TableRow>
+              <TableCell
+                className="h-24 text-center text-ink/45"
                 colSpan={columns.length}
               >
                 No records yet.
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           )}
           {rows.map((row) => (
-            <tr
-              key={row.id ?? row.booking ?? row.file ?? row.task}
-              className="border-b border-ink/6 transition-colors last:border-0 hover:bg-ink/5"
-            >
+            <TableRow key={row.id ?? row.booking ?? row.file ?? row.task}>
               {columns.map((column) => (
-                <td
+                <TableCell
                   key={column.key}
                   className={cn(
-                    "px-4 py-3.5 text-ink/80",
+                    "text-ink/80",
                     column.numeric && "text-right font-mono tabular-nums text-ink"
                   )}
                 >
                   {column.render ? column.render(row) : row[column.key]}
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </>
   );
 }
 
