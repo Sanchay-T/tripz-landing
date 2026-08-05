@@ -12,6 +12,7 @@ import {
 import { RevenueVersusProfit, TakeRateBars, colorForType } from "./charts";
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { SectionCards } from "@/components/section-cards";
+import { BookingsTable } from "@/components/bookings-table";
 import { fetchAdminDashboardData } from "@/lib/admin/records";
 import {
   byType,
@@ -107,25 +108,23 @@ export default async function AdminDashboard() {
     { label: "Domestic hotel booking", cut: asked.domesticHotel, type: "hotel" }
   ];
 
-  const recent = [...rows]
-    .sort((a, b) => String(b.travel_date ?? "").localeCompare(String(a.travel_date ?? "")))
-    .slice(0, 8)
-    .map((row) => {
+  const tableRows = rows.map((row) => {
       const gross = Number(row.selling_price ?? 0);
       const margin = Number(row.margin ?? 0);
-      return {
-        id: row.id,
-        color: colorForType(row.booking_type),
-        type: row.booking_type ?? "other",
-        customer: row.customers?.name ?? "Unknown",
-        route: [row.departure, row.arrival].filter(Boolean).join(" → ") || "Not set",
-        date: formatDate(row.travel_date),
-        price: formatCurrency(gross),
-        margin: formatCurrency(margin),
-        take: formatPct(gross > 0 ? (margin / gross) * 100 : null, 2),
-        isZero: gross > 0 && margin === 0
-      };
-    });
+    return {
+      id: row.id,
+      bookingCode: row.booking_code ?? "—",
+      color: colorForType(row.booking_type),
+      type: row.booking_type ?? "other",
+      customer: row.customers?.name ?? "Unknown",
+      route: [row.departure, row.arrival].filter(Boolean).join(" → ") || "Not set",
+      travelDate: row.travel_date ? String(row.travel_date).slice(0, 10) : "",
+      gross,
+      margin,
+      takePct: gross > 0 ? (margin / gross) * 100 : null,
+      status: row.booking_status ?? "—"
+    };
+  });
 
   // Running totals by travel date. Eleven bookings plotted per-day would be mostly
   // zeroes with a few spikes; cumulative shows the shape of the business.
@@ -138,28 +137,80 @@ export default async function AdminDashboard() {
     current.margin += Number(row.margin ?? 0);
     byDate.set(key, current);
   }
-  const series = [...byDate.entries()]
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .reduce((points, [date, value]) => {
-      const previous = points[points.length - 1] ?? { revenue: 0, margin: 0 };
-      points.push({
-        date,
-        revenue: previous.revenue + value.revenue,
-        margin: previous.margin + value.margin
-      });
-      return points;
-    }, []);
+  // A point per DAY across the whole window, not just the days that had a booking.
+  // Eight scattered points draw a line with visible corners and read as missing data;
+  // carrying the running total forward gives a continuous curve. Still honest —
+  // cumulative revenue on a day with no booking really is the previous day's figure.
+  const dayKeys = [...byDate.keys()].sort();
+  const series = [];
+  if (dayKeys.length > 0) {
+    const cursor = new Date(`${dayKeys[0]}T00:00:00Z`);
+    const last = new Date(`${dayKeys[dayKeys.length - 1]}T00:00:00Z`);
+    let revenue = 0;
+    let margin = 0;
+    while (cursor <= last) {
+      const key = cursor.toISOString().slice(0, 10);
+      const value = byDate.get(key);
+      if (value) {
+        revenue += value.revenue;
+        margin += value.margin;
+      }
+      series.push({ date: key, revenue, margin });
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
+    }
+  }
 
   const topByMargin = [...types].sort((a, b) => b.margin - a.margin)[0];
+
+  // Real month-over-month movement, not an invented "+12.5%".
+  // The block ships a hardcoded badge on every card; a trend that never changes is a
+  // decoration pretending to be information. This compares the most recent calendar
+  // month of travel against the one before it, and returns null when there is not
+  // enough history to say anything — in which case no badge renders at all.
+  function trend(selector) {
+    const months = new Map();
+    for (const row of billable) {
+      if (!row.travel_date) continue;
+      const month = String(row.travel_date).slice(0, 7);
+      months.set(month, (months.get(month) ?? 0) + selector(row));
+    }
+    const ordered = [...months.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+    if (ordered.length < 2) return null;
+    const [previousMonth, previous] = ordered[ordered.length - 2];
+    const [latestMonth, latest] = ordered[ordered.length - 1];
+    if (previous === 0) return null;
+    const change = ((latest - previous) / Math.abs(previous)) * 100;
+    const short = (month) =>
+      new Date(`${month}-01T00:00:00Z`).toLocaleDateString("en-IN", {
+        month: "short",
+        timeZone: "UTC"
+      });
+    return {
+      direction: change >= 0 ? "up" : "down",
+      label: `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`,
+      // Months here are sparse and non-contiguous, so an unlabelled percentage is
+      // alarming rather than informative. Saying which two are being compared costs
+      // nothing and stops the badge being read as a trend line.
+      caption: `${short(latestMonth)} vs ${short(previousMonth)}`
+    };
+  }
+
+  const revenueTrend = trend((row) => Number(row.selling_price ?? 0));
+  const marginTrend = trend((row) => Number(row.margin ?? 0));
+  const countTrend = trend(() => 1);
   const cards = [
     {
       label: "Revenue",
       value: formatCurrency(total.gross),
+      delta: revenueTrend,
+      headline: revenueTrend?.caption ?? null,
       detail: "Total selling price across customer bookings."
     },
     {
       label: "Margin earned",
       value: formatCurrency(total.margin),
+      delta: marginTrend,
+      headline: marginTrend?.caption ?? null,
       detail: "Selling price minus base cost, derived by the database."
     },
     {
@@ -172,11 +223,12 @@ export default async function AdminDashboard() {
       detail: "Margin as a share of revenue."
     },
     {
-      label: "Zero-margin revenue",
-      value: formatPct(zero.shareOfGrossPct, 0),
-      headline: zero.count > 0 ? `${zero.count} booking${zero.count === 1 ? "" : "s"} sold at cost` : null,
-      detail: "Share of revenue that earns nothing."
-    }
+      label: "Bookings",
+      value: total.count,
+      delta: countTrend,
+      headline: countTrend?.caption ?? null,
+      detail: "Customer bookings on record."
+    },
   ];
 
   const openTasks = (ops.tasks ?? []).filter((task) => task.status !== "done");
@@ -364,17 +416,7 @@ export default async function AdminDashboard() {
           </Panel>
         </div>
 
-        <Panel
-          title="Recent bookings"
-          meta="Newest by travel date. Every figure above traces back to a row here."
-          action={
-            <AdminButton href="/admin/margin" tone="light">
-              Full breakdown
-            </AdminButton>
-          }
-        >
-          <AdminTable columns={bookingColumns} rows={recent} />
-        </Panel>
+        <BookingsTable rows={tableRows} />
       </div>
     </>
   );
