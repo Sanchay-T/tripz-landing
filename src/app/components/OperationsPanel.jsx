@@ -80,16 +80,16 @@ function AnimatedSwap({ id, children, className, reduced = false }) {
 
 function AgentCard({ agent, ist }) {
   return (
-    <article className="min-h-[230px] border-l-4 border-accent bg-white p-5 shadow-sm sm:p-6">
+    <article className="min-h-[230px] border-l-4 border-brand bg-white p-5 shadow-sm sm:p-6">
       <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/70 sm:text-[11px] sm:tracking-[0.22em]">
-        <span className="size-2 rounded-full bg-accent ring-4 ring-accent/10" />
+        <span className="size-2 rounded-full bg-brand ring-4 ring-brand/10" />
         Live · {agent.name.split(" ")[0]} on the line · {ist} IST
       </div>
       <p className="mt-5 max-w-[24rem] text-balance font-serif text-[clamp(2rem,6vw,2.5rem)] italic leading-tight text-ink">
         &ldquo;{agent.quote}&rdquo;
       </p>
       <div className="mt-6 flex items-center gap-3 text-sm text-ink/60">
-        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">
+        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
           {agent.initials}
         </span>
         <span>
@@ -104,13 +104,13 @@ function MissionRow({ update }) {
   return (
     <div className="flex min-h-16 items-center justify-between gap-4 bg-ink px-5 py-4 text-sm text-white sm:px-6">
       <div className="min-w-0">
-        <div className="mb-2 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-accent-live sm:tracking-[0.28em]">
-          <span className="size-2 rounded-full bg-accent-live" />
+        <div className="mb-2 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-brand-live sm:tracking-[0.28em]">
+          <span className="size-2 rounded-full bg-brand-live" />
           Mission
         </div>
         <p className="truncate">
           <b>{update.who}</b> {update.verb}{" "}
-          <em className="text-accent-live">{update.subject}</em>
+          <em className="text-brand-live">{update.subject}</em>
         </p>
       </div>
       <span className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.22em] text-white/45 sm:inline">
@@ -140,9 +140,9 @@ function OnlineRoster({ page }) {
             key={agent.initials}
             className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 text-sm"
           >
-            <span className="relative inline-flex size-8 items-center justify-center rounded-full bg-accent text-[11px] font-bold text-white">
+            <span className="relative inline-flex size-8 items-center justify-center rounded-full bg-brand text-[11px] font-bold text-white">
               {agent.initials}
-              <span className="absolute right-0 top-0 size-2 rounded-full bg-accent-live ring-2 ring-field" />
+              <span className="absolute right-0 top-0 size-2 rounded-full bg-brand-live ring-2 ring-field" />
             </span>
             <span className="truncate font-semibold text-ink">{agent.name}</span>
             <span className="hidden font-mono text-[10px] uppercase tracking-[0.22em] text-ink/55 sm:inline">
@@ -188,7 +188,7 @@ export default function OperationsPanel() {
           Fig. 01 · <b className="text-ink">The desk</b>
         </span>
         <span className="inline-flex items-center gap-2">
-          <span className="size-2 rounded-full bg-accent ring-4 ring-accent/10" />
+          <span className="size-2 rounded-full bg-brand ring-4 ring-brand/10" />
           <span className="hidden sm:inline">{ist} IST</span>
         </span>
       </div>

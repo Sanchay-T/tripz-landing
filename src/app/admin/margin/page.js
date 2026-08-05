@@ -214,7 +214,7 @@ export default async function MarginPage() {
             <p className="mt-1 text-sm leading-6 text-ink/60">
               Once bookings carry a selling price and a base cost, this page shows what
               each line earns. Import Rao&apos;s workbook from{" "}
-              <a className="font-semibold text-accent underline" href="/admin/bookings/new">
+              <a className="font-semibold text-brand underline" href="/admin/bookings/new">
                 Add booking
               </a>{" "}
               to populate it.
@@ -258,13 +258,13 @@ export default async function MarginPage() {
               </div>
             ))}
 
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 bg-accent-soft/40 px-4 py-3 sm:px-5">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 bg-brand-soft/40 px-4 py-3 sm:px-5">
               <span className="text-sm font-semibold text-ink">Total booking value</span>
               <span className="text-xl font-bold tabular-nums text-ink">
                 {formatCurrency(asked.totalBookingValue)}
               </span>
             </div>
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 bg-accent-soft/40 px-4 py-3 sm:px-5">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 bg-brand-soft/40 px-4 py-3 sm:px-5">
               <span className="text-sm font-semibold text-ink">Total margin earned</span>
               <span className="text-xl font-bold tabular-nums text-ink">
                 {formatCurrency(asked.totalMarginEarned)}

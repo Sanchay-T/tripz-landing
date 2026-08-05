@@ -3,13 +3,13 @@ import Image from "next/image";
 import { cn } from "@/lib/cn";
 
 const buttonClass = cva(
-  "inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+  "inline-flex min-h-11 max-w-full items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
   {
     variants: {
       tone: {
-        dark: "bg-ink text-white hover:bg-accent-deep",
+        dark: "bg-ink text-white hover:bg-brand-deep",
         light: "border border-ink/15 bg-white text-ink hover:border-ink/35",
-        ghost: "border-b border-accent text-ink hover:bg-accent-soft"
+        ghost: "border-b border-brand text-ink hover:bg-brand-soft"
       },
       size: {
         sm: "min-h-10 px-4 py-2 text-sm",
@@ -57,7 +57,7 @@ export function Wordmark({ onDark = false, size = "text-2xl" }) {
       )}
     >
       Trip
-      <span className="-ml-0.5 font-serif font-normal italic text-accent">
+      <span className="-ml-0.5 font-serif font-normal italic text-brand">
         Z
       </span>
     </span>
@@ -71,7 +71,7 @@ export function SectionLabel({ children, onDark = false, className }) {
         "inline-flex max-w-full flex-wrap items-center gap-3 break-words font-mono text-[11px] uppercase leading-5 tracking-[0.14em] sm:tracking-[0.24em]",
         onDark ? "text-white/65" : "text-ink/50",
         "before:h-px before:w-7",
-        onDark ? "before:bg-white/40" : "before:bg-accent",
+        onDark ? "before:bg-white/40" : "before:bg-brand",
         className
       )}
     >
@@ -85,12 +85,12 @@ export function LivePill({ experts, pickupSeconds, onDark = false, className }) 
     <span
       className={cn(
         "inline-flex max-w-full items-center gap-2 whitespace-nowrap rounded-full px-3 py-2 font-mono text-[12px] uppercase tracking-[0.14em] sm:tracking-[0.2em]",
-        onDark ? "bg-white/10 text-white" : "bg-accent-soft text-ink",
+        onDark ? "bg-white/10 text-white" : "bg-brand-soft text-ink",
         className
       )}
       aria-label={`${experts} travel experts online, average pickup ${pickupSeconds} seconds`}
     >
-      <span className="size-2 rounded-full bg-accent ring-4 ring-accent/10" />
+      <span className="size-2 rounded-full bg-brand ring-4 ring-brand/10" />
       {experts} experts · {pickupSeconds}s pickup
     </span>
   );

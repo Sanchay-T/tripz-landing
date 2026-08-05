@@ -141,7 +141,7 @@ export default function AdminShell({ children }) {
             <div className="min-w-0 flex-1" />
             <Link
               href="/admin/bookings/new"
-              className="ml-auto hidden min-h-10 shrink-0 items-center justify-center gap-2 rounded-control bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:bg-accent-deep md:inline-flex"
+              className="ml-auto hidden min-h-10 shrink-0 items-center justify-center gap-2 rounded-control bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:bg-brand-deep md:inline-flex"
             >
               <PlusCircle size={16} />
               Add booking
@@ -186,7 +186,7 @@ export default function AdminShell({ children }) {
                   href={item.href}
                   className={cn(
                     "flex min-h-12 flex-col items-center justify-center gap-1 text-[10px] font-medium transition",
-                    active ? "bg-ink text-white" : "text-ink/55 hover:bg-accent-soft hover:text-ink"
+                    active ? "bg-ink text-white" : "text-ink/55 hover:bg-brand-soft hover:text-ink"
                   )}
                 >
                   <Icon size={16} />

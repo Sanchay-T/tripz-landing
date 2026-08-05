@@ -31,12 +31,12 @@ export function AdminCard({ children, className }) {
 }
 
 const buttonClass = cva(
-  "inline-flex min-h-10 max-w-full items-center justify-center gap-2 rounded-control px-4 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50",
+  "inline-flex min-h-10 max-w-full items-center justify-center gap-2 rounded-control px-4 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       tone: {
         // The palette document is explicit: "CTA stays pure black."
-        dark: "bg-ink text-paper hover:bg-accent-deep",
+        dark: "bg-ink text-paper hover:bg-brand-deep",
         light: "border border-ink/15 bg-paper text-ink hover:border-ink/35",
         ghost: "text-ink/60 hover:text-ink"
       }
@@ -205,7 +205,7 @@ export function Figure({ label, value, detail, accent = false, className }) {
       <p
         className={cn(
           "mt-2 font-mono text-[clamp(1.5rem,2.4vw,2rem)] font-medium leading-none tabular-nums tracking-[-0.02em]",
-          accent ? "text-accent" : "text-ink"
+          accent ? "text-brand" : "text-ink"
         )}
       >
         {value}

@@ -396,12 +396,12 @@ export default function TicketIntakeClient() {
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_19rem] xl:grid-cols-[minmax(0,1fr)_20rem]">
         <AdminCard className="p-3 sm:p-5">
           <div className="flex min-h-48 flex-col items-center justify-center border border-dashed border-ink/20 bg-field/50 p-4 text-center sm:min-h-56 sm:p-6">
-            <UploadCloud size={38} className="text-accent" />
+            <UploadCloud size={38} className="text-brand" />
             <h2 className="mt-4 text-xl font-semibold">Upload ticket files</h2>
             <p className="mt-2 max-w-xl text-sm leading-6 text-ink/60">
               PDF, PNG, JPG, and WEBP uploads are stored in Vercel Blob and queued for review. Enter the booking details, then confirm to create the booking.
             </p>
-            <label className="mt-5 inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white  transition hover:bg-accent-deep">
+            <label className="mt-5 inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white  transition hover:bg-brand-deep">
               {isUploading ? <Loader2 size={16} className="animate-spin" /> : <UploadCloud size={16} />}
               {isUploading ? "Extracting..." : "Choose files"}
               <input
@@ -425,7 +425,7 @@ export default function TicketIntakeClient() {
               ["Ready", rows.filter((row) => row.status === "ready_to_review").length],
               ["Failed", rows.filter((row) => row.status === "failed").length]
             ].map(([label, value]) => (
-              <div key={label} className="rounded-lg bg-accent-soft p-3">
+              <div key={label} className="rounded-lg bg-brand-soft p-3">
                 <p className="text-2xl font-bold">{value}</p>
                 <p className="text-ink/55">{label}</p>
               </div>
@@ -455,14 +455,14 @@ export default function TicketIntakeClient() {
             {rows.map((row) => (
               <button
                 key={row.id}
-                className={`flex w-full items-center justify-between gap-3 p-4 text-left transition hover:bg-accent-soft/45 ${
-                  row.id === selectedRow?.id ? "bg-accent-soft/70" : ""
+                className={`flex w-full items-center justify-between gap-3 p-4 text-left transition hover:bg-brand-soft/45 ${
+                  row.id === selectedRow?.id ? "bg-brand-soft/70" : ""
                 }`}
                 onClick={() => selectRow(row)}
                 type="button"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <FileText size={18} className="shrink-0 text-accent" />
+                  <FileText size={18} className="shrink-0 text-brand" />
                   <div className="min-w-0">
                     <p className="truncate font-medium">{row.fileName}</p>
                     <p className="truncate text-sm text-ink/55">
@@ -509,7 +509,7 @@ export default function TicketIntakeClient() {
               <label key={field} className="grid gap-1.5 text-sm font-medium text-ink/70">
                 {label}
                 <input
-                  className="min-h-10 rounded-lg border border-ink/10 bg-white px-3 text-sm text-ink outline-none transition focus:border-accent"
+                  className="min-h-10 rounded-lg border border-ink/10 bg-white px-3 text-sm text-ink outline-none transition focus:border-brand"
                   value={reviewData[field] ?? ""}
                   onChange={(event) => updateField(field, event.target.value)}
                   disabled={!selectedRow || isSaving}
@@ -521,7 +521,7 @@ export default function TicketIntakeClient() {
           <label className="mt-4 grid gap-1.5 text-sm font-medium text-ink/70">
             Notes
             <textarea
-              className="min-h-24 rounded-lg border border-ink/10 bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-accent"
+              className="min-h-24 rounded-lg border border-ink/10 bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-brand"
               value={reviewData.rawNotes ?? ""}
               onChange={(event) => updateField("rawNotes", event.target.value)}
               disabled={!selectedRow || isSaving}

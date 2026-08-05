@@ -10,6 +10,8 @@ import {
   Panel
 } from "./components";
 import { RevenueVersusProfit, TakeRateBars, colorForType } from "./charts";
+import { ChartAreaInteractive } from "@/components/chart-area-interactive";
+import { SectionCards } from "@/components/section-cards";
 import { fetchAdminDashboardData } from "@/lib/admin/records";
 import {
   byType,
@@ -125,6 +127,58 @@ export default async function AdminDashboard() {
       };
     });
 
+  // Running totals by travel date. Eleven bookings plotted per-day would be mostly
+  // zeroes with a few spikes; cumulative shows the shape of the business.
+  const byDate = new Map();
+  for (const row of billable) {
+    if (!row.travel_date) continue;
+    const key = String(row.travel_date).slice(0, 10);
+    const current = byDate.get(key) ?? { revenue: 0, margin: 0 };
+    current.revenue += Number(row.selling_price ?? 0);
+    current.margin += Number(row.margin ?? 0);
+    byDate.set(key, current);
+  }
+  const series = [...byDate.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .reduce((points, [date, value]) => {
+      const previous = points[points.length - 1] ?? { revenue: 0, margin: 0 };
+      points.push({
+        date,
+        revenue: previous.revenue + value.revenue,
+        margin: previous.margin + value.margin
+      });
+      return points;
+    }, []);
+
+  const topByMargin = [...types].sort((a, b) => b.margin - a.margin)[0];
+  const cards = [
+    {
+      label: "Revenue",
+      value: formatCurrency(total.gross),
+      detail: "Total selling price across customer bookings."
+    },
+    {
+      label: "Margin earned",
+      value: formatCurrency(total.margin),
+      detail: "Selling price minus base cost, derived by the database."
+    },
+    {
+      label: "Take rate",
+      value: formatPct(total.takePct, 2),
+      headline:
+        topByMargin && total.margin > 0
+          ? `${topByMargin.label} carry ${Math.round((topByMargin.margin / total.margin) * 100)}% of profit`
+          : null,
+      detail: "Margin as a share of revenue."
+    },
+    {
+      label: "Zero-margin revenue",
+      value: formatPct(zero.shareOfGrossPct, 0),
+      headline: zero.count > 0 ? `${zero.count} booking${zero.count === 1 ? "" : "s"} sold at cost` : null,
+      detail: "Share of revenue that earns nothing."
+    }
+  ];
+
   const openTasks = (ops.tasks ?? []).filter((task) => task.status !== "done");
 
   return (
@@ -139,7 +193,7 @@ export default async function AdminDashboard() {
         body="Every figure here is recomputed from selling price minus base cost on each booking, never read from a stored total."
       />
 
-      <div className="space-y-5 px-4 py-5 sm:px-6">
+      <div className="@container/main space-y-5 px-4 py-5 sm:px-6">
         {error && (
           <Notice tone="warn" title="Bookings could not be loaded">
             The database did not answer, so every figure on this page is zero — that is
@@ -147,21 +201,9 @@ export default async function AdminDashboard() {
           </Notice>
         )}
 
-        <FigureRow>
-          <FigureCell>
-            <Figure label="Revenue" value={formatCurrency(total.gross)} detail="Total selling price." />
-          </FigureCell>
-          <FigureCell>
-            <Figure label="Margin earned" value={formatCurrency(total.margin)} detail="Selling price minus base cost." />
-          </FigureCell>
-          <FigureCell>
-            {/* The one figure that carries the argument. */}
-            <Figure accent label="Take rate" value={formatPct(total.takePct, 2)} detail="Margin as a share of revenue." />
-          </FigureCell>
-          <FigureCell>
-            <Figure label="Bookings" value={total.count} detail="Customer business only." />
-          </FigureCell>
-        </FigureRow>
+        <SectionCards cards={cards} />
+
+        <ChartAreaInteractive data={series} />
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
           <Panel
