@@ -41,7 +41,6 @@ export default async function BookingsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Operations"
         title="Bookings"
         body="Search and manage travel bookings by customer, market, type, status, payment, price, and margin."
       />

@@ -21,7 +21,6 @@ export default async function ImportsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Bulk operations"
         title="Imports"
         body="CSV/XLSX upload batches, row-level validation, error preview, and commit history."
       />

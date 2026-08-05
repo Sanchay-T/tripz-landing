@@ -19,6 +19,7 @@ import {
   WalletCards
 } from "lucide-react";
 import { Wordmark } from "../components/ui";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/cn";
 
 const navItems = [
@@ -89,21 +90,21 @@ function NavLink({ item, active, compact = false }) {
   );
 }
 
-export default function AdminShell({ children }) {
+export default function AdminShell({ children, user }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  // The login page lives under /admin so the middleware matcher covers the whole
-  // section with one rule, but it must not wear the shell: every sidebar link leads
-  // to a gated page, so showing that nav to someone who is not signed in is a menu of
-  // dead ends.
-  if (pathname === "/admin/login") {
-    return children;
-  }
+  // No login special-case any more. Sign-in used to live at /admin/login, inside
+  // this shell, so the shell had to detect that path and bail out or it would have
+  // shown an unauthenticated visitor a sidebar full of gated dead ends. The page
+  // moved to /login, outside /admin entirely, and the branch went with it.
 
-  async function signOut() {
-    await fetch("/api/admin/logout", { method: "POST" });
-    router.replace("/admin/login");
+  async function handleSignOut() {
+    // Revokes the session row server-side, not just the cookie. The scheme this
+    // replaced was stateless, so signing out could only expire the browser's copy —
+    // a leaked token stayed valid for its full seven days with no way to kill it.
+    await authClient.signOut();
+    router.replace("/login");
     router.refresh();
   }
 
@@ -125,9 +126,22 @@ export default function AdminShell({ children }) {
           ))}
         </nav>
         <div className="p-3">
+          {/* Who is signed in. With one shared password there was nothing to show;
+              now that sessions belong to a person, not knowing which account you are
+              in is a real way to attribute work to the wrong person. */}
+          {user && (
+            <div className="mb-1 px-3 py-2">
+              <p className="truncate text-[13px] font-medium text-white/80">
+                {user.name || user.displayUsername || user.username}
+              </p>
+              <p className="truncate font-mono text-[10px] uppercase tracking-[0.12em] text-white/35">
+                {user.username ?? user.email}
+              </p>
+            </div>
+          )}
           <button
             className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-[13.5px] font-medium text-white/55 transition-colors hover:bg-white/6 hover:text-white"
-            onClick={signOut}
+            onClick={handleSignOut}
             type="button"
           >
             <LogOut size={16} />

@@ -25,7 +25,6 @@ export default async function DocumentsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Document operations"
         title="Documents"
         body="Tickets, vouchers, boarding passes, receipts, and verification status."
       />

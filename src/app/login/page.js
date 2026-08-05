@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import LoginForm from "./LoginForm";
-import { Wordmark } from "../../components/ui";
+import { Wordmark } from "../components/ui";
 
 export const dynamic = "force-dynamic";
 

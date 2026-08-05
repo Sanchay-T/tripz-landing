@@ -32,7 +32,7 @@ export default async function ExpensesPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Finance" title="Expenses" body="Operating expenses from the workbook as editable finance records." />
+      <PageHeader title="Expenses" body="Operating expenses from the workbook as editable finance records." />
       <div className="p-4 sm:p-6">
         <AdminCard>
           <AdminTable columns={columns} rows={rows} />

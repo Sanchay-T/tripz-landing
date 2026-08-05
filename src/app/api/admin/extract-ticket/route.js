@@ -5,6 +5,8 @@ import { put } from "@vercel/blob";
 import { getDb } from "@/lib/db";
 import { buildManualExtraction, isAiExtractionEnabled } from "@/lib/manual-extraction";
 
+import { requireSession } from "@/lib/require-session";
+
 export const runtime = "nodejs";
 
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
@@ -18,6 +20,12 @@ function getStoragePath(fileName) {
 }
 
 export async function POST(request) {
+  // Real session check. The proxy only sees that a cookie exists; it runs on the
+  // edge and cannot ask Postgres whether that cookie is still valid.
+  const gate = await requireSession();
+  if (gate.response) return gate.response;
+
+
   let extractionId = null;
   const sql = getDb();
 

@@ -1,19 +1,38 @@
+import { headers } from "next/headers";
+
 import { AdminBadge, AdminCard, PageHeader } from "../components";
+import ChangePasswordForm from "./ChangePasswordForm";
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
   const aiEnabled =
     process.env.TRIPZ_AI_EXTRACTION === "on" && Boolean(process.env.ANTHROPIC_API_KEY);
+  const session = await auth.api.getSession({ headers: await headers() });
 
   return (
     <>
       <PageHeader
-        eyebrow="System"
         title="Settings"
-        body="Environment, storage, and admin defaults."
+        body="Your account, environment, storage, and admin defaults."
       />
       <div className="grid gap-4 p-4 sm:p-6 lg:grid-cols-2">
+        <AdminCard className="p-5 lg:col-span-2">
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink/45">
+            Your account
+          </p>
+          <p className="mt-2 text-xl font-semibold">
+            {session?.user?.name ?? "Signed in"}
+          </p>
+          <p className="mt-2 text-sm text-ink/55">
+            Username <span className="font-mono text-ink">{session?.user?.username}</span>
+            {" · "}
+            {session?.user?.email}. Sign in with either.
+          </p>
+          <ChangePasswordForm />
+        </AdminCard>
+
         <AdminCard className="p-5">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink/45">Database</p>
           <p className="mt-2 text-xl font-semibold">Neon Postgres</p>
@@ -37,7 +56,10 @@ export default function SettingsPage() {
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink/45">
               Automatic extraction
             </p>
-            <AdminBadge tone={aiEnabled ? "success" : "default"}>
+            {/* `success` is not one of AdminBadge's tones (default/good/warn/
+                critical), so this was resolving to undefined and rendering with no
+                colour at all. */}
+            <AdminBadge tone={aiEnabled ? "good" : "default"}>
               {aiEnabled ? "on" : "off"}
             </AdminBadge>
           </div>

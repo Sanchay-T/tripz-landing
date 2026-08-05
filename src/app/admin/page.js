@@ -205,7 +205,6 @@ export default async function AdminDashboard() {
   return (
     <>
       <PageHeader
-        eyebrow="TripZ operating system"
         title="Dashboard"
         body={
           <>

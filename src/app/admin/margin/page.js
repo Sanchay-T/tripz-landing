@@ -194,7 +194,6 @@ export default async function MarginPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Finance"
         title="Margin"
         body="What each line of the business actually earns. Margin is recomputed from selling price minus base cost on every row, never read from a stored total."
         action={<AdminButton href="/admin/bookings" tone="light">View bookings</AdminButton>}

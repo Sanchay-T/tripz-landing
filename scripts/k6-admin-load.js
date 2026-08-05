@@ -18,30 +18,51 @@ import { check } from "k6";
 import { Rate, Trend } from "k6/metrics";
 
 const BASE = __ENV.BASE_URL || "http://127.0.0.1:3300";
-// /admin is password-gated, so the load test has to authenticate or it just measures
-// how fast the app can return 401.
+// /admin is gated, so the load test has to authenticate or it just measures how fast
+// the app can return 401. Per-user accounts now, so this needs an identifier too.
+const ADMIN_USER = __ENV.ADMIN_USER || "";
 const ADMIN_PASSWORD = __ENV.ADMIN_PASSWORD || "";
 
+// Better Auth's cookie. Named `__Secure-better-auth.session_token` over HTTPS and
+// `better-auth.session_token` over plain HTTP, so a local run and a production run
+// look for different names.
+const SESSION_COOKIE = BASE.startsWith("https:")
+  ? "__Secure-better-auth.session_token"
+  : "better-auth.session_token";
+
 /**
- * Sign in once per VU and reuse the session cookie.
+ * Sign in once and reuse the session cookie across every VU.
  *
- * The admin moved from HTTP Basic to a signed session cookie, so sending an
- * Authorization header now just measures how fast the app can redirect to the login
- * page. k6 keeps a cookie jar per VU, so one login at setup time covers every
- * subsequent request that VU makes.
+ * Rewritten for Better Auth. It previously posted `{password}` to
+ * `/api/admin/login` and read a `tripz_session` cookie; both the endpoint and the
+ * cookie are gone, so left alone this would have failed at setup and every run
+ * would have measured redirect latency instead of the app.
+ *
+ * The endpoint depends on what ADMIN_USER looks like, exactly as the login form
+ * does: /sign-in/username takes only a username, /sign-in/email only an email.
  */
 export function setup() {
-  if (!ADMIN_PASSWORD) {
+  if (!ADMIN_USER || !ADMIN_PASSWORD) {
     return {};
   }
-  const res = http.post(`${BASE}/api/admin/login`, JSON.stringify({ password: ADMIN_PASSWORD }), {
-    headers: { "Content-Type": "application/json" }
-  });
+
+  const isEmail = ADMIN_USER.includes("@");
+  const body = isEmail
+    ? { email: ADMIN_USER, password: ADMIN_PASSWORD }
+    : { username: ADMIN_USER, password: ADMIN_PASSWORD };
+
+  const res = http.post(
+    `${BASE}/api/auth/sign-in/${isEmail ? "email" : "username"}`,
+    JSON.stringify(body),
+    { headers: { "Content-Type": "application/json" } }
+  );
+
   if (res.status !== 200) {
     throw new Error(`Could not sign in for the load test: HTTP ${res.status}`);
   }
+
   // Hand the cookie to every VU rather than having each one hit the login endpoint.
-  return { cookie: res.cookies?.tripz_session?.[0]?.value ?? "" };
+  return { cookie: res.cookies?.[SESSION_COOKIE]?.[0]?.value ?? "" };
 }
 
 const zeroedPages = new Rate("zeroed_pages");
@@ -80,7 +101,7 @@ export const options = {
 function visit(path, kind, session) {
   const res = http.get(`${BASE}${path}`, {
     tags: { kind, route: path },
-    cookies: session.cookie ? { tripz_session: session.cookie } : {}
+    cookies: session.cookie ? { [SESSION_COOKIE]: session.cookie } : {}
   });
 
   if (kind === "db") {

@@ -8,7 +8,7 @@ export default async function ProvidersPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Master data" title="Providers" body="Airline, hotel, and vendor records with logo support." />
+      <PageHeader title="Providers" body="Airline, hotel, and vendor records with logo support." />
       <div className="grid gap-4 p-4 sm:p-6 lg:grid-cols-3">
         {data.providers.length === 0 && (
           <AdminCard className="p-5">

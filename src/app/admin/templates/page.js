@@ -8,7 +8,7 @@ export default async function TemplatesPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Templates" title="Templates" body="Reusable ticket, voucher, reminder, and WhatsApp copy templates." />
+      <PageHeader title="Templates" body="Reusable ticket, voucher, reminder, and WhatsApp copy templates." />
       <div className="grid gap-4 p-4 sm:p-6 lg:grid-cols-3">
         {data.templates.length === 0 && (
           <AdminCard className="p-5">

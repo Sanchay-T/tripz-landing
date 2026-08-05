@@ -2,7 +2,6 @@ import Link from "next/link";
 import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/cn";
-import { SectionLabel } from "../components/ui";
 
 /**
  * Admin primitives.
@@ -185,15 +184,19 @@ export function AdminTable({ columns, rows }) {
  * stylesheet. That is this brand's one signature gesture and it survives the change
  * of genre precisely because it is now used at a normal size.
  */
-export function PageHeader({ eyebrow, title, body, action }) {
+export function PageHeader({ title, body, action }) {
   return (
     <div className="px-4 pb-2 pt-8 sm:px-6">
-      {eyebrow && <SectionLabel>{eyebrow}</SectionLabel>}
       {/* Title and primary action share one line, which is the convention every
           product screen follows. Previously the action was a sibling of the whole
           text column and aligned to its top, so it landed beside the eyebrow — a
-          10px label — leaving the title it belongs to stranded on the line below. */}
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+          10px label — leaving the title it belongs to stranded on the line below.
+
+          The eyebrow itself is gone. Every screen opened with a category label
+          above its own name ("TRIPZ OPERATING SYSTEM" over "Dashboard"), which is
+          magazine furniture: it spent the first line of every page on something
+          nobody needs told twice, and delayed the title. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
         <h1 className="min-w-0 text-balance font-sans text-[clamp(1.375rem,2vw,1.625rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-ink">
           {title}
         </h1>

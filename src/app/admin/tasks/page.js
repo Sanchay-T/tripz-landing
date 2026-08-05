@@ -33,7 +33,6 @@ export default async function TasksPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Work queue"
         title="Tasks"
         body="Boarding passes, 24-hour reminders, payment follow-ups, callbacks, and document work."
       />

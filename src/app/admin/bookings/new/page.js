@@ -7,7 +7,6 @@ export default function NewBookingPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Operations"
         title="Add booking"
         body="Type a booking in and the totals update. Margin is derived from cost and price by the database, so it can never disagree with them."
       />

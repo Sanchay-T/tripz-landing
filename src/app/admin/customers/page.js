@@ -25,7 +25,6 @@ export default async function CustomersPage() {
   return (
     <>
       <PageHeader
-        eyebrow="CRM"
         title="Customers"
         body="Customer intake fields from the workbook converted into searchable CRM records."
       />

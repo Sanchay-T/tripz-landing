@@ -24,7 +24,6 @@ export default async function FinancePage() {
   return (
     <>
       <PageHeader
-        eyebrow="Finance"
         title="Finance"
         body="Workbook revenue and expense scratch work converted into reportable finance metrics."
       />

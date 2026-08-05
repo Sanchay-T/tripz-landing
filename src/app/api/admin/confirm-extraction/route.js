@@ -3,6 +3,8 @@ import { getDb } from "@/lib/db";
 import { buildBookingCode, buildCustomerCode, toNumberOrNull } from "@/lib/admin/records";
 import { ticketExtractionZodSchema } from "@/lib/booking-extraction-schema";
 
+import { requireSession } from "@/lib/require-session";
+
 export const runtime = "nodejs";
 
 function normalizeDate(value) {
@@ -10,6 +12,12 @@ function normalizeDate(value) {
 }
 
 export async function POST(request) {
+  // Real session check. The proxy only sees that a cookie exists; it runs on the
+  // edge and cannot ask Postgres whether that cookie is still valid.
+  const gate = await requireSession();
+  if (gate.response) return gate.response;
+
+
   try {
     const body = await request.json();
     const extractionId = body.extractionId;
