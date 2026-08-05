@@ -391,9 +391,12 @@ export default async function MarginPage() {
                         {formatPct(type.takePct, 2)}
                       </span>
                     </div>
-                    <div className="mt-2 h-px w-full bg-ink/10">
+                    {/* 6px, matching the shared TakeRateBars on the dashboard. This
+                        page kept its own copy at `h-px`, so the same measure was a
+                        readable bar on one screen and a hairline rule on the other. */}
+                    <div className="mt-2.5 h-1.5 w-full rounded-full bg-ink/8">
                       <div
-                        className="h-px"
+                        className="h-1.5 rounded-full"
                         style={{
                           backgroundColor: colorForType(type.type),
                           // Scaled against the best-performing type so a 0.49% bar is
