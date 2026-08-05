@@ -13,7 +13,7 @@ export default async function ProvidersPage() {
         {data.providers.length === 0 && (
           <AdminCard className="p-5">
             <h2 className="font-semibold">No providers yet</h2>
-            <p className="mt-2 text-sm text-ink/55">Add airlines, hotels, and vendor records in Supabase to make them available here.</p>
+            <p className="mt-2 text-sm text-ink/55">Airlines, hotels and vendors are added automatically as you use them on a booking.</p>
           </AdminCard>
         )}
         {data.providers.map((provider) => (

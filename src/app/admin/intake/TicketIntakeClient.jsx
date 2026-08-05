@@ -438,7 +438,7 @@ export default function TicketIntakeClient() {
         <AdminCard>
           <div className="border-b border-ink/10 p-4 sm:p-5">
             <h2 className="text-lg font-semibold">Upload queue</h2>
-            <p className="text-sm text-ink/55">Live Supabase rows. Select a file to review or edit extracted fields.</p>
+            <p className="text-sm text-ink/55">Select a file to review or edit its extracted fields.</p>
           </div>
           <div className="divide-y divide-ink/10">
             {isLoadingRows && (

@@ -13,7 +13,7 @@ export default async function TemplatesPage() {
         {data.templates.length === 0 && (
           <AdminCard className="p-5">
             <h2 className="font-semibold">No templates yet</h2>
-            <p className="mt-3 text-sm leading-6 text-ink/55">Create reusable ticket and reminder templates in Supabase to show them here.</p>
+            <p className="mt-3 text-sm leading-6 text-ink/55">Reusable ticket and reminder templates appear here once they are created.</p>
           </AdminCard>
         )}
         {data.templates.map((template) => (
