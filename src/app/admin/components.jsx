@@ -187,17 +187,21 @@ export function AdminTable({ columns, rows }) {
  */
 export function PageHeader({ eyebrow, title, body, action }) {
   return (
-    <div className="flex flex-col gap-4 px-4 pb-2 pt-8 sm:px-6 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
-      <div className="min-w-0 max-w-3xl">
-        {eyebrow && <SectionLabel>{eyebrow}</SectionLabel>}
-        <h1 className="mt-3 text-balance font-sans text-[clamp(1.375rem,2vw,1.625rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-ink">
+    <div className="px-4 pb-2 pt-8 sm:px-6">
+      {eyebrow && <SectionLabel>{eyebrow}</SectionLabel>}
+      {/* Title and primary action share one line, which is the convention every
+          product screen follows. Previously the action was a sibling of the whole
+          text column and aligned to its top, so it landed beside the eyebrow — a
+          10px label — leaving the title it belongs to stranded on the line below. */}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+        <h1 className="min-w-0 text-balance font-sans text-[clamp(1.375rem,2vw,1.625rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-ink">
           {title}
         </h1>
-        {body && (
-          <p className="mt-2 max-w-2xl text-[14px] leading-[1.65] text-ink/55">{body}</p>
-        )}
+        {action && <div className="shrink-0">{action}</div>}
       </div>
-      {action && <div className="shrink-0 lg:pt-1">{action}</div>}
+      {body && (
+        <p className="mt-2.5 max-w-2xl text-[14px] leading-[1.65] text-ink/55">{body}</p>
+      )}
     </div>
   );
 }
