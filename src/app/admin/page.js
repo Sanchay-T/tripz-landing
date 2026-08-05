@@ -232,7 +232,12 @@ export default async function AdminDashboard() {
 
         <SectionCards cards={cards} />
 
-        <div className="grid items-start gap-5 xl:grid-cols-2">
+        {/* No `items-start` here. Letting each card hug its own content made every
+            row ragged: a short card left a block of dead space beside a tall one,
+            which reads as a hole in the page rather than as two separate things.
+            Stretching pairs to a common height costs some whitespace inside the
+            shorter card and makes the grid read as a grid. */}
+        <div className="grid gap-5 xl:grid-cols-2">
           <Panel
             title="Where the revenue comes from, and where the profit does"
             meta="Same colours, two bars. A line that is wide on top and narrow below is turning revenue into no profit."
@@ -301,7 +306,7 @@ export default async function AdminDashboard() {
           </Panel>
         </div>
 
-        <div className="grid items-start gap-5 xl:grid-cols-2">
+        <div className="grid gap-5 xl:grid-cols-2">
           <Panel title="Take rate by type" meta="Margin as a percentage of what the customer paid.">
             <TakeRateBars types={types} formatCurrency={formatCurrency} formatPct={formatPct} />
           </Panel>
@@ -350,7 +355,7 @@ export default async function AdminDashboard() {
           </Panel>
         </div>
 
-        <div className="grid items-start gap-5 xl:grid-cols-2">
+        <div className="grid gap-5 xl:grid-cols-2">
           <Panel title="Open tasks" meta="Travel reminders, payment follow-ups and boarding passes.">
             {openTasks.length === 0 ? (
               <p className="text-sm text-ink/45">Nothing outstanding.</p>
