@@ -195,40 +195,42 @@ export default async function AdminDashboard() {
     };
   }
 
-  const revenueTrend = trend((row) => Number(row.selling_price ?? 0));
-  const marginTrend = trend((row) => Number(row.margin ?? 0));
   const countTrend = trend(() => 1);
+  const expenses = Number(ops.metrics.totalExpenses ?? 0);
+
+  // Revenue, margin and take rate are the hero, inside the chart card. Repeating them
+  // here would spend the widest row on the page restating what is already the largest
+  // thing on it. These four are the figures visible nowhere else at a glance.
   const cards = [
-    {
-      label: "Revenue",
-      value: formatCurrency(total.gross),
-      delta: revenueTrend,
-      headline: revenueTrend?.caption ?? null,
-      detail: "Total selling price across customer bookings."
-    },
-    {
-      label: "Margin earned",
-      value: formatCurrency(total.margin),
-      delta: marginTrend,
-      headline: marginTrend?.caption ?? null,
-      detail: "Selling price minus base cost, derived by the database."
-    },
-    {
-      label: "Take rate",
-      value: formatPct(total.takePct, 2),
-      headline:
-        topByMargin && total.margin > 0
-          ? `${topByMargin.label} carry ${Math.round((topByMargin.margin / total.margin) * 100)}% of profit`
-          : null,
-      detail: "Margin as a share of revenue."
-    },
     {
       label: "Bookings",
       value: total.count,
       delta: countTrend,
-      headline: countTrend?.caption ?? null,
       detail: "Customer bookings on record."
     },
+    {
+      label: "Zero-margin exposure",
+      value: zero.count > 0 ? formatPct(zero.shareOfGrossPct, 0) : "None",
+      tone: zero.count > 0 ? "critical" : undefined,
+      detail:
+        zero.count > 0
+          ? `${zero.count} booking${zero.count === 1 ? "" : "s"} worth ${formatCurrency(zero.gross)} sold at cost.`
+          : "Every booking recorded a margin."
+    },
+    {
+      label: "Expenses",
+      value: formatCurrency(expenses),
+      detail: "Recorded costs outside the booking base cost."
+    },
+    {
+      label: "Net after expenses",
+      value: formatCurrency(total.margin - expenses),
+      tone: total.margin - expenses > 0 ? "accent" : "critical",
+      detail:
+        topByMargin && total.margin > 0
+          ? `${topByMargin.label} carry ${Math.round((topByMargin.margin / total.margin) * 100)}% of the profit.`
+          : "Margin earned, less expenses."
+    }
   ];
 
   const openTasks = (ops.tasks ?? []).filter((task) => task.status !== "done");
@@ -237,15 +239,16 @@ export default async function AdminDashboard() {
     <>
       <PageHeader
         eyebrow="TripZ operating system"
-        title={
+        title="Dashboard"
+        body={
           <>
-            Where the money <em>actually comes from</em>
+            Every figure is recomputed from selling price minus base cost on each
+            booking, <em>never</em> read from a stored total.
           </>
         }
-        body="Every figure here is recomputed from selling price minus base cost on each booking, never read from a stored total."
       />
 
-      <div className="@container/main space-y-5 px-4 py-5 sm:px-6">
+      <div className="@container/main space-y-5 px-4 pb-8 pt-3 sm:px-6 lg:px-8">
         {error && (
           <Notice tone="warn" title="Bookings could not be loaded">
             The database did not answer, so every figure on this page is zero — that is
@@ -253,11 +256,11 @@ export default async function AdminDashboard() {
           </Notice>
         )}
 
-        <SectionCards cards={cards} />
-
         <ChartAreaInteractive data={series} />
 
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+        <SectionCards cards={cards} />
+
+        <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
           <Panel
             title="Where the revenue comes from, and where the profit does"
             meta="Same colours, two bars. A line that is wide on top and narrow below is turning revenue into no profit."
@@ -266,7 +269,7 @@ export default async function AdminDashboard() {
           </Panel>
 
           <Panel title="The numbers" meta="Bookings and value by market, plus totals.">
-            <dl className="divide-y divide-ink/10">
+            <dl className="divide-y divide-ink/8">
               {askedRows.map((row) => (
                 <div
                   key={row.label}
@@ -315,7 +318,7 @@ export default async function AdminDashboard() {
               </div>
             </dl>
             {internal.length > 0 && (
-              <p className="mt-4 border-t border-ink/10 pt-3 text-[11.5px] leading-5 text-ink/50">
+              <p className="mt-4 border-t border-ink/8 pt-3 text-[11.5px] leading-5 text-ink/50">
                 Excludes {internal.length} internal booking{internal.length === 1 ? "" : "s"} worth{" "}
                 {formatCurrency(
                   internal.reduce((sum, row) => sum + Number(row.selling_price ?? 0), 0)
@@ -326,22 +329,25 @@ export default async function AdminDashboard() {
           </Panel>
         </div>
 
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div className="grid items-start gap-5 xl:grid-cols-2">
           <Panel title="Take rate by type" meta="Margin as a percentage of what the customer paid.">
             <TakeRateBars types={types} formatCurrency={formatCurrency} formatPct={formatPct} />
           </Panel>
 
-          <Panel title="Zero-margin exposure" meta="Bookings delivered with no profit recorded.">
+          <Panel
+            title="Zero-margin exposure"
+            meta={
+              zero.count > 0
+                ? `${formatPct(zero.shareOfGrossPct, 0)} of revenue earns nothing — ${formatCurrency(zero.gross)} sold at cost.`
+                : "Bookings delivered with no profit recorded."
+            }
+          >
+            {/* The headline percentage lives in the stat row above. Repeating it here
+                as a second giant numeral put the same number on the screen twice; this
+                panel's job is the list of which bookings they are. */}
             {zero.count > 0 ? (
               <>
-                <p className="font-mono text-[clamp(1.75rem,3vw,2.4rem)] font-medium leading-none tabular-nums text-critical">
-                  {formatPct(zero.shareOfGrossPct, 0)}
-                </p>
-                <p className="mt-2.5 text-[13px] text-ink/60">
-                  of revenue earns nothing — {zero.count} booking{zero.count === 1 ? "" : "s"} worth{" "}
-                  {formatCurrency(zero.gross)} sold at cost.
-                </p>
-                <ul className="mt-4 space-y-2 border-t border-ink/10 pt-3.5">
+                <ul className="space-y-2.5">
                   {zero.rows.map((row, index) => (
                     <li
                       key={row.id ?? index}
@@ -372,12 +378,12 @@ export default async function AdminDashboard() {
           </Panel>
         </div>
 
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div className="grid items-start gap-5 xl:grid-cols-2">
           <Panel title="Open tasks" meta="Travel reminders, payment follow-ups and boarding passes.">
             {openTasks.length === 0 ? (
               <p className="text-sm text-ink/45">Nothing outstanding.</p>
             ) : (
-              <ul className="divide-y divide-ink/10">
+              <ul className="divide-y divide-ink/8">
                 {openTasks.slice(0, 6).map((task) => (
                   <li
                     key={task.id}
@@ -397,7 +403,7 @@ export default async function AdminDashboard() {
           </Panel>
 
           <Panel title="Finance" meta="Money in and out.">
-            <dl className="divide-y divide-ink/10">
+            <dl className="divide-y divide-ink/8">
               {[
                 ["Revenue", formatCurrency(total.gross)],
                 ["Margin earned", formatCurrency(total.margin)],

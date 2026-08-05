@@ -104,8 +104,28 @@ export function BookingsTable({ rows }) {
           </span>
         )
       },
-      { accessorKey: "customer", header: "Customer" },
-      { accessorKey: "route", header: "Route / Stay" },
+      // Capped and truncated, with the full value on hover. Left to size themselves
+      // these two columns ran to ~50 characters and pushed Price, Margin and Take off
+      // the right edge of the card — the three columns the table exists for were the
+      // ones you had to scroll to find.
+      {
+        accessorKey: "customer",
+        header: "Customer",
+        cell: ({ row }) => (
+          <div className="max-w-[180px] truncate" title={row.original.customer}>
+            {row.original.customer}
+          </div>
+        )
+      },
+      {
+        accessorKey: "route",
+        header: "Route / Stay",
+        cell: ({ row }) => (
+          <div className="max-w-[220px] truncate" title={row.original.route}>
+            {row.original.route}
+          </div>
+        )
+      },
       {
         accessorKey: "travelDate",
         header: ({ column }) => <SortableHeader column={column}>Travel date</SortableHeader>,
@@ -204,7 +224,11 @@ export function BookingsTable({ rows }) {
   });
 
   return (
-    <div className="w-full flex-col gap-4 px-4 lg:px-6">
+    // One raised surface, like every other block on the page. This used to sit
+    // directly on the page background inside its own `px-4 lg:px-6`, which both
+    // double-padded it against the page's own gutter and left it as the only
+    // unelevated thing on the screen.
+    <div className="w-full rounded-lg bg-paper p-6 shadow-card">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Tabs value={tab} onValueChange={setTab}>
           <TabsList>
@@ -250,9 +274,9 @@ export function BookingsTable({ rows }) {
         </DropdownMenu>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-lg border">
+      <div className="mt-5 overflow-x-auto">
         <Table>
-          <TableHeader className="bg-muted sticky top-0 z-10">
+          <TableHeader className="bg-muted/70 sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -287,7 +311,7 @@ export function BookingsTable({ rows }) {
         </Table>
       </div>
 
-      <div className="mt-4 flex items-center justify-between">
+      <div className="mt-5 flex items-center justify-between">
         <p className="text-muted-foreground text-sm">
           {filtered.length} booking{filtered.length === 1 ? "" : "s"}
         </p>

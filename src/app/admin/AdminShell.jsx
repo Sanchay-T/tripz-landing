@@ -72,14 +72,18 @@ function NavLink({ item, active, compact = false }) {
     <Link
       href={item.href}
       className={cn(
-        "flex items-center gap-3 text-[13.5px] font-medium transition",
+        "flex items-center gap-3 rounded-md text-[13.5px] font-medium transition-colors",
         compact ? "min-w-max px-3 py-2" : "px-3 py-2.5",
         active
-          ? "bg-paper text-ink"
-          : "text-white/60 hover:bg-white/8 hover:text-white"
+          ? "bg-white/10 text-white"
+          : "text-white/55 hover:bg-white/6 hover:text-white"
       )}
     >
-      <Icon size={16} />
+      {/* The active item is marked twice: a lifted fill and a live-green icon. A
+          full white block was the old treatment and it punched a hole in the
+          sidebar — the loudest thing on screen was a nav item rather than a
+          figure. */}
+      <Icon size={16} className={active ? "text-brand-live" : undefined} />
       <span>{compact ? item.shortLabel : item.label}</span>
     </Link>
   );
@@ -104,14 +108,14 @@ export default function AdminShell({ children }) {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-field text-ink">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-ink/10 bg-ink text-white xl:flex xl:flex-col">
-        <div className="flex h-16 items-center border-b border-white/10 px-5">
+    <div className="min-h-screen overflow-x-hidden bg-base text-ink">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 bg-ink text-white xl:flex xl:flex-col">
+        <div className="flex h-16 items-center px-5">
           <Link href="/admin" aria-label="TripZ Admin home">
             <Wordmark onDark />
           </Link>
         </div>
-        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-3">
           {navItems.map((item) => (
             <NavLink
               key={item.href}
@@ -120,9 +124,9 @@ export default function AdminShell({ children }) {
             />
           ))}
         </nav>
-        <div className="border-t border-white/10 p-3">
+        <div className="p-3">
           <button
-            className="flex w-full items-center gap-3 px-3 py-2.5 text-[13.5px] font-medium text-white/60 transition hover:bg-white/8 hover:text-white"
+            className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-[13.5px] font-medium text-white/55 transition-colors hover:bg-white/6 hover:text-white"
             onClick={signOut}
             type="button"
           >
@@ -133,7 +137,11 @@ export default function AdminShell({ children }) {
       </aside>
 
       <div className="min-w-0 xl:pl-72">
-        <header className="sticky top-0 z-20 border-b border-ink/10 bg-paper">
+        {/* Tinted glass rather than a white bar. On a base-coloured page a solid
+            white header draws a seam across the top of every screen; letting the
+            page show through means the only thing marking the header is the
+            hairline, and only once you have scrolled under it. */}
+        <header className="sticky top-0 z-20 border-b border-ink/8 bg-base/80 backdrop-blur-md">
           <div className="flex h-16 items-center gap-3 px-4 sm:px-5 lg:px-6">
             <Link href="/admin" className="shrink-0 xl:hidden" aria-label="TripZ Admin home">
               <Wordmark size="text-xl" />
@@ -141,14 +149,14 @@ export default function AdminShell({ children }) {
             <div className="min-w-0 flex-1" />
             <Link
               href="/admin/bookings/new"
-              className="ml-auto hidden min-h-10 shrink-0 items-center justify-center gap-2 rounded-control bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:bg-brand-deep md:inline-flex"
+              className="ml-auto hidden min-h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper shadow-card transition hover:bg-brand-deep md:inline-flex"
             >
               <PlusCircle size={16} />
               Add booking
             </Link>
           </div>
 
-          <nav className="scrollbar-none flex max-w-full gap-2 overflow-x-auto border-t border-ink/10 px-4 py-2 xl:hidden">
+          <nav className="scrollbar-none flex max-w-full gap-1.5 overflow-x-auto border-t border-ink/8 px-4 py-2.5 xl:hidden">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = isActivePath(pathname, item.href);
@@ -158,13 +166,13 @@ export default function AdminShell({ children }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "inline-flex min-h-9 shrink-0 items-center gap-2 border px-3 font-mono text-[10px] uppercase tracking-[0.12em] transition",
+                    "inline-flex min-h-9 shrink-0 items-center gap-2 rounded-md px-3 text-[12px] font-medium transition-colors",
                     active
-                      ? "border-ink bg-ink text-white"
-                      : "border-ink/10 bg-paper text-ink/65 hover:border-ink/25 hover:text-ink"
+                      ? "bg-ink text-white"
+                      : "bg-paper text-ink/60 shadow-card hover:text-ink"
                   )}
                 >
-                  <Icon size={16} />
+                  <Icon size={15} />
                   {item.shortLabel}
                 </Link>
               );
@@ -174,7 +182,7 @@ export default function AdminShell({ children }) {
 
         <main className="min-w-0 pb-24 xl:pb-0">{children}</main>
 
-        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-ink/10 bg-paper px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 sm:px-4 xl:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-ink/8 bg-paper/90 px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 backdrop-blur-md sm:px-4 xl:hidden">
           <div className="mx-auto grid max-w-xl grid-cols-5 gap-1">
             {mobilePrimaryItems.map((item) => {
               const Icon = item.icon;
@@ -185,8 +193,8 @@ export default function AdminShell({ children }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex min-h-12 flex-col items-center justify-center gap-1 text-[10px] font-medium transition",
-                    active ? "bg-ink text-white" : "text-ink/55 hover:bg-brand-soft hover:text-ink"
+                    "flex min-h-12 flex-col items-center justify-center gap-1 rounded-md text-[10px] font-medium transition-colors",
+                    active ? "bg-ink text-white" : "text-ink/55 hover:bg-ink/5 hover:text-ink"
                   )}
                 >
                   <Icon size={16} />

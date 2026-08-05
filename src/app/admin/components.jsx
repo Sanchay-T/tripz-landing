@@ -5,40 +5,45 @@ import { cn } from "@/lib/cn";
 import { SectionLabel } from "../components/ui";
 
 /**
- * Admin primitives, in the landing page's visual language.
+ * Admin primitives.
  *
- * These used to be a shadcn dashboard: rounded-xl cards, a soft shadow on every
- * surface, stock Tailwind status colours, and a flat type scale where a section
- * heading was the same size as body text. `docs/admin/00-master-spec.md` asked for
- * exactly that — "the default shadcn admin template shape" — which is why it looked
- * like every other generated dashboard.
+ * These have been through two wrong genres. First a stock shadcn dashboard —
+ * rounded-xl, a shadow on every surface, Tailwind's default status ramp — which read
+ * as generated. The fix over-corrected into an editorial print language: square
+ * corners, a 1px rule between every pair of surfaces, and a mint-tinted page. That is
+ * a coherent object and it is a *printed* one, which is the wrong thing for software
+ * someone sits in front of all day.
  *
- * The rules now, matching `src/app/page.js`:
- *   - Square. Radius is for controls and dots, nothing else.
- *   - Hairlines, not shadows. Panels are separated by 1px ink rules.
- *   - Three fonts with disjoint jobs: Geist for prose, Instrument Serif italic for
- *     emphasis, JetBrains Mono for every figure and every micro-label.
- *   - Accent is ink, not signal — it marks meaning, never decorates a surface.
+ * The rules now:
+ *   - Depth, not outlines. A white card on a near-neutral base, lifted by a two-layer
+ *     shadow. Borders survive only *inside* a card, to divide its own rows.
+ *   - Air. Padding and gaps are roughly 40% larger than the print version, because
+ *     most of what reads as cheap in a dashboard is crowding.
+ *   - Figures lead. The number is the loud element; its label is quiet.
+ *   - One saturated accent (`brand-vivid`), spent on the figure that carries the
+ *     page's meaning and nowhere else. `brand` is nearly black and cannot do this job.
+ *   - Instrument Serif italic stays, sparingly. It is the one thing here that is not
+ *     interchangeable with every other dashboard.
  */
 
-/** A square panel. No shadow: on a flat field, a border is enough. */
+/** A raised surface. The shadow does the separating, so there is no outline. */
 export function AdminCard({ children, className }) {
   return (
-    <section className={cn("border border-ink/10 bg-paper", className)}>
+    <section className={cn("rounded-lg bg-paper shadow-card", className)}>
       {children}
     </section>
   );
 }
 
 const buttonClass = cva(
-  "inline-flex min-h-10 max-w-full items-center justify-center gap-2 rounded-control px-4 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50",
+  "inline-flex min-h-10 max-w-full items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-vivid disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       tone: {
         // The palette document is explicit: "CTA stays pure black."
-        dark: "bg-ink text-paper hover:bg-brand-deep",
-        light: "border border-ink/15 bg-paper text-ink hover:border-ink/35",
-        ghost: "text-ink/60 hover:text-ink"
+        dark: "bg-ink text-paper shadow-card hover:bg-brand-deep",
+        light: "bg-paper text-ink shadow-card ring-1 ring-ink/8 hover:ring-ink/20",
+        ghost: "text-ink/60 hover:bg-ink/5 hover:text-ink"
       }
     },
     defaultVariants: { tone: "dark" }
@@ -46,9 +51,10 @@ const buttonClass = cva(
 );
 
 /**
- * Matches `ButtonLink` in `src/app/components/ui.jsx` — same three tones, same
- * radius, same hover. It exists separately only because admin navigation needs
- * next/link for client-side routing, where the landing uses a plain anchor.
+ * Mirrors `ButtonLink` in `src/app/components/ui.jsx`, with one deliberate departure:
+ * the radius comes from shadcn's scale (8px) rather than `--radius-control` (6px), so
+ * admin buttons sit correctly inside 10px cards. The landing page keeps 6px and is
+ * untouched. It exists separately because admin navigation needs next/link.
  */
 export function AdminButton({ children, href, tone, className, ...props }) {
   const classes = cn(buttonClass({ tone }), className);
@@ -103,8 +109,12 @@ export function AdminBadge({ children, tone = "default" }) {
 }
 
 /**
- * Hairline table. Figures are mono and right-aligned so columns line up on the
- * decimal — the single biggest legibility win on a page of numbers.
+ * Table. Figures are mono and right-aligned so columns line up on the decimal — the
+ * single biggest legibility win on a page of numbers.
+ *
+ * The row rules stay: these are divisions *within* one surface, which is what a
+ * hairline is actually for. What went away is the outline around the whole thing,
+ * because the card underneath already establishes the edge.
  *
  * Pass `numeric: true` on a column to right-align it.
  */
@@ -113,12 +123,12 @@ export function AdminTable({ columns, rows }) {
     <div className="w-full overflow-x-auto">
       <table className="w-full min-w-[680px] border-collapse text-left text-[13px]">
         <thead>
-          <tr className="border-b border-ink/15">
+          <tr className="border-b border-ink/10">
             {columns.map((column) => (
               <th
                 key={column.key}
                 className={cn(
-                  "px-4 py-2.5 font-mono text-[10px] font-normal uppercase tracking-[0.14em] text-ink/45",
+                  "px-4 py-3 font-mono text-[10px] font-normal uppercase tracking-[0.14em] text-ink/45",
                   column.numeric && "text-right"
                 )}
                 scope="col"
@@ -132,7 +142,7 @@ export function AdminTable({ columns, rows }) {
           {rows.length === 0 && (
             <tr>
               <td
-                className="px-4 py-10 text-center text-sm text-ink/45"
+                className="px-4 py-12 text-center text-sm text-ink/45"
                 colSpan={columns.length}
               >
                 No records yet.
@@ -142,13 +152,13 @@ export function AdminTable({ columns, rows }) {
           {rows.map((row) => (
             <tr
               key={row.id ?? row.booking ?? row.file ?? row.task}
-              className="border-b border-ink/8 last:border-0 hover:bg-field/60"
+              className="border-b border-ink/6 transition-colors last:border-0 hover:bg-ink/[0.025]"
             >
               {columns.map((column) => (
                 <td
                   key={column.key}
                   className={cn(
-                    "px-4 py-3 text-ink/80",
+                    "px-4 py-3.5 text-ink/80",
                     column.numeric && "text-right font-mono tabular-nums text-ink"
                   )}
                 >
@@ -166,35 +176,38 @@ export function AdminTable({ columns, rows }) {
 /**
  * Page header.
  *
- * `title` may contain an `<em>` — the base stylesheet renders every `<em>` as
- * Instrument Serif italic, which is this brand's signature gesture and appeared
- * nowhere in the admin before. Display type is fluid and set tight, against body
- * copy set loose; that contrast is most of what makes the landing page feel typeset.
+ * Deliberately small. It used to open every screen with a fluid display headline up
+ * to 2.6rem — magazine scale — which pushed the actual figures below the fold and
+ * made the page announce itself instead of reporting. A dashboard's title is a label
+ * telling you where you are; the largest thing on the screen should be a number.
+ *
+ * `title` may contain an `<em>`, rendered as Instrument Serif italic by the base
+ * stylesheet. That is this brand's one signature gesture and it survives the change
+ * of genre precisely because it is now used at a normal size.
  */
 export function PageHeader({ eyebrow, title, body, action }) {
   return (
-    <div className="flex flex-col gap-5 border-b border-ink/10 px-4 pb-7 pt-8 sm:px-6 lg:flex-row lg:items-end lg:justify-between">
+    <div className="flex flex-col gap-4 px-4 pb-2 pt-8 sm:px-6 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
       <div className="min-w-0 max-w-3xl">
         {eyebrow && <SectionLabel>{eyebrow}</SectionLabel>}
-        <h1 className="mt-4 text-balance font-sans text-[clamp(1.9rem,3.4vw,2.6rem)] font-bold leading-[1.02] tracking-[-0.035em] text-ink">
+        <h1 className="mt-3 text-balance font-sans text-[clamp(1.375rem,2vw,1.625rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-ink">
           {title}
         </h1>
         {body && (
-          <p className="mt-3 max-w-2xl text-[15px] leading-[1.7] text-ink/60">{body}</p>
+          <p className="mt-2 max-w-2xl text-[14px] leading-[1.65] text-ink/55">{body}</p>
         )}
       </div>
-      {action}
+      {action && <div className="shrink-0 lg:pt-1">{action}</div>}
     </div>
   );
 }
 
 /**
- * A figure with its label. The number is the loud element and the label is quiet —
- * the reverse of the old stat tiles, where an uppercase label and a bold value
- * competed inside a rounded box.
+ * A figure with its label. The number is the loud element and the label is quiet.
  *
- * `accent` marks the one figure on a page that carries the meaning. Used sparingly,
- * per the palette document: the accent recedes so the human moments carry weight.
+ * `accent` marks the one figure on a page that carries the meaning, and it now has a
+ * colour that can actually carry it: `brand-vivid` rather than `brand`, which is dark
+ * enough to be indistinguishable from body ink.
  */
 export function Figure({ label, value, detail, accent = false, className }) {
   return (
@@ -204,29 +217,31 @@ export function Figure({ label, value, detail, accent = false, className }) {
       </p>
       <p
         className={cn(
-          "mt-2 font-mono text-[clamp(1.5rem,2.4vw,2rem)] font-medium leading-none tabular-nums tracking-[-0.02em]",
-          accent ? "text-brand" : "text-ink"
+          "mt-2.5 font-mono text-[clamp(1.5rem,2.4vw,2rem)] font-medium leading-none tabular-nums tracking-[-0.02em]",
+          accent ? "text-brand-vivid" : "text-ink"
         )}
       >
         {value}
       </p>
-      {detail && <p className="mt-2 text-[12.5px] leading-5 text-ink/50">{detail}</p>}
+      {detail && <p className="mt-2.5 text-[12.5px] leading-5 text-ink/50">{detail}</p>}
     </div>
   );
 }
 
 /**
- * A row of figures separated by hairlines rather than boxed into cards.
+ * A row of figures.
  *
- * This is the landing page's `gap-px` over an ink background trick: the parent
- * colour bleeds through the gaps as 1px rules, so the group reads as one ruled
- * object instead of four floating tiles.
+ * This used to be the landing page's `gap-px` trick — cells over an ink background so
+ * the parent bled through the gaps as 1px rules. That reads as one ruled table, which
+ * is right on a marketing page and wrong here: it welds four independent metrics into
+ * a single object. Real gaps and individual elevation let each figure be its own
+ * thing, which is what it is.
  */
 export function FigureRow({ children, className }) {
   return (
     <div
       className={cn(
-        "grid grid-cols-1 gap-px border border-ink/10 bg-ink/10 sm:grid-cols-2 xl:grid-cols-4",
+        "grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4",
         className
       )}
     >
@@ -235,52 +250,58 @@ export function FigureRow({ children, className }) {
   );
 }
 
-/** Wraps each child of a FigureRow so the hairline gaps show through. */
+/** Wraps each child of a FigureRow as its own raised surface. */
 export function FigureCell({ children, className }) {
-  return <div className={cn("bg-paper p-5", className)}>{children}</div>;
+  return (
+    <div className={cn("rounded-lg bg-paper p-6 shadow-card", className)}>{children}</div>
+  );
 }
 
 /**
- * A titled block inside a page. The heading is a real step above body text — in the
- * old version every section heading was `text-sm`, identical to the prose beneath
- * it, so nothing established hierarchy.
+ * A titled block inside a page.
+ *
+ * The header no longer sits above a full-width rule. Inside a card that is already
+ * separated from the page by elevation, a divider under the title is a second
+ * separator doing the first one's job — spacing says it more quietly.
  */
 export function Panel({ title, meta, action, children, className }) {
   return (
-    <AdminCard className={className}>
+    <AdminCard className={cn("flex flex-col", className)}>
       {(title || action) && (
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-ink/10 px-5 py-4">
+        <div className="flex flex-wrap items-start justify-between gap-3 px-6 pb-5 pt-6">
           <div className="min-w-0">
             {title && (
-              <h2 className="text-[17px] font-semibold leading-tight tracking-[-0.01em] text-ink">
+              <h2 className="text-[15px] font-semibold leading-tight tracking-[-0.01em] text-ink">
                 {title}
               </h2>
             )}
-            {meta && <p className="mt-1.5 text-[12.5px] leading-5 text-ink/55">{meta}</p>}
+            {meta && <p className="mt-1.5 text-[12.5px] leading-5 text-ink/50">{meta}</p>}
           </div>
           {action}
         </div>
       )}
-      <div className="p-5">{children}</div>
+      <div className={cn("px-6 pb-6", !title && !action && "pt-6")}>{children}</div>
     </AdminCard>
   );
 }
 
 /**
- * A notice. Deliberately NOT a coloured left-border strip — that is the single most
- * recognisable generated-UI tell, and the old alert cards used it. A hairline box
- * with a status dot says the same thing without the tell.
+ * A notice.
+ *
+ * Deliberately NOT a coloured left-border strip — that is the most recognisable
+ * generated-UI tell. A soft tint of the status colour with a dot says the same thing:
+ * the tone is legible at a glance, and the dot means it is not colour alone.
  */
 export function Notice({ tone = "default", title, children }) {
-  const border = {
-    default: "border-ink/15",
-    good: "border-good/35",
-    warn: "border-warn/35",
-    critical: "border-critical/35"
+  const surface = {
+    default: "bg-ink/4",
+    good: "bg-good/8",
+    warn: "bg-warn/8",
+    critical: "bg-critical/8"
   }[tone];
 
   return (
-    <div className={cn("border bg-paper px-5 py-4", border)}>
+    <div className={cn("rounded-lg px-5 py-4", surface)}>
       {title && (
         <p className="flex items-center gap-2 text-[13.5px] font-semibold text-ink">
           <span

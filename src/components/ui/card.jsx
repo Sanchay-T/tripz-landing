@@ -12,7 +12,12 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground ring-1 ring-foreground/10 [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        // Two departures from the shipped component, both to match the admin's own
+        // primitives: elevation replaces the `ring-1 ring-foreground/10` outline, and
+        // card spacing goes from 16px to 24px. Left as shipped, shadcn blocks would
+        // read as outlined and cramped next to `AdminCard`, which is exactly the
+        // mismatch that made the dashboard look assembled rather than designed.
+        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground shadow-card [--card-spacing:--spacing(6)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(4)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
         className
       )}
       {...props} />
@@ -95,8 +100,11 @@ function CardFooter({
   return (
     <div
       data-slot="card-footer"
+      // No grey footer strip. `border-t bg-muted/50` split every stat card into two
+      // tones and is one of the most recognisable stock-template shapes there is; the
+      // footer here is just the bottom of the card.
       className={cn(
-        "flex items-center rounded-b-xl border-t bg-muted/50 p-(--card-spacing)",
+        "flex items-center rounded-b-xl px-(--card-spacing) pb-(--card-spacing)",
         className
       )}
       {...props} />

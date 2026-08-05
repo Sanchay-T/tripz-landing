@@ -45,7 +45,7 @@ export function ShareBar({ segments, className }) {
 
   return (
     <div className={className}>
-      <div className="flex h-2.5 w-full gap-px bg-ink/10">
+      <div className="flex h-2.5 w-full gap-px overflow-hidden rounded-full bg-ink/8">
         {shown.map((segment) => (
           <div
             key={segment.label}
@@ -122,7 +122,7 @@ export function RevenueVersusProfit({ types, formatCurrency }) {
       </div>
 
       {top && totalMargin > 0 && totalGross > 0 && (
-        <p className="border-t border-ink/10 pt-5 text-[13.5px] leading-[1.65] text-ink/75">
+        <p className="border-t border-ink/8 pt-5 text-[13.5px] leading-[1.65] text-ink/75">
           <strong className="font-semibold text-ink">{top.label}</strong> are{" "}
           {Math.round((top.gross / totalGross) * 100)}% of revenue but{" "}
           {Math.round((top.margin / totalMargin) * 100)}% of profit —{" "}
@@ -159,9 +159,13 @@ export function TakeRateBars({ types, formatCurrency, formatPct }) {
               {formatPct(type.takePct, 2)}
             </span>
           </div>
-          <div className="mt-2 h-px w-full bg-ink/10">
+          {/* 6px, not 1px. These were `h-px`, which is a hairline rule rather than a
+              bar — "thin marks" is a rule about restraint, not about making the data
+              invisible. At this height the fill is legible and the rounded end reads
+              as a measured quantity. */}
+          <div className="mt-2.5 h-1.5 w-full rounded-full bg-ink/8">
             <div
-              className="h-px"
+              className="h-1.5 rounded-full"
               style={{
                 backgroundColor: colorForType(type.type),
                 width: `${Math.max(((type.takePct ?? 0) / widest) * 100, type.takePct > 0 ? 2 : 0).toFixed(2)}%`

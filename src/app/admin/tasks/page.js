@@ -43,14 +43,20 @@ export default async function TasksPage() {
             <h2 className="text-lg font-semibold">{group}</h2>
             <div className="mt-4 space-y-3">
               {tasks.length === 0 && <p className="text-sm text-ink/55">No tasks in this lane.</p>}
+              {/* Recessed, not raised. These sit inside an AdminCard, and a second
+                  elevated surface on top of the first reads as a card in a card. */}
               {tasks.map((task) => (
-                <div key={task.id} className="rounded-md border border-ink/10 p-3">
+                <div key={task.id} className="rounded-md bg-ink/[0.035] p-3.5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-medium">{task.task_type}</p>
                       <p className="text-sm text-ink/55">{task.customers?.name ?? "Unknown"} · {task.due_at?.slice(0, 10)}</p>
                     </div>
-                    <AdminBadge tone={task.priority === "urgent" ? "danger" : "warn"}>
+                    {/* `danger` is not one of AdminBadge's tones (default/good/warn/
+                        critical), so urgent tasks were resolving to undefined and
+                        rendering with no colour at all — the one priority that needed
+                        to stand out was the only one that did not. */}
+                    <AdminBadge tone={task.priority === "urgent" ? "critical" : "warn"}>
                       {task.priority}
                     </AdminBadge>
                   </div>

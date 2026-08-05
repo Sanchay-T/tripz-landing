@@ -395,7 +395,7 @@ export default function TicketIntakeClient() {
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_19rem] xl:grid-cols-[minmax(0,1fr)_20rem]">
         <AdminCard className="p-3 sm:p-5">
-          <div className="flex min-h-48 flex-col items-center justify-center border border-dashed border-ink/20 bg-field/50 p-4 text-center sm:min-h-56 sm:p-6">
+          <div className="flex min-h-48 flex-col items-center justify-center rounded-lg border border-dashed border-ink/15 bg-ink/[0.02] p-4 text-center sm:min-h-56 sm:p-6">
             <UploadCloud size={38} className="text-brand" />
             <h2 className="mt-4 text-xl font-semibold">Upload ticket files</h2>
             <p className="mt-2 max-w-xl text-sm leading-6 text-ink/60">
@@ -509,7 +509,7 @@ export default function TicketIntakeClient() {
               <label key={field} className="grid gap-1.5 text-sm font-medium text-ink/70">
                 {label}
                 <input
-                  className="min-h-10 rounded-lg border border-ink/10 bg-white px-3 text-sm text-ink outline-none transition focus:border-brand"
+                  className="min-h-10 rounded-md border border-ink/12 bg-paper px-3 text-sm text-ink outline-none transition focus:border-brand-vivid focus:ring-2 focus:ring-brand-vivid/20"
                   value={reviewData[field] ?? ""}
                   onChange={(event) => updateField(field, event.target.value)}
                   disabled={!selectedRow || isSaving}
@@ -521,7 +521,7 @@ export default function TicketIntakeClient() {
           <label className="mt-4 grid gap-1.5 text-sm font-medium text-ink/70">
             Notes
             <textarea
-              className="min-h-24 rounded-lg border border-ink/10 bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-brand"
+              className="min-h-24 rounded-md border border-ink/12 bg-paper px-3 py-2 text-sm text-ink outline-none transition focus:border-brand-vivid focus:ring-2 focus:ring-brand-vivid/20"
               value={reviewData.rawNotes ?? ""}
               onChange={(event) => updateField("rawNotes", event.target.value)}
               disabled={!selectedRow || isSaving}

@@ -9,40 +9,61 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
 
 /**
- * The stat row from shadcn's dashboard-01, fed real figures.
+ * The supporting stat row.
  *
- * As shipped this block hardcoded "$1,250.00", "+12.5%" and "Visitors for the last 6
- * months". Left alone it is a demo: a confident dashboard of numbers that never
- * change. Every value here now comes from the bookings in the database, and the trend
- * badge only renders when there is a genuine prior period to compare against — an
- * invented "+12.5%" is worse than no badge at all.
+ * Two things changed about what this shows. As shipped by shadcn it hardcoded
+ * "$1,250.00" and "+12.5%" — a confident dashboard of numbers that never move — so
+ * every value here now comes from the bookings in the database, and a trend badge
+ * renders only when there is a genuine prior period to compare against.
+ *
+ * Then it stopped repeating the hero. Revenue, margin and take rate live in the chart
+ * card above; carrying them again here would spend the widest row on the page saying
+ * the same thing twice. These four are the figures that are *not* visible anywhere
+ * else on first sight: how many bookings, how much of the revenue earns nothing, what
+ * went out, and what is actually left.
  */
 export function SectionCards({ cards }) {
   return (
-    <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+    <div className="grid grid-cols-1 gap-5 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       {cards.map((card) => (
         <Card className="@container/card" key={card.label}>
           <CardHeader>
-            <CardDescription>{card.label}</CardDescription>
-            <CardTitle className="font-mono text-2xl font-medium tabular-nums @[250px]/card:text-3xl">
+            <CardDescription className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
+              {card.label}
+            </CardDescription>
+            <CardTitle
+              className={cn(
+                "font-mono text-[clamp(1.5rem,2.2vw,1.875rem)] font-medium leading-none tracking-[-0.02em] tabular-nums",
+                card.tone === "critical" && "text-critical",
+                card.tone === "accent" && "text-brand-vivid",
+                !card.tone && "text-ink"
+              )}
+            >
               {card.value}
             </CardTitle>
             {card.delta && (
               <CardAction>
-                <Badge variant="outline">
-                  {card.delta.direction === "up" ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                <Badge variant="outline" className="gap-1 font-mono text-[11px]">
+                  {card.delta.direction === "up" ? (
+                    <TrendingUpIcon className="size-3" />
+                  ) : (
+                    <TrendingDownIcon className="size-3" />
+                  )}
                   {card.delta.label}
                 </Badge>
               </CardAction>
             )}
           </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            {card.headline && (
-              <div className="line-clamp-1 flex gap-2 font-medium">{card.headline}</div>
-            )}
-            <div className="text-muted-foreground">{card.detail}</div>
+          <CardFooter>
+            <p className="text-[12.5px] leading-[1.5] text-ink/50">
+              {card.detail}
+              {card.delta?.caption && (
+                <span className="text-ink/35"> · {card.delta.caption}</span>
+              )}
+            </p>
           </CardFooter>
         </Card>
       ))}

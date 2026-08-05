@@ -57,10 +57,22 @@ const RANGES = {
   "30d": { label: "Last 30 days", short: "30 days", days: 30 }
 };
 
+// Short form, for axis ticks where space is the constraint.
 function inr(value) {
   if (Math.abs(value) >= 100000) return `₹${(value / 100000).toFixed(1)}L`;
   if (Math.abs(value) >= 1000) return `₹${Math.round(value / 1000)}k`;
   return `₹${value}`;
+}
+
+// Full form, for the hero figure. An abbreviated headline number ("₹5.0L") throws
+// away the precision that makes it worth reading — this is the one figure on the
+// screen that should be exact.
+function inrFull(value) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0
+  }).format(Number(value ?? 0));
 }
 
 export function ChartAreaInteractive({ data = [] }) {
@@ -88,18 +100,62 @@ export function ChartAreaInteractive({ data = [] }) {
   }, [data, range]);
 
   const total = filtered.length > 0 ? filtered[filtered.length - 1] : { revenue: 0, margin: 0 };
+  const takePct = total.revenue > 0 ? (total.margin / total.revenue) * 100 : null;
 
   return (
     <Card className="@container/card">
+      {/* This card is the page's hero.
+          Revenue used to be one of four identically sized stat tiles, which meant
+          nothing on the screen led and the eye had no entry point. It is the figure
+          the business is actually run on, so it is set large, in mono, with margin
+          and take rate as supporting figures beneath it and the chart directly below
+          — one object that answers "how much, and is it moving" without a scroll.
+          Every figure here follows the range toggle, so the headline and the plot can
+          never disagree. */}
       <CardHeader>
-        <CardTitle>Revenue and margin</CardTitle>
-        <CardDescription>
-          <span className="hidden @[540px]/card:block">
-            Running totals by travel date · {inr(total.revenue)} revenue,{" "}
-            {inr(total.margin)} margin
+        {/* The two figures also serve as the legend: each carries the swatch of the
+            series it names, so the plot never relies on the tooltip to say which area
+            is which. That is also why margin is drawn in `--chart-3` here rather than
+            the UI accent — a headline figure in a different green from its own line
+            is worse than no colour at all. */}
+        <CardDescription className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
+          <span
+            aria-hidden
+            className="inline-block size-2 shrink-0 rounded-[2px]"
+            style={{ backgroundColor: "var(--chart-1)" }}
+          />
+          Revenue
+          {/* The range picker sits directly to the right and already names the
+              window, so on a narrow card this would wrap to a second line to repeat
+              it. */}
+          <span className="hidden @[520px]/card:inline">
+            · {RANGES[range].label.toLowerCase()}
           </span>
-          <span className="@[540px]/card:hidden">{inr(total.revenue)} revenue</span>
         </CardDescription>
+        <CardTitle className="font-mono text-[clamp(2rem,4.5vw,2.75rem)] font-medium leading-none tracking-[-0.03em] tabular-nums text-ink">
+          {inrFull(total.revenue)}
+        </CardTitle>
+        <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <span className="flex items-center gap-2 text-[13px] text-ink/55">
+            <span
+              aria-hidden
+              className="inline-block size-2 shrink-0 rounded-[2px]"
+              style={{ backgroundColor: "var(--chart-3)" }}
+            />
+            <span className="font-mono tabular-nums" style={{ color: "var(--chart-3)" }}>
+              {inrFull(total.margin)}
+            </span>{" "}
+            margin
+          </span>
+          {takePct !== null && (
+            <span className="text-[13px] text-ink/55">
+              <span className="font-mono tabular-nums text-ink">
+                {takePct.toFixed(2)}%
+              </span>{" "}
+              take rate
+            </span>
+          )}
+        </div>
         <CardAction>
           <ToggleGroup
             type="single"
@@ -132,13 +188,13 @@ export function ChartAreaInteractive({ data = [] }) {
           </Select>
         </CardAction>
       </CardHeader>
-      <div className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <div className="px-2 sm:px-6">
         {filtered.length === 0 ? (
           <p className="py-16 text-center text-sm text-muted-foreground">
             No bookings in this range.
           </p>
         ) : (
-          <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
+          <ChartContainer config={chartConfig} className="aspect-auto h-[260px] w-full">
             <AreaChart data={filtered}>
               <defs>
                 <linearGradient id="fillRevenue" x1="0" y1="0" x2="0" y2="1">
@@ -171,9 +227,12 @@ export function ChartAreaInteractive({ data = [] }) {
                 width={52}
                 tickFormatter={inr}
               />
+              {/* No `defaultIndex`. The block ships `isMobile ? -1 : undefined`, which
+                  recharts resolves to the last point — so on a phone the chart opened
+                  with a tooltip pinned over its own top-left corner, covering the plot
+                  before you had touched anything. */}
               <ChartTooltip
                 cursor={false}
-                defaultIndex={isMobile ? -1 : undefined}
                 content={
                   <ChartTooltipContent
                     labelFormatter={(value) =>
@@ -183,14 +242,20 @@ export function ChartAreaInteractive({ data = [] }) {
                         year: "numeric"
                       })
                     }
-                    formatter={(value, name) => [
-                      ` ${new Intl.NumberFormat("en-IN", {
-                        style: "currency",
-                        currency: "INR",
-                        maximumFractionDigits: 0
-                      }).format(value)}`,
-                      chartConfig[name]?.label ?? name
-                    ]}
+                    // Returning `[value, name]` rendered the two as adjacent inline
+                    // nodes — "₹4,15,271Revenue" — because HTML collapses the leading
+                    // space. Laying the row out explicitly also lets the figure be
+                    // mono and right-aligned, like every other figure in the app.
+                    formatter={(value, name) => (
+                      <span className="flex w-full items-baseline justify-between gap-6">
+                        <span className="text-ink/60">
+                          {chartConfig[name]?.label ?? name}
+                        </span>
+                        <span className="font-mono tabular-nums text-ink">
+                          {inrFull(value)}
+                        </span>
+                      </span>
+                    )}
                     indicator="dot"
                   />
                 }

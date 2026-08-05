@@ -68,7 +68,7 @@ function Field({ label, children, hint }) {
 }
 
 const inputClass =
-  "w-full rounded-control border border-ink/15 bg-paper px-3 py-2 text-[13.5px] text-ink outline-none transition focus:border-brand focus:ring-1 focus:ring-brand/30";
+  "w-full rounded-md border border-ink/12 bg-paper px-3 py-2.5 text-[13.5px] text-ink outline-none transition focus:border-brand-vivid focus:ring-2 focus:ring-brand-vivid/20";
 
 export default function AddBookingForm() {
   const router = useRouter();
@@ -314,7 +314,7 @@ export default function AddBookingForm() {
         </div>
 
         {preview && (
-          <div className="mt-6 flex flex-wrap items-baseline gap-x-6 gap-y-1 border-t border-ink/15 pt-5">
+          <div className="mt-6 flex flex-wrap items-baseline gap-x-6 gap-y-1 border-t border-ink/8 pt-5">
             <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
               This booking earns
             </span>

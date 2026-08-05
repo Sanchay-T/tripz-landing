@@ -84,7 +84,7 @@ export default function LoginForm() {
             aria-invalid={error ? "true" : undefined}
             autoComplete="current-password"
             autoFocus
-            className="w-full rounded-control border border-ink/15 bg-paper px-3 py-2.5 text-[14px] text-ink outline-none transition focus:border-brand focus:ring-1 focus:ring-brand/30"
+            className="w-full rounded-md border border-ink/12 bg-paper px-3.5 py-2.5 text-[14px] text-ink shadow-card outline-none transition focus:border-brand-vivid focus:ring-2 focus:ring-brand-vivid/20"
             id="password"
             name="password"
             onChange={(event) => setPassword(event.target.value)}
@@ -109,7 +109,7 @@ export default function LoginForm() {
         </AdminButton>
       </form>
 
-      <p className="mt-7 border-t border-ink/10 pt-5 font-mono text-[10px] uppercase tracking-[0.12em] text-ink/40">
+      <p className="mt-7 border-t border-ink/8 pt-5 font-mono text-[10px] uppercase tracking-[0.12em] text-ink/40">
         One shared password · no per-user accounts yet
       </p>
     </div>

@@ -227,14 +227,14 @@ export default async function MarginPage() {
             package vendor value, "All in numbers". It leads the page because it is
             the thing he asked for; everything below it is interpretation. */}
         <AdminCard className="overflow-hidden">
-          <div className="border-b border-ink/10 px-4 py-4 sm:px-5">
+          <div className="border-b border-ink/8 px-4 py-4 sm:px-5">
             <h2 className="text-sm font-semibold text-ink">The numbers</h2>
             <p className="mt-1 text-xs leading-5 text-ink/55">
               Bookings and value by market, plus totals.
             </p>
           </div>
 
-          <div className="divide-y divide-ink/10">
+          <div className="divide-y divide-ink/8">
             {askedRows.map((row) => (
               <div
                 key={row.label}
@@ -291,17 +291,17 @@ export default async function MarginPage() {
           </div>
 
           {internal.length > 0 && (
-            <p className="border-t border-ink/10 px-4 py-3 text-xs leading-5 text-ink/55 sm:px-5">
+            <p className="border-t border-ink/8 px-4 py-3 text-xs leading-5 text-ink/55 sm:px-5">
               Excludes {internal.length} internal booking
               {internal.length === 1 ? "" : "s"} worth{" "}
-              {formatCurrency(internal.reduce((sum, row) => sum + grossOf(row), 0))} made on
-              the company&apos;s own account. They are real bookings but not customer
+              {formatCurrency(internal.reduce((sum, row) => sum + grossOf(row), 0))}{" "}
+              made on the company&apos;s own account. They are real bookings but not customer
               business, and counting them would drag the take rate down.
             </p>
           )}
 
           {asked.unclassified > 0 && (
-            <p className="border-t border-ink/10 px-4 py-3 text-[12px] leading-5 text-warn sm:px-5">
+            <p className="border-t border-ink/8 px-4 py-3 text-[12px] leading-5 text-warn sm:px-5">
               {asked.unclassified} booking{asked.unclassified === 1 ? " has" : "s have"} no
               market recorded, so {asked.unclassified === 1 ? "it is" : "they are"} counted
               in the totals but in neither the domestic nor the international line. The
@@ -363,7 +363,7 @@ export default async function MarginPage() {
           </div>
 
           {topByMargin && profitShare !== null && revenueShare !== null && total.margin > 0 && (
-            <p className="mt-5 border-t border-ink/10 pt-4 text-sm leading-6 text-ink/75">
+            <p className="mt-5 border-t border-ink/8 pt-4 text-sm leading-6 text-ink/75">
               <strong className="text-ink">{topByMargin.label}</strong> are{" "}
               {formatPct(revenueShare, 0)} of revenue but {formatPct(profitShare, 0)} of
               profit — {formatCurrency(topByMargin.margin)} of the{" "}
@@ -435,7 +435,7 @@ export default async function MarginPage() {
                   {zero.count === 1 ? "" : "s"} worth {formatCurrency(zero.gross)} sold at
                   cost.
                 </p>
-                <ul className="mt-4 space-y-2 border-t border-ink/10 pt-3">
+                <ul className="mt-4 space-y-2 border-t border-ink/8 pt-3">
                   {zero.rows.map((row, index) => (
                     <li
                       key={row.id ?? `zero-${index}`}
@@ -505,7 +505,7 @@ export default async function MarginPage() {
         )}
 
         <AdminCard>
-          <div className="border-b border-ink/10 px-4 py-4 sm:px-5">
+          <div className="border-b border-ink/8 px-4 py-4 sm:px-5">
             <h2 className="text-sm font-semibold text-ink">Every booking, by what it earned</h2>
             <p className="mt-1 text-xs leading-5 text-ink/55">
               Sorted by travel date. Every figure above traces to a row here.
