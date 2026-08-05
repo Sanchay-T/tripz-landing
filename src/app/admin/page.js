@@ -1,22 +1,40 @@
-import { UploadCloud } from "lucide-react";
-import { AdminBadge, AdminButton, AdminCard, AdminTable, PageHeader, Panel } from "./components";
+import {
+  AdminBadge,
+  AdminButton,
+  AdminTable,
+  Figure,
+  FigureCell,
+  FigureRow,
+  Notice,
+  PageHeader,
+  Panel
+} from "./components";
+import { RevenueVersusProfit, TakeRateBars, colorForType } from "./charts";
 import { fetchAdminDashboardData } from "@/lib/admin/records";
+import {
+  byType,
+  customerBookings,
+  fetchMarginRows,
+  internalBookings,
+  requestedFigures,
+  summarise,
+  zeroMargin
+} from "@/lib/admin/margin";
 
 export const dynamic = "force-dynamic";
 
-const bookingColumns = [
-  { key: "booking", label: "Booking" },
-  { key: "customer", label: "Customer" },
-  { key: "route", label: "Route / Stay" },
-  { key: "date", label: "Travel date" },
-  { key: "price", label: "Price" },
-  { key: "margin", label: "Margin" },
-  {
-    key: "status",
-    label: "Status",
-    render: (row) => <AdminBadge tone={row.status === "ticketed" || row.status === "completed" ? "success" : "default"}>{row.status}</AdminBadge>
-  }
-];
+/**
+ * The operating screen.
+ *
+ * This is what you land on, so it carries the figures the business is actually run
+ * on rather than a summary that sends you somewhere else to find them. It used to
+ * show a hardcoded bar chart and four counts, with the money two clicks away.
+ *
+ * Money comes from `fetchMarginRows()`, deliberately not `fetchAdminDashboardData()`
+ * — that helper caps bookings at 20 and omits `base_cost`, so any total built on it
+ * would be a silent partial sum. The operational panels still use it, because for
+ * "the most recent tasks" a cap is the correct behaviour.
+ */
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("en-IN", {
@@ -26,11 +44,14 @@ function formatCurrency(value) {
   }).format(Number(value ?? 0));
 }
 
-function formatDate(value) {
-  if (!value) {
-    return "Not set";
-  }
+function formatPct(value, digits = 1) {
+  return value === null || value === undefined || Number.isNaN(value)
+    ? "—"
+    : `${Number(value).toFixed(digits)}%`;
+}
 
+function formatDate(value) {
+  if (!value) return "Not set";
   return new Intl.DateTimeFormat("en-IN", {
     day: "2-digit",
     month: "short",
@@ -38,188 +59,280 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
-export default async function AdminDashboard() {
-  const data = await fetchAdminDashboardData();
-
-  // Replaces a hardcoded [45,70,38,85,62,95] bar chart that never moved with the data.
-  // A chart that cannot change is worse than no chart: it teaches people to distrust
-  // the ones that can.
-  const revenueTotals = new Map();
-  for (const booking of data.bookings) {
-    const type = booking.booking_type ?? "other";
-    const current = revenueTotals.get(type) ?? { revenue: 0, margin: 0, count: 0 };
-    current.revenue += Number(booking.selling_price ?? 0);
-    current.margin += Number(booking.margin ?? 0);
-    current.count += 1;
-    revenueTotals.set(type, current);
+const bookingColumns = [
+  {
+    key: "type",
+    label: "Type",
+    render: (row) => (
+      <span className="inline-flex items-center gap-2 whitespace-nowrap">
+        <span className="inline-block size-2 shrink-0" style={{ backgroundColor: row.color }} />
+        {row.type}
+      </span>
+    )
+  },
+  { key: "customer", label: "Customer" },
+  { key: "route", label: "Route / Stay" },
+  { key: "date", label: "Travel date" },
+  { key: "price", label: "Price", numeric: true },
+  { key: "margin", label: "Margin", numeric: true },
+  {
+    key: "take",
+    label: "Take",
+    numeric: true,
+    render: (row) =>
+      row.isZero ? <AdminBadge tone="critical">0%</AdminBadge> : <span>{row.take}</span>
   }
-  const biggest = Math.max(1, ...[...revenueTotals.values()].map((r) => r.revenue));
-  const revenueByType = [...revenueTotals.entries()]
-    .map(([type, r]) => ({ type, ...r, share: (r.revenue / biggest) * 100 }))
-    .sort((a, b) => b.revenue - a.revenue);
-  const metrics = [
-    {
-      label: "Booked amount",
-      value: formatCurrency(data.metrics.totalBooked),
-      detail: "Confirmed booking value across live records.",
-      trend: "live"
-    },
-    {
-      label: "Margin earned",
-      value: formatCurrency(data.metrics.totalMargin),
-      detail: "Generated from selling price minus base cost.",
-      trend: "live"
-    },
-    {
-      label: "Customers",
-      value: data.metrics.customerCount,
-      detail: "Recent customer records currently visible.",
-      trend: "live"
-    },
-    {
-      label: "Open tasks",
-      value: data.metrics.openTasks,
-      detail: "Travel reminders, payment follow-ups, and boarding pass tasks.",
-      trend: data.metrics.openTasks ? "urgent" : "clear"
-    }
+];
+
+export default async function AdminDashboard() {
+  const [{ rows, error }, ops] = await Promise.all([
+    fetchMarginRows(),
+    fetchAdminDashboardData()
+  ]);
+
+  const billable = customerBookings(rows);
+  const internal = internalBookings(rows);
+  const total = summarise(billable);
+  const types = byType(billable);
+  const zero = zeroMargin(billable);
+  const asked = requestedFigures(billable);
+
+  // Rao's list, in the order he asked for it on 2026-08-04.
+  const askedRows = [
+    { label: "International booking", cut: asked.internationalBooking, type: "flight" },
+    { label: "Domestic booking", cut: asked.domesticBooking, type: "flight" },
+    { label: "International hotel booking", cut: asked.internationalHotel, type: "hotel" },
+    { label: "Domestic hotel booking", cut: asked.domesticHotel, type: "hotel" }
   ];
 
-  const bookingRows = data.bookings.map((booking) => ({
-    id: booking.id,
-    booking: booking.booking_code,
-    customer: booking.customers?.name ?? "Unknown",
-    route: [booking.departure, booking.arrival].filter(Boolean).join(" -> ") || booking.booking_type,
-    date: formatDate(booking.travel_date),
-    price: formatCurrency(booking.selling_price),
-    margin: formatCurrency(booking.margin),
-    status: booking.booking_status
-  }));
+  const recent = [...rows]
+    .sort((a, b) => String(b.travel_date ?? "").localeCompare(String(a.travel_date ?? "")))
+    .slice(0, 8)
+    .map((row) => {
+      const gross = Number(row.selling_price ?? 0);
+      const margin = Number(row.margin ?? 0);
+      return {
+        id: row.id,
+        color: colorForType(row.booking_type),
+        type: row.booking_type ?? "other",
+        customer: row.customers?.name ?? "Unknown",
+        route: [row.departure, row.arrival].filter(Boolean).join(" → ") || "Not set",
+        date: formatDate(row.travel_date),
+        price: formatCurrency(gross),
+        margin: formatCurrency(margin),
+        take: formatPct(gross > 0 ? (margin / gross) * 100 : null, 2),
+        isZero: gross > 0 && margin === 0
+      };
+    });
+
+  const openTasks = (ops.tasks ?? []).filter((task) => task.status !== "done");
 
   return (
     <>
       <PageHeader
         eyebrow="TripZ operating system"
-        title="Dashboard"
-        body="Booking revenue, margin, documents, and reminders work from one operating surface."
-        action={
-          <AdminButton href="/admin/intake">
-            <UploadCloud size={16} />
-            Upload tickets
-          </AdminButton>
+        title={
+          <>
+            Where the money <em>actually comes from</em>
+          </>
         }
+        body="Every figure here is recomputed from selling price minus base cost on each booking, never read from a stored total."
       />
-      <div className="space-y-5 p-4 sm:p-6">
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {metrics.map((metric) => (
-            <AdminCard key={metric.label} className="p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-sm font-medium text-ink/55">{metric.label}</p>
-                  <p className="mt-2 text-3xl font-bold tracking-[-0.04em] text-ink">
-                    {metric.value}
-                  </p>
-                </div>
-                <AdminBadge tone={metric.trend === "urgent" ? "warn" : "default"}>
-                  {metric.trend}
-                </AdminBadge>
-              </div>
-              <p className="mt-3 text-sm text-ink/55">{metric.detail}</p>
-            </AdminCard>
-          ))}
-        </section>
 
-        <section className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(22rem,0.65fr)]">
+      <div className="space-y-5 px-4 py-5 sm:px-6">
+        {error && (
+          <Notice tone="warn" title="Bookings could not be loaded">
+            The database did not answer, so every figure on this page is zero — that is
+            an empty response, not a real result. {error}
+          </Notice>
+        )}
+
+        <FigureRow>
+          <FigureCell>
+            <Figure label="Revenue" value={formatCurrency(total.gross)} detail="Total selling price." />
+          </FigureCell>
+          <FigureCell>
+            <Figure label="Margin earned" value={formatCurrency(total.margin)} detail="Selling price minus base cost." />
+          </FigureCell>
+          <FigureCell>
+            {/* The one figure that carries the argument. */}
+            <Figure accent label="Take rate" value={formatPct(total.takePct, 2)} detail="Margin as a share of revenue." />
+          </FigureCell>
+          <FigureCell>
+            <Figure label="Bookings" value={total.count} detail="Customer business only." />
+          </FigureCell>
+        </FigureRow>
+
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
           <Panel
-            title="Revenue by type"
-            meta="Real figures from the bookings below, not a sample."
+            title="Where the revenue comes from, and where the profit does"
+            meta="Same colours, two bars. A line that is wide on top and narrow below is turning revenue into no profit."
           >
-            {revenueByType.length === 0 ? (
-              <p className="text-sm text-ink/45">No bookings recorded yet.</p>
-            ) : (
-              <ul className="space-y-4">
-                {revenueByType.map((row) => (
-                  <li key={row.type}>
-                    <div className="flex items-baseline justify-between gap-4">
-                      <span className="text-[13.5px] capitalize text-ink/75">{row.type}</span>
-                      <span className="font-mono text-[13.5px] tabular-nums text-ink">
-                        {formatCurrency(row.revenue)}
+            <RevenueVersusProfit types={types} formatCurrency={formatCurrency} />
+          </Panel>
+
+          <Panel title="The numbers" meta="Bookings and value by market, plus totals.">
+            <dl className="divide-y divide-ink/10">
+              {askedRows.map((row) => (
+                <div
+                  key={row.label}
+                  className="flex items-baseline justify-between gap-4 py-2.5 first:pt-0"
+                >
+                  <dt className="flex items-center gap-2 text-[13px] text-ink/75">
+                    <span
+                      className="inline-block size-2 shrink-0"
+                      style={{ backgroundColor: colorForType(row.type) }}
+                    />
+                    {row.label}
+                  </dt>
+                  <dd className="flex shrink-0 items-baseline gap-4">
+                    <span className="font-mono text-[11px] tabular-nums text-ink/40">
+                      {row.cut.count}
+                    </span>
+                    <span className="min-w-[6.5rem] text-right font-mono text-[14px] tabular-nums text-ink">
+                      {formatCurrency(row.cut.value)}
+                    </span>
+                  </dd>
+                </div>
+              ))}
+              <div className="flex items-baseline justify-between gap-4 py-2.5">
+                <dt className="text-[13px] font-semibold text-ink">Total booking value</dt>
+                <dd className="font-mono text-[15px] font-medium tabular-nums text-ink">
+                  {formatCurrency(asked.totalBookingValue)}
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-4 py-2.5">
+                <dt className="text-[13px] font-semibold text-ink">Total margin earned</dt>
+                <dd className="font-mono text-[15px] font-medium tabular-nums text-ink">
+                  {formatCurrency(asked.totalMarginEarned)}
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-4 pt-2.5">
+                <dt className="flex items-center gap-2 text-[13px] text-ink/75">
+                  <span
+                    className="inline-block size-2 shrink-0"
+                    style={{ backgroundColor: colorForType("package") }}
+                  />
+                  Package vendor booking value
+                </dt>
+                <dd className="font-mono text-[14px] tabular-nums text-ink">
+                  {formatCurrency(asked.packageVendorValue)}
+                </dd>
+              </div>
+            </dl>
+            {internal.length > 0 && (
+              <p className="mt-4 border-t border-ink/10 pt-3 text-[11.5px] leading-5 text-ink/50">
+                Excludes {internal.length} internal booking{internal.length === 1 ? "" : "s"} worth{" "}
+                {formatCurrency(
+                  internal.reduce((sum, row) => sum + Number(row.selling_price ?? 0), 0)
+                )}{" "}
+                made on the company&apos;s own account.
+              </p>
+            )}
+          </Panel>
+        </div>
+
+        <div className="grid gap-5 xl:grid-cols-2">
+          <Panel title="Take rate by type" meta="Margin as a percentage of what the customer paid.">
+            <TakeRateBars types={types} formatCurrency={formatCurrency} formatPct={formatPct} />
+          </Panel>
+
+          <Panel title="Zero-margin exposure" meta="Bookings delivered with no profit recorded.">
+            {zero.count > 0 ? (
+              <>
+                <p className="font-mono text-[clamp(1.75rem,3vw,2.4rem)] font-medium leading-none tabular-nums text-critical">
+                  {formatPct(zero.shareOfGrossPct, 0)}
+                </p>
+                <p className="mt-2.5 text-[13px] text-ink/60">
+                  of revenue earns nothing — {zero.count} booking{zero.count === 1 ? "" : "s"} worth{" "}
+                  {formatCurrency(zero.gross)} sold at cost.
+                </p>
+                <ul className="mt-4 space-y-2 border-t border-ink/10 pt-3.5">
+                  {zero.rows.map((row, index) => (
+                    <li
+                      key={row.id ?? index}
+                      className="flex items-center justify-between gap-3 text-[13px]"
+                    >
+                      <span className="flex min-w-0 items-center gap-2">
+                        <span
+                          className="inline-block size-2 shrink-0"
+                          style={{ backgroundColor: colorForType(row.booking_type) }}
+                        />
+                        <span className="truncate text-ink/75">
+                          {[row.departure, row.arrival].filter(Boolean).join(" → ") ||
+                            row.booking_code}
+                        </span>
                       </span>
-                    </div>
-                    <div className="mt-2 h-px w-full bg-ink/10">
-                      <div
-                        className="h-px bg-accent"
-                        style={{ width: `${row.share}%` }}
-                      />
-                    </div>
-                    <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/40">
-                      {row.count} booking{row.count === 1 ? "" : "s"} · {formatCurrency(row.margin)} margin
-                    </p>
+                      <span className="shrink-0 font-mono tabular-nums text-ink">
+                        {formatCurrency(row.selling_price)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="text-sm text-ink/55">
+                {rows.length === 0 ? "Nothing to check yet." : "Every booking recorded a margin."}
+              </p>
+            )}
+          </Panel>
+        </div>
+
+        <div className="grid gap-5 xl:grid-cols-2">
+          <Panel title="Open tasks" meta="Travel reminders, payment follow-ups and boarding passes.">
+            {openTasks.length === 0 ? (
+              <p className="text-sm text-ink/45">Nothing outstanding.</p>
+            ) : (
+              <ul className="divide-y divide-ink/10">
+                {openTasks.slice(0, 6).map((task) => (
+                  <li
+                    key={task.id}
+                    className="flex items-baseline justify-between gap-3 py-2.5 first:pt-0"
+                  >
+                    <span className="min-w-0 truncate text-[13px] text-ink/75">
+                      {task.task_type}
+                      <span className="text-ink/40"> · {task.customers?.name ?? "Unknown"}</span>
+                    </span>
+                    <span className="shrink-0 font-mono text-[11px] tabular-nums text-ink/45">
+                      {formatDate(task.due_at)}
+                    </span>
                   </li>
                 ))}
               </ul>
             )}
           </Panel>
-          <AdminCard className="p-5">
-            <h2 className="text-lg font-semibold">Finance snapshot</h2>
-            <dl className="mt-5 space-y-4 text-sm">
+
+          <Panel title="Finance" meta="Money in and out.">
+            <dl className="divide-y divide-ink/10">
               {[
-                ["Total revenue", formatCurrency(data.metrics.totalBooked)],
-                ["Expenses", formatCurrency(data.metrics.totalExpenses)],
-                ["Net profit", formatCurrency(data.metrics.netProfit)],
-                ["Pending documents", data.metrics.pendingDocuments]
+                ["Revenue", formatCurrency(total.gross)],
+                ["Margin earned", formatCurrency(total.margin)],
+                ["Expenses", formatCurrency(ops.metrics.totalExpenses)],
+                ["Net after expenses", formatCurrency(total.margin - ops.metrics.totalExpenses)]
               ].map(([label, value]) => (
-                <div key={label} className="flex items-center justify-between border-b border-ink/10 pb-3">
-                  <dt className="text-ink/55">{label}</dt>
-                  <dd className="font-semibold">{value}</dd>
+                <div
+                  key={label}
+                  className="flex items-baseline justify-between gap-3 py-2.5 first:pt-0"
+                >
+                  <dt className="text-[13px] text-ink/60">{label}</dt>
+                  <dd className="font-mono text-[13.5px] tabular-nums text-ink">{value}</dd>
                 </div>
               ))}
             </dl>
-          </AdminCard>
-        </section>
+          </Panel>
+        </div>
 
-        <section className="grid gap-5 xl:grid-cols-2">
-          <AdminCard className="p-5">
-            <h2 className="text-lg font-semibold">24-hour travel queue</h2>
-            <div className="mt-4 space-y-3">
-              {data.tasks.length === 0 && <p className="text-sm text-ink/55">No open tasks yet.</p>}
-              {data.tasks.slice(0, 5).map((task) => (
-                <div key={task.id} className="flex items-center justify-between gap-3 rounded-md border border-ink/10 p-3">
-                  <div>
-                    <p className="font-medium">{task.task_type}</p>
-                    <p className="text-sm text-ink/55">{task.customers?.name ?? "Unknown"} · {formatDate(task.due_at)}</p>
-                  </div>
-                  <AdminBadge tone={task.priority === "urgent" ? "danger" : "warn"}>
-                    {task.priority}
-                  </AdminBadge>
-                </div>
-              ))}
-            </div>
-          </AdminCard>
-          <AdminCard className="p-5">
-            <h2 className="text-lg font-semibold">Pending extraction review</h2>
-            <div className="mt-4 space-y-3">
-              {data.documents.length === 0 && <p className="text-sm text-ink/55">No pending documents yet.</p>}
-              {data.documents.slice(0, 5).map((doc) => (
-                <div key={doc.id} className="flex items-center justify-between gap-3 rounded-md border border-ink/10 p-3">
-                  <div>
-                    <p className="font-medium">{doc.file_name}</p>
-                    <p className="text-sm text-ink/55">{doc.customers?.name ?? "Unassigned"} · {doc.document_type}</p>
-                  </div>
-                  <AdminBadge tone={doc.status === "verified" ? "success" : "warn"}>
-                    {doc.status}
-                  </AdminBadge>
-                </div>
-              ))}
-            </div>
-          </AdminCard>
-        </section>
-
-        <AdminCard>
-          <div className="border-b border-ink/10 p-5">
-            <h2 className="text-lg font-semibold">Recent bookings</h2>
-          </div>
-          <AdminTable columns={bookingColumns} rows={bookingRows} />
-        </AdminCard>
+        <Panel
+          title="Recent bookings"
+          meta="Newest by travel date. Every figure above traces back to a row here."
+          action={
+            <AdminButton href="/admin/margin" tone="light">
+              Full breakdown
+            </AdminButton>
+          }
+        >
+          <AdminTable columns={bookingColumns} rows={recent} />
+        </Panel>
       </div>
     </>
   );
