@@ -1,10 +1,9 @@
 "use client";
 
-import { CheckCircle2, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
-import { AdminButton, AdminCard } from "../../components";
+import { AdminButton, Notice, Panel } from "../../components";
 
 /**
  * Add a booking by typing it in.
@@ -61,15 +60,15 @@ function inr(value) {
 function Field({ label, children, hint }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-xs font-medium text-ink/70">{label}</span>
+      <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.12em] text-ink/50">{label}</span>
       {children}
-      {hint && <span className="mt-1 block text-[11px] text-ink/45">{hint}</span>}
+      {hint && <span className="mt-1.5 block text-[11.5px] leading-4 text-ink/45">{hint}</span>}
     </label>
   );
 }
 
 const inputClass =
-  "w-full rounded-lg border border-ink/15 bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-ink/40";
+  "w-full rounded-control border border-ink/15 bg-paper px-3 py-2 text-[13.5px] text-ink outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/30";
 
 export default function AddBookingForm() {
   const router = useRouter();
@@ -129,31 +128,13 @@ export default function AddBookingForm() {
   return (
     <form onSubmit={submit} className="space-y-4">
       {notice && (
-        <AdminCard
-          className={`flex items-start gap-2.5 p-4 ${
-            notice.tone === "success"
-              ? "border-emerald-300 bg-emerald-50/80"
-              : "border-red-300 bg-red-50/80"
-          }`}
-        >
-          {notice.tone === "success" ? (
-            <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-700" />
-          ) : (
-            <TriangleAlert size={18} className="mt-0.5 shrink-0 text-red-700" />
-          )}
-          <p
-            className={`text-sm ${
-              notice.tone === "success" ? "text-emerald-900" : "text-red-900"
-            }`}
-          >
-            {notice.message}
-          </p>
-        </AdminCard>
+        <Notice tone={notice.tone === "success" ? "good" : "critical"}>
+          {notice.message}
+        </Notice>
       )}
 
-      <AdminCard className="p-5">
-        <h2 className="text-sm font-semibold text-ink">Customer</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+      <Panel title="Customer">
+        <div className="grid gap-5 sm:grid-cols-3">
           <Field label="Name">
             <input
               className={inputClass}
@@ -189,11 +170,10 @@ export default function AddBookingForm() {
           This is our own booking, not customer business
           <span className="text-xs text-ink/45">(excluded from the take rate)</span>
         </label>
-      </AdminCard>
+      </Panel>
 
-      <AdminCard className="p-5">
-        <h2 className="text-sm font-semibold text-ink">Booking</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+      <Panel title="Booking">
+        <div className="grid gap-5 sm:grid-cols-3">
           <Field label="Type">
             <select
               className={inputClass}
@@ -278,15 +258,16 @@ export default function AddBookingForm() {
             />
           </Field>
         </div>
-      </AdminCard>
+      </Panel>
 
-      <AdminCard className="p-5">
-        <h2 className="text-sm font-semibold text-ink">Money</h2>
-        <p className="mt-1 text-xs text-ink/55">
-          Enter what it cost and what the customer paid. Margin is derived by the
-          database from these two, never typed in.
-        </p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-4">
+      {/* The point of the form. Given a heavier frame than the blocks around it so it
+          does not read at the same weight as the notes box. */}
+      <Panel
+        className="border-ink/25"
+        title="Money"
+        meta="Enter what it cost and what the customer paid. Margin is derived by the database from these two, never typed in."
+      >
+        <div className="grid gap-5 sm:grid-cols-4">
           <Field label="Base cost (what we paid)">
             <input
               className={inputClass}
@@ -333,24 +314,27 @@ export default function AddBookingForm() {
         </div>
 
         {preview && (
-          <div className="mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-1 border-t border-ink/10 pt-4">
-            <span className="text-xs uppercase tracking-wide text-ink/45">This booking earns</span>
+          <div className="mt-6 flex flex-wrap items-baseline gap-x-6 gap-y-1 border-t border-ink/15 pt-5">
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
+              This booking earns
+            </span>
             <span
-              className="font-mono text-2xl font-bold"
-              style={{ color: preview.margin > 0 ? "#0ca30c" : preview.margin < 0 ? "#d03b3b" : undefined }}
+              className={`font-mono text-[clamp(1.75rem,3vw,2.4rem)] font-medium leading-none tabular-nums tracking-[-0.02em] ${
+                preview.margin > 0 ? "text-accent" : preview.margin < 0 ? "text-critical" : "text-ink/50"
+              }`}
             >
               {inr(preview.margin)}
             </span>
             {preview.takePct !== null && (
-              <span className="text-sm text-ink/55">
+              <span className="font-mono text-[13px] tabular-nums text-ink/50">
                 {preview.takePct.toFixed(2)}% take
               </span>
             )}
           </div>
         )}
-      </AdminCard>
+      </Panel>
 
-      <AdminCard className="p-5">
+      <Panel>
         <Field label="Notes">
           <textarea
             className={`${inputClass} min-h-20`}
@@ -358,7 +342,7 @@ export default function AddBookingForm() {
             value={form.notes}
           />
         </Field>
-      </AdminCard>
+      </Panel>
 
       <div className="flex flex-wrap items-center gap-3">
         <AdminButton disabled={saving} type="submit">

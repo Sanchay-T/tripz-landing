@@ -1,5 +1,5 @@
 import { UploadCloud } from "lucide-react";
-import { AdminBadge, AdminButton, AdminCard, AdminTable, PageHeader } from "./components";
+import { AdminBadge, AdminButton, AdminCard, AdminTable, PageHeader, Panel } from "./components";
 import { fetchAdminDashboardData } from "@/lib/admin/records";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +40,23 @@ function formatDate(value) {
 
 export default async function AdminDashboard() {
   const data = await fetchAdminDashboardData();
+
+  // Replaces a hardcoded [45,70,38,85,62,95] bar chart that never moved with the data.
+  // A chart that cannot change is worse than no chart: it teaches people to distrust
+  // the ones that can.
+  const revenueTotals = new Map();
+  for (const booking of data.bookings) {
+    const type = booking.booking_type ?? "other";
+    const current = revenueTotals.get(type) ?? { revenue: 0, margin: 0, count: 0 };
+    current.revenue += Number(booking.selling_price ?? 0);
+    current.margin += Number(booking.margin ?? 0);
+    current.count += 1;
+    revenueTotals.set(type, current);
+  }
+  const biggest = Math.max(1, ...[...revenueTotals.values()].map((r) => r.revenue));
+  const revenueByType = [...revenueTotals.entries()]
+    .map(([type, r]) => ({ type, ...r, share: (r.revenue / biggest) * 100 }))
+    .sort((a, b) => b.revenue - a.revenue);
   const metrics = [
     {
       label: "Booked amount",
@@ -112,26 +129,36 @@ export default async function AdminDashboard() {
         </section>
 
         <section className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(22rem,0.65fr)]">
-          <AdminCard className="p-5">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h2 className="text-lg font-semibold">Revenue and margin</h2>
-                <p className="text-sm text-ink/55">Workbook categories mapped into live dashboard buckets.</p>
-              </div>
-              <AdminBadge>Last 30 days</AdminBadge>
-            </div>
-            <div className="mt-5 grid h-64 grid-cols-6 items-end gap-3 rounded-md border border-ink/10 bg-[#fbfdfc] p-4">
-              {[45, 70, 38, 85, 62, 95].map((height, index) => (
-                <div key={height + index} className="flex h-full items-end">
-                  <div
-                    className="w-full rounded-t-md bg-accent"
-                    style={{ height: `${height}%` }}
-                    aria-label={`Chart bar ${index + 1}`}
-                  />
-                </div>
-              ))}
-            </div>
-          </AdminCard>
+          <Panel
+            title="Revenue by type"
+            meta="Real figures from the bookings below, not a sample."
+          >
+            {revenueByType.length === 0 ? (
+              <p className="text-sm text-ink/45">No bookings recorded yet.</p>
+            ) : (
+              <ul className="space-y-4">
+                {revenueByType.map((row) => (
+                  <li key={row.type}>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <span className="text-[13.5px] capitalize text-ink/75">{row.type}</span>
+                      <span className="font-mono text-[13.5px] tabular-nums text-ink">
+                        {formatCurrency(row.revenue)}
+                      </span>
+                    </div>
+                    <div className="mt-2 h-px w-full bg-ink/10">
+                      <div
+                        className="h-px bg-accent"
+                        style={{ width: `${row.share}%` }}
+                      />
+                    </div>
+                    <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/40">
+                      {row.count} booking{row.count === 1 ? "" : "s"} · {formatCurrency(row.margin)} margin
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Panel>
           <AdminCard className="p-5">
             <h2 className="text-lg font-semibold">Finance snapshot</h2>
             <dl className="mt-5 space-y-4 text-sm">

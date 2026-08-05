@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 const columns = [
   { key: "name", label: "Name / vendor" },
   { key: "category", label: "Category" },
-  { key: "amount", label: "Amount" },
+  { key: "amount", label: "Amount", numeric: true },
   { key: "date", label: "Date" },
   { key: "status", label: "Status", render: (row) => <AdminBadge>{row.status}</AdminBadge> }
 ];

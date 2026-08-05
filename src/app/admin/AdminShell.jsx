@@ -11,7 +11,6 @@ import {
   Plane,
   PlusCircle,
   ReceiptText,
-  Search,
   Settings,
   TrendingUp,
   UploadCloud,
@@ -72,14 +71,14 @@ function NavLink({ item, active, compact = false }) {
     <Link
       href={item.href}
       className={cn(
-        "flex items-center gap-3 rounded-xl text-sm font-medium transition",
+        "flex items-center gap-3 text-[13.5px] font-medium transition",
         compact ? "min-w-max px-3 py-2" : "px-3 py-2.5",
         active
-          ? "bg-white text-ink shadow-sm"
-          : "text-white/68 hover:bg-white/10 hover:text-white"
+          ? "bg-paper text-ink"
+          : "text-white/60 hover:bg-white/8 hover:text-white"
       )}
     >
-      <Icon size={17} />
+      <Icon size={16} />
       <span>{compact ? item.shortLabel : item.label}</span>
     </Link>
   );
@@ -89,8 +88,8 @@ export default function AdminShell({ children }) {
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top_left,rgba(126,199,157,0.20),transparent_30%),linear-gradient(180deg,#f8fbf9_0%,#eef4f0_100%)] text-ink">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-white/10 bg-ink text-white xl:flex xl:flex-col">
+    <div className="min-h-screen overflow-x-hidden bg-field text-ink">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-ink/10 bg-ink text-white xl:flex xl:flex-col">
         <div className="flex h-16 items-center border-b border-white/10 px-5">
           <Link href="/admin" aria-label="TripZ Admin home">
             <Wordmark onDark />
@@ -106,9 +105,9 @@ export default function AdminShell({ children }) {
           ))}
         </nav>
         <div className="border-t border-white/10 p-4">
-          <div className="rounded-2xl border border-white/10 bg-white/8 p-4">
+          <div className="border border-white/12 p-4">
             <div className="flex items-center gap-2">
-              <TrendingUp size={15} className="text-accent-live" />
+              <TrendingUp size={16} className="text-accent-live" />
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/45">
                 Margin
               </p>
@@ -122,18 +121,15 @@ export default function AdminShell({ children }) {
       </aside>
 
       <div className="min-w-0 xl:pl-72">
-        <header className="sticky top-0 z-20 border-b border-ink/10 bg-white/86 backdrop-blur-xl">
+        <header className="sticky top-0 z-20 border-b border-ink/10 bg-paper">
           <div className="flex h-16 items-center gap-3 px-4 sm:px-5 lg:px-6">
             <Link href="/admin" className="shrink-0 xl:hidden" aria-label="TripZ Admin home">
               <Wordmark size="text-xl" />
             </Link>
-            <div className="hidden min-w-0 flex-1 items-center gap-2 rounded-xl border border-ink/10 bg-white px-3 py-2 text-sm text-ink/45 shadow-sm md:flex">
-              <Search size={16} />
-              <span className="truncate">Search customers, bookings, PNRs...</span>
-            </div>
+            <div className="min-w-0 flex-1" />
             <Link
               href="/admin/bookings/new"
-              className="ml-auto hidden min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-ink px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-accent md:inline-flex"
+              className="ml-auto hidden min-h-10 shrink-0 items-center justify-center gap-2 rounded-control bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:bg-accent-deep md:inline-flex"
             >
               <PlusCircle size={16} />
               Add booking
@@ -150,13 +146,13 @@ export default function AdminShell({ children }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "inline-flex min-h-9 shrink-0 items-center gap-2 rounded-full border px-3 text-xs font-semibold transition",
+                    "inline-flex min-h-9 shrink-0 items-center gap-2 border px-3 font-mono text-[10px] uppercase tracking-[0.12em] transition",
                     active
                       ? "border-ink bg-ink text-white"
-                      : "border-ink/10 bg-white text-ink/65 hover:border-ink/25 hover:text-ink"
+                      : "border-ink/10 bg-paper text-ink/65 hover:border-ink/25 hover:text-ink"
                   )}
                 >
-                  <Icon size={14} />
+                  <Icon size={16} />
                   {item.shortLabel}
                 </Link>
               );
@@ -166,7 +162,7 @@ export default function AdminShell({ children }) {
 
         <main className="min-w-0 pb-24 xl:pb-0">{children}</main>
 
-        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-ink/10 bg-white/92 px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 shadow-[0_-18px_60px_rgba(15,26,22,0.12)] backdrop-blur-xl sm:px-4 xl:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-ink/10 bg-paper px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2 sm:px-4 xl:hidden">
           <div className="mx-auto grid max-w-xl grid-cols-5 gap-1">
             {mobilePrimaryItems.map((item) => {
               const Icon = item.icon;
@@ -177,11 +173,11 @@ export default function AdminShell({ children }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-semibold transition",
+                    "flex min-h-12 flex-col items-center justify-center gap-1 text-[10px] font-medium transition",
                     active ? "bg-ink text-white" : "text-ink/55 hover:bg-accent-soft hover:text-ink"
                   )}
                 >
-                  <Icon size={17} />
+                  <Icon size={16} />
                   {item.shortLabel}
                 </Link>
               );

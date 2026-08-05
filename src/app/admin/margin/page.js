@@ -1,6 +1,16 @@
 import { AlertTriangle, TrendingDown } from "lucide-react";
 
-import { AdminBadge, AdminButton, AdminCard, AdminTable, PageHeader } from "../components";
+import {
+  AdminBadge,
+  AdminButton,
+  AdminCard,
+  AdminTable,
+  Figure,
+  FigureCell,
+  FigureRow,
+  Notice,
+  PageHeader
+} from "../components";
 import {
   byCustomer,
   byType,
@@ -26,16 +36,23 @@ export const dynamic = "force-dynamic";
  */
 
 // Fixed hue per booking type. Colour follows the entity, never its rank, so a type
-// dropping out of the data never repaints the others. Validated for contrast against
-// a white card in both normal and colour-vision-deficient viewing.
+// dropping out of the data never repaints the others.
+//
+// These are NOT the brand palette, deliberately. TripZ's accent is a desaturated
+// spine green chosen to recede — right for ink, but it fails the chroma floor and the
+// protan CVD gate the moment you ask it to encode categories (green against the
+// palette's clay reads as one colour to a protanope). So encoding uses a validated
+// categorical set, and the brand accent stays reserved for meaning. Verified with
+// `scripts/validate_palette.js --pairs all`: worst CVD ΔE 9.2, worst normal-vision
+// ΔE 24.0. Its contrast warning is discharged by the direct labels and the table.
 const TYPE_COLOR = {
-  flight: "#f26a4b",
-  hotel: "#2a78d6",
+  flight: "#2a78d6",
+  hotel: "#eb6834",
   package: "#1baf7a",
   transfer: "#4a3aa7",
   visa: "#eda100",
   insurance: "#e87ba4",
-  other: "#a8a196"
+  other: "#8a8a80"
 };
 
 function colorForType(type) {
@@ -56,21 +73,6 @@ function formatPct(value, digits = 1) {
     : `${Number(value).toFixed(digits)}%`;
 }
 
-function StatTile({ label, value, detail, tone }) {
-  return (
-    <AdminCard className="p-4">
-      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-ink/45">{label}</p>
-      <p
-        className="mt-2 text-2xl font-bold"
-        style={tone ? { color: tone } : undefined}
-      >
-        {value}
-      </p>
-      {detail && <p className="mt-1 text-xs leading-5 text-ink/55">{detail}</p>}
-    </AdminCard>
-  );
-}
-
 /** One 100% stacked bar. Segments keep a 2px gap so adjacent hues never touch. */
 function ShareBar({ segments }) {
   const shown = segments.filter((segment) => segment.value > 0);
@@ -82,11 +84,11 @@ function ShareBar({ segments }) {
 
   return (
     <div>
-      <div className="flex h-3.5 w-full gap-0.5 overflow-hidden rounded-full bg-ink/5">
+      <div className="flex h-3.5 w-full gap-0.5 overflow-hidden rounded-full bg-ink/10">
         {shown.map((segment) => (
           <div
             key={segment.label}
-            className="h-full first:rounded-l-full last:rounded-r-full"
+            className="h-full"
             style={{
               backgroundColor: segment.color,
               flexGrow: segment.value,
@@ -137,7 +139,7 @@ const bookingColumns = [
     key: "take",
     label: "Take",
     render: (row) =>
-      row.isZero ? <AdminBadge tone="danger">0%</AdminBadge> : <span>{row.take}</span>
+      row.isZero ? <AdminBadge tone="critical">0%</AdminBadge> : <span>{row.take}</span>
   }
 ];
 
@@ -200,16 +202,10 @@ export default async function MarginPage() {
 
       <div className="space-y-5 px-4 py-5 sm:px-6">
         {error && (
-          <AdminCard className="flex items-start gap-3 border-amber-300 bg-amber-50/80 p-4">
-            <AlertTriangle size={18} className="mt-0.5 shrink-0 text-amber-700" />
-            <div>
-              <p className="text-sm font-semibold text-amber-900">Bookings could not be loaded</p>
-              <p className="mt-1 text-xs leading-5 text-amber-800">
-                The database did not answer, so every figure on this page is zero — that
-                is an empty response, not a real result. {error}
-              </p>
-            </div>
-          </AdminCard>
+          <Notice tone="warn" title="Bookings could not be loaded">
+            The database did not answer, so every figure on this page is zero — that is
+            an empty response, not a real result. {error}
+          </Notice>
         )}
 
         {!error && rows.length === 0 && (
@@ -305,7 +301,7 @@ export default async function MarginPage() {
           )}
 
           {asked.unclassified > 0 && (
-            <p className="border-t border-ink/10 bg-amber-50/70 px-4 py-3 text-xs leading-5 text-amber-900 sm:px-5">
+            <p className="border-t border-ink/10 px-4 py-3 text-[12px] leading-5 text-warn sm:px-5">
               {asked.unclassified} booking{asked.unclassified === 1 ? " has" : "s have"} no
               market recorded, so {asked.unclassified === 1 ? "it is" : "they are"} counted
               in the totals but in neither the domestic nor the international line. The
@@ -314,28 +310,21 @@ export default async function MarginPage() {
           )}
         </AdminCard>
 
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <StatTile
-            label="Revenue"
-            value={formatCurrency(total.gross)}
-            detail="Total selling price across all bookings."
-          />
-          <StatTile
-            label="Margin earned"
-            value={formatCurrency(total.margin)}
-            detail="Selling price minus base cost."
-          />
-          <StatTile
-            label="Take rate"
-            value={formatPct(total.takePct, 2)}
-            detail="Margin as a share of revenue."
-          />
-          <StatTile
-            label="Bookings"
-            value={total.count}
-            detail="Every priced booking on record."
-          />
-        </section>
+        <FigureRow>
+          <FigureCell>
+            <Figure label="Revenue" value={formatCurrency(total.gross)} detail="Total selling price." />
+          </FigureCell>
+          <FigureCell>
+            <Figure label="Margin earned" value={formatCurrency(total.margin)} detail="Selling price minus base cost." />
+          </FigureCell>
+          <FigureCell>
+            {/* The one figure on this page that carries the argument. */}
+            <Figure accent label="Take rate" value={formatPct(total.takePct, 2)} detail="Margin as a share of revenue." />
+          </FigureCell>
+          <FigureCell>
+            <Figure label="Bookings" value={total.count} detail="Every priced booking on record." />
+          </FigureCell>
+        </FigureRow>
 
         <AdminCard className="p-5">
           <h2 className="text-sm font-semibold text-ink">
@@ -403,9 +392,9 @@ export default async function MarginPage() {
                         {formatPct(type.takePct, 2)}
                       </span>
                     </div>
-                    <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-ink/5">
+                    <div className="mt-2 h-px w-full bg-ink/10">
                       <div
-                        className="h-full rounded-full"
+                        className="h-px"
                         style={{
                           backgroundColor: colorForType(type.type),
                           // Scaled against the best-performing type so a 0.49% bar is
@@ -427,7 +416,7 @@ export default async function MarginPage() {
 
           <AdminCard className="p-5">
             <div className="flex items-start gap-2">
-              <TrendingDown size={17} className="mt-0.5 shrink-0 text-red-600" />
+              <TrendingDown size={16} className="mt-0.5 shrink-0 text-critical" />
               <div>
                 <h2 className="text-sm font-semibold text-ink">Zero-margin exposure</h2>
                 <p className="mt-1 text-xs leading-5 text-ink/55">
@@ -438,7 +427,7 @@ export default async function MarginPage() {
 
             {zero.count > 0 ? (
               <>
-                <p className="mt-4 text-3xl font-bold text-red-600">
+                <p className="mt-4 font-mono text-[clamp(1.75rem,3vw,2.4rem)] font-medium leading-none tabular-nums text-critical">
                   {formatPct(zero.shareOfGrossPct, 0)}
                 </p>
                 <p className="mt-1 text-sm text-ink/60">

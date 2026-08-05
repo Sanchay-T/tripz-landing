@@ -1,4 +1,4 @@
-import { AdminBadge, AdminButton, AdminCard, AdminTable, PageHeader } from "../components";
+import { AdminBadge, AdminCard, AdminTable, PageHeader } from "../components";
 import { fetchAdminDashboardData } from "@/lib/admin/records";
 
 export const dynamic = "force-dynamic";
@@ -10,8 +10,8 @@ const columns = [
   { key: "market", label: "Market" },
   { key: "route", label: "Route / Stay" },
   { key: "date", label: "Travel date" },
-  { key: "price", label: "Price" },
-  { key: "margin", label: "Margin" },
+  { key: "price", label: "Price", numeric: true },
+  { key: "margin", label: "Margin", numeric: true },
   { key: "status", label: "Status", render: (row) => <AdminBadge>{row.status}</AdminBadge> }
 ];
 
@@ -41,7 +41,6 @@ export default async function BookingsPage() {
   return (
     <>
       <PageHeader
-        action={<AdminButton href="/admin/bookings/new">Add booking</AdminButton>}
         eyebrow="Operations"
         title="Bookings"
         body="Search and manage travel bookings by customer, market, type, status, payment, price, and margin."

@@ -12,6 +12,24 @@
   --color-accent-deep: #102420;
   --color-accent-soft: #e8f0ec;
   --color-accent-live: #7ec79d;
+
+  /* Status, drawn from the palette document's own schemes rather than Tailwind's
+     stock ramp. `warn` is Bureau's burnt clay and `critical` is Postal's stamp red —
+     both desaturated, both already part of this brand's family. Using amber-500 and
+     red-600 here was the loudest generic tell in the admin. */
+  --color-good: #1f4538;
+  --color-warn: #a64a28;
+  --color-critical: #9b3438;
+
+  /* One radius, for controls only. Every panel, card and table is square, the way
+     the landing page is — the drift to six different radii is what made the admin
+     read as a template. */
+  --radius-control: 0.375rem;
+
+  /* Two shadows, both reserved for something that genuinely floats above the page.
+     A shadow on every surface means nothing is raised. */
+  --shadow-raised: 0 1px 2px rgba(15, 26, 22, 0.06);
+  --shadow-float: 0 24px 60px rgba(15, 26, 22, 0.12);
 }
 
 @layer base {

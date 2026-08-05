@@ -383,10 +383,10 @@ export default function TicketIntakeClient() {
     <div className="space-y-4 p-3 sm:space-y-5 sm:p-6">
       {notice && (
         <div
-          className={`rounded-xl border px-4 py-3 text-sm ${
+          className={` border px-4 py-3 text-sm ${
             notice.tone === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-              : "border-red-200 bg-red-50 text-red-700"
+              ? "border-good/35 text-good"
+              : "border-critical/35 text-critical"
           }`}
         >
           {notice.message}
@@ -395,13 +395,13 @@ export default function TicketIntakeClient() {
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_19rem] xl:grid-cols-[minmax(0,1fr)_20rem]">
         <AdminCard className="p-3 sm:p-5">
-          <div className="flex min-h-48 flex-col items-center justify-center rounded-xl border border-dashed border-accent/35 bg-[radial-gradient(circle_at_top,#eff7f3,transparent_55%),linear-gradient(135deg,#fbfdfc,#eef5f1)] p-4 text-center sm:min-h-56 sm:p-6">
+          <div className="flex min-h-48 flex-col items-center justify-center border border-dashed border-ink/20 bg-field/50 p-4 text-center sm:min-h-56 sm:p-6">
             <UploadCloud size={38} className="text-accent" />
             <h2 className="mt-4 text-xl font-semibold">Upload ticket files</h2>
             <p className="mt-2 max-w-xl text-sm leading-6 text-ink/60">
               PDF, PNG, JPG, and WEBP uploads are stored in Vercel Blob and queued for review. Enter the booking details, then confirm to create the booking.
             </p>
-            <label className="mt-5 inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-deep">
+            <label className="mt-5 inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white  transition hover:bg-accent-deep">
               {isUploading ? <Loader2 size={16} className="animate-spin" /> : <UploadCloud size={16} />}
               {isUploading ? "Extracting..." : "Choose files"}
               <input
