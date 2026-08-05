@@ -84,7 +84,7 @@ export default function LoginForm() {
             aria-invalid={error ? "true" : undefined}
             autoComplete="current-password"
             autoFocus
-            className="w-full rounded-control border border-ink/15 bg-paper px-3 py-2.5 text-[14px] text-ink outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/30"
+            className="w-full rounded-control border border-ink/15 bg-paper px-3 py-2.5 text-[14px] text-ink outline-none transition focus:border-brand focus:ring-1 focus:ring-brand/30"
             id="password"
             name="password"
             onChange={(event) => setPassword(event.target.value)}

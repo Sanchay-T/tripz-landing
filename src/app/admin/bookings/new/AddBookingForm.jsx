@@ -68,7 +68,7 @@ function Field({ label, children, hint }) {
 }
 
 const inputClass =
-  "w-full rounded-control border border-ink/15 bg-paper px-3 py-2 text-[13.5px] text-ink outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/30";
+  "w-full rounded-control border border-ink/15 bg-paper px-3 py-2 text-[13.5px] text-ink outline-none transition focus:border-brand focus:ring-1 focus:ring-brand/30";
 
 export default function AddBookingForm() {
   const router = useRouter();
@@ -320,7 +320,7 @@ export default function AddBookingForm() {
             </span>
             <span
               className={`font-mono text-[clamp(1.75rem,3vw,2.4rem)] font-medium leading-none tabular-nums tracking-[-0.02em] ${
-                preview.margin > 0 ? "text-accent" : preview.margin < 0 ? "text-critical" : "text-ink/50"
+                preview.margin > 0 ? "text-brand" : preview.margin < 0 ? "text-critical" : "text-ink/50"
               }`}
             >
               {inr(preview.margin)}

@@ -143,13 +143,13 @@ function IndianBases() {
               <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink/45">
                 {base.code}
               </span>
-              <span className="size-2 rounded-full bg-accent-live ring-4 ring-accent-live/20" />
+              <span className="size-2 rounded-full bg-brand-live ring-4 ring-brand-live/20" />
             </div>
             <h3 className="mt-5 text-2xl font-bold leading-none text-ink">
               {base.city}
             </h3>
             <p className="mt-3 text-sm leading-6 text-ink/60">{base.line}</p>
-            <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
+            <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.18em] text-brand">
               {base.detail}
             </p>
           </article>
@@ -244,8 +244,8 @@ function Services() {
           <a
             href={service.href}
             className={cn(
-              "group flex min-h-56 flex-col bg-white p-6 transition hover:bg-accent-soft lg:p-8",
-              service.live && "bg-accent text-white hover:bg-accent"
+              "group flex min-h-56 flex-col bg-white p-6 transition hover:bg-brand-soft lg:p-8",
+              service.live && "bg-brand text-white hover:bg-brand"
             )}
           >
             <div className={cn("font-mono text-xs uppercase tracking-[0.24em]", service.live ? "text-white/65" : "text-ink/40")}>
@@ -324,7 +324,7 @@ function Pillar({ pillar }) {
             {pillar.lede}
           </p>
           <div className="mt-8 border-t border-ink/10 pt-6">
-            <span className="block text-5xl font-bold tracking-[-0.04em] text-accent sm:text-6xl">
+            <span className="block text-5xl font-bold tracking-[-0.04em] text-brand sm:text-6xl">
               {pillar.callout.value}
             </span>
             <span className="mt-2 block font-mono text-xs uppercase tracking-[0.28em] text-ink/45">
@@ -336,7 +336,7 @@ function Pillar({ pillar }) {
           {pillar.points.map((point) => (
             <StaggerItem key={point.n} className="bg-white p-6 sm:p-8">
               <article>
-                <span className="font-serif text-3xl italic text-accent">— {point.n}</span>
+                <span className="font-serif text-3xl italic text-brand">— {point.n}</span>
                 <h4 className="mt-5 text-balance text-2xl font-bold leading-tight tracking-[-0.03em]">
                   {point.title}
                 </h4>
@@ -358,7 +358,7 @@ function PullBand() {
   return (
     <Reveal as="section" className="border-y border-ink/10 bg-field">
       <div className={cn(sectionShell, "grid gap-8 lg:grid-cols-[minmax(0,7.5rem)_minmax(0,1fr)]")}>
-        <div className="font-serif text-8xl leading-none text-accent" aria-hidden="true">
+        <div className="font-serif text-8xl leading-none text-brand" aria-hidden="true">
           &ldquo;
         </div>
         <div>
@@ -490,7 +490,7 @@ function Desk() {
               onDark
               className="mt-3 max-w-4xl text-[length:var(--desk-title-size)] tracking-normal"
             >
-              One of <em className="text-accent-live">ten travel experts</em> is already online.
+              One of <em className="text-brand-live">ten travel experts</em> is already online.
             </DisplayTitle>
             <p className="mt-4 max-w-3xl text-[length:var(--desk-copy-size)] leading-[1.6] text-white/65">
               Travel agents book what you tell them. Travel experts <em>advise</em>{" "}
@@ -518,7 +518,7 @@ function Desk() {
             {desk.map((agent) => (
               <StaggerItem key={agent.initials} className="flex min-h-0 bg-ink p-[var(--desk-card-pad)] ring-1 ring-white/10">
                 <article className="flex h-full min-h-0 flex-col">
-                  <span className="inline-flex size-2 rounded-full bg-accent-live" aria-label="Online" />
+                  <span className="inline-flex size-2 rounded-full bg-brand-live" aria-label="Online" />
                   <div className="mt-3 flex items-center gap-3">
                     <span className="inline-flex size-8 items-center justify-center rounded-full bg-white text-[11px] font-bold text-ink">
                       {agent.initials}
@@ -555,7 +555,7 @@ function Metrics() {
       {metrics.map((m) => (
         <StaggerItem key={m.label} className="bg-white p-8 sm:p-10 lg:p-14">
           <div>
-            <div className="font-bold text-[clamp(3.75rem,8vw,4.5rem)] leading-none tracking-[-0.05em] text-accent">
+            <div className="font-bold text-[clamp(3.75rem,8vw,4.5rem)] leading-none tracking-[-0.05em] text-brand">
               {m.value}
             </div>
             <div className="mt-3 font-mono text-[11px] uppercase tracking-[0.26em] text-ink/45">
@@ -590,7 +590,7 @@ function Closing() {
         >
           Next trip,
           <br />
-          <em className="text-accent">call a human.</em>
+          <em className="text-brand">call a human.</em>
         </h2>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <ClosingCtas />
@@ -608,7 +608,7 @@ function Footer() {
           <div>
             <Wordmark onDark size="text-3xl" />
             <p className="mt-5 max-w-sm text-lg text-white/60">
-              TripZ — picked up <em className="text-accent-live">by humans.</em>
+              TripZ — picked up <em className="text-brand-live">by humans.</em>
             </p>
             <div className="mt-8">
               <span className="block font-mono text-[11px] uppercase tracking-[0.26em] text-white/40">

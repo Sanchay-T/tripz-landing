@@ -66,11 +66,11 @@ export default function HeroLeft() {
       >
         <motion.span className="block" variants={HL}>
           Travel experts{" "}
-          <em className="block text-accent">by your side.</em>
+          <em className="block text-brand">by your side.</em>
         </motion.span>
         <motion.span className="block" variants={HL}>
           Better prices,{" "}
-          <em className="block text-accent">in your pocket.</em>
+          <em className="block text-brand">in your pocket.</em>
         </motion.span>
       </motion.h1>
 
@@ -94,14 +94,14 @@ export default function HeroLeft() {
       </motion.div>
 
       <motion.a
-        className="inline-flex min-h-10 max-w-full flex-wrap items-center gap-3 border-b border-accent pr-1 font-serif text-xl italic text-ink transition hover:bg-accent-soft"
+        className="inline-flex min-h-10 max-w-full flex-wrap items-center gap-3 border-b border-brand pr-1 font-serif text-xl italic text-ink transition hover:bg-brand-soft"
         href={ctaActions.whatsapp.href}
         target="_blank"
         rel="noreferrer"
         variants={I}
       >
         <span
-          className="inline-flex size-7 items-center justify-center rounded-full bg-accent text-white"
+          className="inline-flex size-7 items-center justify-center rounded-full bg-brand text-white"
           aria-hidden="true"
         >
           <Icons.whatsapp size={13} />
