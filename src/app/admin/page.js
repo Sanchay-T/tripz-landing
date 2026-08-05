@@ -1,14 +1,6 @@
-import {
-  AdminBadge,
-  AdminButton,
-  AdminTable,
-  Figure,
-  FigureCell,
-  FigureRow,
-  Notice,
-  PageHeader,
-  Panel
-} from "./components";
+import { PlusCircle } from "lucide-react";
+
+import { AdminButton, Notice, PageHeader, Panel } from "./components";
 import { RevenueVersusProfit, TakeRateBars, colorForType } from "./charts";
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { SectionCards } from "@/components/section-cards";
@@ -61,31 +53,6 @@ function formatDate(value) {
     year: "numeric"
   }).format(new Date(value));
 }
-
-const bookingColumns = [
-  {
-    key: "type",
-    label: "Type",
-    render: (row) => (
-      <span className="inline-flex items-center gap-2 whitespace-nowrap">
-        <span className="inline-block size-2 shrink-0" style={{ backgroundColor: row.color }} />
-        {row.type}
-      </span>
-    )
-  },
-  { key: "customer", label: "Customer" },
-  { key: "route", label: "Route / Stay" },
-  { key: "date", label: "Travel date" },
-  { key: "price", label: "Price", numeric: true },
-  { key: "margin", label: "Margin", numeric: true },
-  {
-    key: "take",
-    label: "Take",
-    numeric: true,
-    render: (row) =>
-      row.isZero ? <AdminBadge tone="critical">0%</AdminBadge> : <span>{row.take}</span>
-  }
-];
 
 export default async function AdminDashboard() {
   const [{ rows, error }, ops] = await Promise.all([
@@ -245,6 +212,12 @@ export default async function AdminDashboard() {
             Every figure is recomputed from selling price minus base cost on each
             booking, <em>never</em> read from a stored total.
           </>
+        }
+        action={
+          <AdminButton href="/admin/bookings/new">
+            <PlusCircle size={16} />
+            Add booking
+          </AdminButton>
         }
       />
 

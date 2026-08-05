@@ -137,22 +137,19 @@ export default function AdminShell({ children }) {
       </aside>
 
       <div className="min-w-0 xl:pl-72">
-        {/* Tinted glass rather than a white bar. On a base-coloured page a solid
-            white header draws a seam across the top of every screen; letting the
-            page show through means the only thing marking the header is the
-            hairline, and only once you have scrolled under it. */}
-        <header className="sticky top-0 z-20 border-b border-ink/8 bg-base/80 backdrop-blur-md">
+        {/* Below xl only. On a wide screen the sidebar already carries the wordmark
+            and an "Add booking" nav entry, which left this bar holding nothing but a
+            duplicate of that button — 64px of empty chrome above every page, pushing
+            the figures down for no reason. Pages put their primary action in
+            PageHeader instead, where it sits beside the title it belongs to.
+            Tinted glass rather than a white bar, so on the sizes that do show it the
+            page reads through and only the hairline marks the edge. */}
+        <header className="sticky top-0 z-20 border-b border-ink/8 bg-base/80 backdrop-blur-md xl:hidden">
+          {/* Wordmark only. The "Add booking" button that used to sit here now lives
+              in PageHeader, and keeping both meant it rendered twice on tablet. */}
           <div className="flex h-16 items-center gap-3 px-4 sm:px-5 lg:px-6">
-            <Link href="/admin" className="shrink-0 xl:hidden" aria-label="TripZ Admin home">
+            <Link href="/admin" className="shrink-0" aria-label="TripZ Admin home">
               <Wordmark size="text-xl" />
-            </Link>
-            <div className="min-w-0 flex-1" />
-            <Link
-              href="/admin/bookings/new"
-              className="ml-auto hidden min-h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper shadow-card transition hover:bg-brand-deep md:inline-flex"
-            >
-              <PlusCircle size={16} />
-              Add booking
             </Link>
           </div>
 
