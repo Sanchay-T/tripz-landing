@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   BarChart3,
   BookOpen,
@@ -11,6 +11,7 @@ import {
   Plane,
   PlusCircle,
   ReceiptText,
+  LogOut,
   Settings,
   TrendingUp,
   UploadCloud,
@@ -86,6 +87,21 @@ function NavLink({ item, active, compact = false }) {
 
 export default function AdminShell({ children }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  // The login page lives under /admin so the middleware matcher covers the whole
+  // section with one rule, but it must not wear the shell: every sidebar link leads
+  // to a gated page, so showing that nav to someone who is not signed in is a menu of
+  // dead ends.
+  if (pathname === "/admin/login") {
+    return children;
+  }
+
+  async function signOut() {
+    await fetch("/api/admin/logout", { method: "POST" });
+    router.replace("/admin/login");
+    router.refresh();
+  }
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-field text-ink">
@@ -104,19 +120,15 @@ export default function AdminShell({ children }) {
             />
           ))}
         </nav>
-        <div className="border-t border-white/10 p-4">
-          <div className="border border-white/12 p-4">
-            <div className="flex items-center gap-2">
-              <TrendingUp size={16} className="text-accent-live" />
-              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/45">
-                Margin
-              </p>
-            </div>
-            <p className="mt-2 text-sm font-semibold text-white">Where profit comes from</p>
-            <p className="mt-1 text-xs leading-5 text-white/55">
-              Recomputed from selling price minus cost on every booking.
-            </p>
-          </div>
+        <div className="border-t border-white/10 p-3">
+          <button
+            className="flex w-full items-center gap-3 px-3 py-2.5 text-[13.5px] font-medium text-white/60 transition hover:bg-white/8 hover:text-white"
+            onClick={signOut}
+            type="button"
+          >
+            <LogOut size={16} />
+            Sign out
+          </button>
         </div>
       </aside>
 

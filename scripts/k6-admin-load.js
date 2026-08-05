@@ -16,15 +16,33 @@
 import http from "k6/http";
 import { check } from "k6";
 import { Rate, Trend } from "k6/metrics";
-import encoding from "k6/encoding";
 
 const BASE = __ENV.BASE_URL || "http://127.0.0.1:3300";
 // /admin is password-gated, so the load test has to authenticate or it just measures
 // how fast the app can return 401.
 const ADMIN_PASSWORD = __ENV.ADMIN_PASSWORD || "";
-const AUTH_HEADERS = ADMIN_PASSWORD
-  ? { Authorization: `Basic ${encoding.b64encode(`admin:${ADMIN_PASSWORD}`)}` }
-  : {};
+
+/**
+ * Sign in once per VU and reuse the session cookie.
+ *
+ * The admin moved from HTTP Basic to a signed session cookie, so sending an
+ * Authorization header now just measures how fast the app can redirect to the login
+ * page. k6 keeps a cookie jar per VU, so one login at setup time covers every
+ * subsequent request that VU makes.
+ */
+export function setup() {
+  if (!ADMIN_PASSWORD) {
+    return {};
+  }
+  const res = http.post(`${BASE}/api/admin/login`, JSON.stringify({ password: ADMIN_PASSWORD }), {
+    headers: { "Content-Type": "application/json" }
+  });
+  if (res.status !== 200) {
+    throw new Error(`Could not sign in for the load test: HTTP ${res.status}`);
+  }
+  // Hand the cookie to every VU rather than having each one hit the login endpoint.
+  return { cookie: res.cookies?.tripz_session?.[0]?.value ?? "" };
+}
 
 const zeroedPages = new Rate("zeroed_pages");
 const dbPageDuration = new Trend("db_page_duration", true);
@@ -59,8 +77,11 @@ export const options = {
   }
 };
 
-function visit(path, kind) {
-  const res = http.get(`${BASE}${path}`, { tags: { kind, route: path }, headers: AUTH_HEADERS });
+function visit(path, kind, session) {
+  const res = http.get(`${BASE}${path}`, {
+    tags: { kind, route: path },
+    cookies: session.cookie ? { tripz_session: session.cookie } : {}
+  });
 
   if (kind === "db") {
     dbPageDuration.add(res.timings.duration);
@@ -91,11 +112,11 @@ function visit(path, kind) {
 
 // Named rather than anonymous so `import/no-anonymous-default-export` stays quiet;
 // k6 only requires that the default export be a function.
-export default function adminLoadScenario() {
+export default function adminLoadScenario(session) {
   for (const route of STATIC_ROUTES) {
-    visit(route, "static");
+    visit(route, "static", session);
   }
   for (const route of DB_ROUTES) {
-    visit(route, "db");
+    visit(route, "db", session);
   }
 }
