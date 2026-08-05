@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn";
+import { Progress } from "@/components/ui/progress";
 
 /**
  * The chart pieces shared by the dashboard and the margin page.
@@ -134,50 +134,65 @@ export function RevenueVersusProfit({ types, formatCurrency }) {
   );
 }
 
-/** Take rate per type, scaled against the best performer so a 0.5% bar is still visible. */
+/**
+ * Take rate per type, on a true 0–100% scale.
+ *
+ * This used to divide each bar by the *best* performer, which meant the top line
+ * always drew a completely full bar no matter what it had actually earned — a
+ * 19.97% take rate rendered as 100%. That is not a styling problem, it is the
+ * chart stating something false, and it flattered the one number on this page
+ * that most needs to be read honestly.
+ *
+ * The scale is now the same one the figure is quoted in, so a fifth of the track
+ * means a fifth of the selling price. Most bars are consequently short. That is
+ * the finding, not a rendering fault, and the caption says so.
+ *
+ * `Progress` comes from the component library rather than two nested divs with an
+ * inline width — the same measure previously existed twice, here and in
+ * `margin/page.js`, at two different heights.
+ */
 export function TakeRateBars({ types, formatCurrency, formatPct }) {
   const shown = types.filter((t) => t.count > 0);
-  const widest = Math.max(...shown.map((t) => t.takePct ?? 0), 1);
 
   if (shown.length === 0) {
     return <p className="text-sm text-ink/45">No bookings yet.</p>;
   }
 
   return (
-    <ul className="space-y-4">
-      {shown.map((type) => (
-        <li key={type.type}>
-          <div className="flex items-baseline justify-between gap-3">
-            <span className="flex items-center gap-2 text-sm text-ink/75">
-              <span
-                className="inline-block size-2 shrink-0"
-                style={{ backgroundColor: colorForType(type.type) }}
-              />
-              {type.label}
-            </span>
-            <span className="font-mono text-sm tabular-nums text-ink">
-              {formatPct(type.takePct, 2)}
-            </span>
-          </div>
-          {/* 6px, not 1px. These were `h-px`, which is a hairline rule rather than a
-              bar — "thin marks" is a rule about restraint, not about making the data
-              invisible. At this height the fill is legible and the rounded end reads
-              as a measured quantity. */}
-          <div className="mt-2.5 h-1.5 w-full rounded-full bg-ink/8">
-            <div
-              className="h-1.5 rounded-full"
-              style={{
-                backgroundColor: colorForType(type.type),
-                width: `${Math.max(((type.takePct ?? 0) / widest) * 100, type.takePct > 0 ? 2 : 0).toFixed(2)}%`
-              }}
+    <div className="space-y-4">
+      <ul className="space-y-4">
+        {shown.map((type) => (
+          <li key={type.type}>
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="flex min-w-0 items-center gap-2 text-sm text-ink/75">
+                <span
+                  aria-hidden
+                  className="inline-block size-2 shrink-0 rounded-xs"
+                  style={{ backgroundColor: colorForType(type.type) }}
+                />
+                <span className="truncate">{type.label}</span>
+              </span>
+              <span className="shrink-0 font-mono text-sm tabular-nums text-ink">
+                {formatPct(type.takePct, 2)}
+              </span>
+            </div>
+            <Progress
+              aria-label={`${type.label} take rate`}
+              className="mt-2.5 h-1.5"
+              indicatorColor={colorForType(type.type)}
+              value={type.takePct ?? 0}
             />
-          </div>
-          <p className={cn("mt-1.5 font-mono text-xs uppercase tracking-widest text-ink/40")}>
-            {formatCurrency(type.margin)} on {formatCurrency(type.gross)} · {type.count} booking
-            {type.count === 1 ? "" : "s"}
-          </p>
-        </li>
-      ))}
-    </ul>
+            <p className="mt-1.5 font-mono text-xs uppercase tracking-widest text-ink/40">
+              {formatCurrency(type.margin)} on {formatCurrency(type.gross)} · {type.count} booking
+              {type.count === 1 ? "" : "s"}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <p className="text-xs text-ink/45">
+        Bars run 0–100% of selling price. Short bars mean the line keeps little of
+        what it takes in.
+      </p>
+    </div>
   );
 }

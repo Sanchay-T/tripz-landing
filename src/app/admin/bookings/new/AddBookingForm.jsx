@@ -267,7 +267,7 @@ export default function AddBookingForm() {
         title="Money"
         meta="Enter what it cost and what the customer paid. Margin is derived by the database from these two, never typed in."
       >
-        <div className="grid gap-5 sm:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="Base cost (what we paid)">
             <input
               className={inputClass}

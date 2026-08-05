@@ -23,7 +23,7 @@ export default async function ProvidersPage() {
                 <h2 className="font-semibold">{provider.name}</h2>
                 <p className="mt-2 text-sm text-ink/55">{provider.support_contact || "No support contact set."}</p>
               </div>
-              <AdminBadge tone={provider.is_active ? "success" : "default"}>{provider.type}</AdminBadge>
+              <AdminBadge tone={provider.is_active ? "good" : "default"}>{provider.type}</AdminBadge>
             </div>
           </AdminCard>
         ))}

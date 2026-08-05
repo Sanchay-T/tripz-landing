@@ -80,19 +80,23 @@ export function AdminButton({ children, href, tone, className, ...props }) {
  * which also means it survives being printed or screenshotted in greyscale.
  */
 export function AdminBadge({ children, tone = "default" }) {
+  // Fall back rather than resolve to undefined. Call sites passed "success" and
+  // "danger" — neither is a key here — and the badge rendered with no colour at
+  // all, silently, in four places. An unknown tone should look plain, not invisible.
+  const key = ["default", "good", "warn", "critical"].includes(tone) ? tone : "default";
   const dot = {
     default: "bg-ink/30",
     good: "bg-good",
     warn: "bg-warn",
     critical: "bg-critical"
-  }[tone];
+  }[key];
 
   const text = {
     default: "text-ink/60",
     good: "text-good",
     warn: "text-warn",
     critical: "text-critical"
-  }[tone];
+  }[key];
 
   return (
     <span
@@ -120,7 +124,7 @@ export function AdminBadge({ children, tone = "default" }) {
 export function AdminTable({ columns, rows }) {
   return (
     <div className="w-full overflow-x-auto">
-      <table className="w-full min-w-170 border-collapse text-left text-sm">
+      <table className="w-full border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-ink/10">
             {columns.map((column) => (

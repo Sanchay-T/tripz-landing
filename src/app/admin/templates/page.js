@@ -20,7 +20,7 @@ export default async function TemplatesPage() {
           <AdminCard key={template.id} className="p-5">
             <div className="flex items-center justify-between gap-3">
               <h2 className="font-semibold">{template.name}</h2>
-              <AdminBadge tone={template.is_active ? "success" : "default"}>{template.is_active ? "Active" : "Inactive"}</AdminBadge>
+              <AdminBadge tone={template.is_active ? "good" : "default"}>{template.is_active ? "Active" : "Inactive"}</AdminBadge>
             </div>
             <p className="mt-3 text-sm leading-6 text-ink/55">{template.type}</p>
           </AdminCard>

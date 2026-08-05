@@ -228,10 +228,13 @@ export function BookingsTable({ rows }) {
     // directly on the page background inside its own `px-4 lg:px-6`, which both
     // double-padded it against the page's own gutter and left it as the only
     // unelevated thing on the screen.
-    <div className="w-full rounded-lg bg-paper p-6 shadow-card">
+    <div className="w-full rounded-lg bg-paper p-4 shadow-card sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList>
+        {/* Scrolls rather than overflows. Four triggers plus their count badges
+            are ~420px wide, which is more than a phone has after card padding. */}
+        <div className="-mx-1 max-w-full overflow-x-auto px-1">
+          <Tabs value={tab} onValueChange={setTab}>
+            <TabsList>
             {TABS.map((entry) => {
               const count =
                 entry.value === "all"
@@ -246,8 +249,9 @@ export function BookingsTable({ rows }) {
                 </TabsTrigger>
               );
             })}
-          </TabsList>
-        </Tabs>
+            </TabsList>
+          </Tabs>
+        </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -311,7 +315,7 @@ export function BookingsTable({ rows }) {
         </Table>
       </div>
 
-      <div className="mt-5 flex items-center justify-between">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <p className="text-muted-foreground text-sm">
           {filtered.length} booking{filtered.length === 1 ? "" : "s"}
         </p>

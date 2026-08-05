@@ -214,7 +214,11 @@ export default function AdminShell({ children, user }) {
           </SidebarFooter>
         </Sidebar>
 
-        <SidebarInset className="bg-base">
+        {/* min-w-0 is load-bearing. SidebarInset is `w-full flex-1` with no
+            min-width override, and a flex item defaults to min-width:auto, so it
+            refuses to shrink below its content: at 768px the inset stayed 718px
+            wide beside a 256px sidebar and pushed the page past the viewport. */}
+        <SidebarInset className="min-w-0 bg-base">
           {/* The only chrome above the page. On desktop the trigger collapses the
               rail; on mobile it opens the sheet. `overflow-x-hidden` used to sit on
               the root here, which clipped any overflow rather than preventing it and
@@ -226,7 +230,7 @@ export default function AdminShell({ children, user }) {
             </Link>
           </header>
 
-          <main className="min-w-0 flex-1">{children}</main>
+          <div className="min-w-0 flex-1">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>

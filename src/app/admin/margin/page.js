@@ -23,6 +23,7 @@ import {
   summarise,
   zeroMargin
 } from "@/lib/admin/margin";
+import { TakeRateBars } from "../charts";
 
 export const dynamic = "force-dynamic";
 
@@ -378,42 +379,16 @@ export default async function MarginPage() {
             <p className="mt-1 text-xs leading-5 text-ink/55">
               Margin as a percentage of what the customer paid.
             </p>
-            <ul className="mt-4 space-y-3">
-              {types.length === 0 && <li className="text-sm text-ink/45">No bookings yet.</li>}
-              {types.map((type) => {
-                const widest = Math.max(...types.map((t) => t.takePct ?? 0), 1);
-
-                return (
-                  <li key={type.type}>
-                    <div className="flex items-baseline justify-between gap-3 text-sm">
-                      <span className="text-ink/75">{type.label}</span>
-                      <span className="font-semibold tabular-nums text-ink">
-                        {formatPct(type.takePct, 2)}
-                      </span>
-                    </div>
-                    {/* 6px, matching the shared TakeRateBars on the dashboard. This
-                        page kept its own copy at `h-px`, so the same measure was a
-                        readable bar on one screen and a hairline rule on the other. */}
-                    <div className="mt-2.5 h-1.5 w-full rounded-full bg-ink/8">
-                      <div
-                        className="h-1.5 rounded-full"
-                        style={{
-                          backgroundColor: colorForType(type.type),
-                          // Scaled against the best-performing type so a 0.49% bar is
-                          // still visible next to a 20% one, with a 2% floor so a real
-                          // but tiny take never renders as nothing at all.
-                          width: `${Math.max(((type.takePct ?? 0) / widest) * 100, type.takePct > 0 ? 2 : 0).toFixed(2)}%`
-                        }}
-                      />
-                    </div>
-                    <p className="mt-1 text-xs text-ink/50">
-                      {formatCurrency(type.margin)} on {formatCurrency(type.gross)} across{" "}
-                      {type.count} booking{type.count === 1 ? "" : "s"}
-                    </p>
-                  </li>
-                );
-              })}
-            </ul>
+            {/* The shared component, not a third copy. This page had its own
+                take-rate renderer that drifted from the dashboard's twice over —
+                first to a different bar height, then to a different scale. */}
+            <div className="mt-4">
+              <TakeRateBars
+                types={types}
+                formatCurrency={formatCurrency}
+                formatPct={formatPct}
+              />
+            </div>
           </AdminCard>
 
           <AdminCard className="p-5">

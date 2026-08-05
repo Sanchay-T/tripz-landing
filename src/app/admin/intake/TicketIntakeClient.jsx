@@ -120,7 +120,7 @@ export default function TicketIntakeClient() {
       } catch (error) {
         if (isMounted) {
           setNotice({
-            tone: "danger",
+            tone: "critical",
             message: error instanceof Error ? error.message : "Could not load intake queue"
           });
         }
@@ -214,7 +214,7 @@ export default function TicketIntakeClient() {
 
         setRows((current) => current.map((row) => (row.id === pendingId ? failedRow : row)));
         setNotice({
-          tone: "danger",
+          tone: "critical",
           message: failedRow.route
         });
       }
@@ -246,7 +246,7 @@ export default function TicketIntakeClient() {
 
   async function confirmBooking() {
     if (!selectedRow?.extractionId || !selectedRow?.documentId) {
-      setNotice({ tone: "danger", message: "Upload and extract a real document before confirming." });
+      setNotice({ tone: "critical", message: "Upload and extract a real document before confirming." });
       return;
     }
 
@@ -277,12 +277,12 @@ export default function TicketIntakeClient() {
         extraction
       });
       setNotice({
-        tone: "success",
+        tone: "good",
         message: `Booking ${payload.booking.booking_code} created with ${payload.tasksCreated} tasks.`
       });
     } catch (error) {
       setNotice({
-        tone: "danger",
+        tone: "critical",
         message: error instanceof Error ? error.message : "Could not confirm booking"
       });
     } finally {
@@ -292,7 +292,7 @@ export default function TicketIntakeClient() {
 
   async function saveDocumentOnly() {
     if (!selectedRow?.extractionId || !selectedRow?.documentId) {
-      setNotice({ tone: "danger", message: "Upload and extract a real document before saving." });
+      setNotice({ tone: "critical", message: "Upload and extract a real document before saving." });
       return;
     }
 
@@ -323,10 +323,10 @@ export default function TicketIntakeClient() {
         route: formatRoute(extraction),
         extraction
       });
-      setNotice({ tone: "success", message: "Document saved without creating a booking." });
+      setNotice({ tone: "good", message: "Document saved without creating a booking." });
     } catch (error) {
       setNotice({
-        tone: "danger",
+        tone: "critical",
         message: error instanceof Error ? error.message : "Could not save document"
       });
     } finally {
@@ -336,7 +336,7 @@ export default function TicketIntakeClient() {
 
   async function markFailed() {
     if (!selectedRow?.extractionId || !selectedRow?.documentId) {
-      setNotice({ tone: "danger", message: "Upload and extract a real document before marking failed." });
+      setNotice({ tone: "critical", message: "Upload and extract a real document before marking failed." });
       return;
     }
 
@@ -361,10 +361,10 @@ export default function TicketIntakeClient() {
       }
 
       patchSelectedRow({ status: "failed", route: payload.reason });
-      setNotice({ tone: "success", message: "Document marked failed." });
+      setNotice({ tone: "good", message: "Document marked failed." });
     } catch (error) {
       setNotice({
-        tone: "danger",
+        tone: "critical",
         message: error instanceof Error ? error.message : "Could not mark failed"
       });
     } finally {
@@ -374,9 +374,9 @@ export default function TicketIntakeClient() {
 
   const statusTone =
     selectedRow?.status === "ready_to_review" || selectedRow?.status === "saved"
-      ? "success"
+      ? "good"
       : selectedRow?.status === "failed"
-        ? "danger"
+        ? "critical"
         : "warn";
 
   return (
@@ -434,7 +434,7 @@ export default function TicketIntakeClient() {
         </AdminCard>
       </section>
 
-      <section className="grid gap-4 2xl:grid-cols-2">
+      <section className="grid gap-4 lg:grid-cols-2">
         <AdminCard>
           <div className="border-b border-ink/10 p-4 sm:p-5">
             <h2 className="text-lg font-semibold">Upload queue</h2>
@@ -470,7 +470,7 @@ export default function TicketIntakeClient() {
                     </p>
                   </div>
                 </div>
-                <AdminBadge tone={row.status === "ready_to_review" || row.status === "saved" ? "success" : row.status === "failed" ? "danger" : "warn"}>
+                <AdminBadge tone={row.status === "ready_to_review" || row.status === "saved" ? "good" : row.status === "failed" ? "critical" : "warn"}>
                   {row.status}
                 </AdminBadge>
               </button>
