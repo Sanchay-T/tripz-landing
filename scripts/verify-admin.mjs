@@ -84,15 +84,20 @@ check(
 );
 
 // --- no dead primitives ----------------------------------------------------
-const primitives = read(join(ADMIN, "components.jsx"));
-const exported = [...primitives.matchAll(/^export function ([A-Za-z]+)/gm)].map((m) => m[1]);
-const KEEP = ["PageHeader", "AdminTable"];
-const extra = exported.filter((e) => !KEEP.includes(e));
+// The goal is that nothing here REIMPLEMENTS the library, not that the file is
+// empty. Deleting these would mean repeating Card/CardHeader markup in twelve
+// files and table markup in six, which is copy-paste rather than adoption. So the
+// check is that the file builds on @/components/ui and no longer hand-rolls the
+// elements those components exist to provide.
+const primitives = code(read(join(ADMIN, "components.jsx")));
+const handRolled = [...primitives.matchAll(/<(table|input|select|textarea|button)\b/g)].map(
+  (m) => m[1]
+);
 check(
-  "no duplicate primitives",
-  `components.jsx exports ${exported.length} (want ${KEEP.join(", ")})`,
-  extra.length === 0,
-  extra
+  "primitives are adapters",
+  `components.jsx composes the library, hand-rolls ${handRolled.length} element(s)`,
+  handRolled.length === 0 && primitives.includes("@/components/ui"),
+  [...new Set(handRolled)]
 );
 
 // --- installed-but-unused --------------------------------------------------
