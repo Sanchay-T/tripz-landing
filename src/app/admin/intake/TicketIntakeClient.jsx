@@ -3,6 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { AlertCircle, CheckCircle2, FileText, Loader2, UploadCloud } from "lucide-react";
 import { AdminBadge, AdminButton, AdminCard } from "../components";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/cn";
 
 const blankExtraction = {
   documentType: "unknown",
@@ -401,7 +406,10 @@ export default function TicketIntakeClient() {
             <p className="mt-2 max-w-xl text-sm leading-6 text-ink/60">
               PDF, PNG, JPG, and WEBP uploads are stored in Vercel Blob and queued for review. Enter the booking details, then confirm to create the booking.
             </p>
-            <label className="mt-5 inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white  transition hover:bg-brand-deep">
+            {/* A hidden input inside a styled label is the standard file-picker
+                pattern and has no library equivalent, so the label borrows
+                buttonVariants rather than hand-rolling something button-shaped. */}
+            <label className={cn(buttonVariants(), "mt-5 cursor-pointer")}>
               {isUploading ? <Loader2 size={16} className="animate-spin" /> : <UploadCloud size={16} />}
               {isUploading ? "Extracting..." : "Choose files"}
               <input
@@ -453,13 +461,15 @@ export default function TicketIntakeClient() {
               </div>
             )}
             {rows.map((row) => (
-              <button
+              <Button
                 key={row.id}
-                className={`flex w-full items-center justify-between gap-3 p-4 text-left transition hover:bg-brand-soft/45 ${
-                  row.id === selectedRow?.id ? "bg-brand-soft/70" : ""
-                }`}
+                className={cn(
+                  "h-auto w-full justify-between gap-3 rounded-none p-4 text-left font-normal",
+                  row.id === selectedRow?.id && "bg-muted"
+                )}
                 onClick={() => selectRow(row)}
                 type="button"
+                variant="ghost"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <FileText size={18} className="shrink-0 text-brand" />
@@ -473,7 +483,7 @@ export default function TicketIntakeClient() {
                 <AdminBadge tone={row.status === "ready_to_review" || row.status === "saved" ? "good" : row.status === "failed" ? "critical" : "warn"}>
                   {row.status}
                 </AdminBadge>
-              </button>
+              </Button>
             ))}
           </div>
         </AdminCard>
@@ -506,27 +516,27 @@ export default function TicketIntakeClient() {
               ["currency", "Currency"],
               ["confidence", "Confidence"]
             ].map(([field, label]) => (
-              <label key={field} className="grid gap-1.5 text-sm font-medium text-ink/70">
-                {label}
-                <input
-                  className="min-h-10 rounded-md border border-ink/12 bg-paper px-3 text-sm text-ink outline-none transition focus:border-brand-vivid focus:ring-2 focus:ring-brand-vivid/20"
-                  value={reviewData[field] ?? ""}
-                  onChange={(event) => updateField(field, event.target.value)}
+              <div key={field} className="grid gap-1.5">
+                <Label htmlFor={`intake-${field}`}>{label}</Label>
+                <Input
                   disabled={!selectedRow || isSaving}
+                  id={`intake-${field}`}
+                  onChange={(event) => updateField(field, event.target.value)}
+                  value={reviewData[field] ?? ""}
                 />
-              </label>
+              </div>
             ))}
           </div>
 
-          <label className="mt-4 grid gap-1.5 text-sm font-medium text-ink/70">
-            Notes
-            <textarea
-              className="min-h-24 rounded-md border border-ink/12 bg-paper px-3 py-2 text-sm text-ink outline-none transition focus:border-brand-vivid focus:ring-2 focus:ring-brand-vivid/20"
-              value={reviewData.rawNotes ?? ""}
-              onChange={(event) => updateField("rawNotes", event.target.value)}
+          <div className="mt-4 grid gap-1.5">
+            <Label htmlFor="intake-notes">Notes</Label>
+            <Textarea
               disabled={!selectedRow || isSaving}
+              id="intake-notes"
+              onChange={(event) => updateField("rawNotes", event.target.value)}
+              value={reviewData.rawNotes ?? ""}
             />
-          </label>
+          </div>
 
           <div className="mt-5 grid gap-3 sm:flex sm:flex-wrap">
             <AdminButton type="button" className="w-full sm:w-auto" onClick={confirmBooking} disabled={!selectedRow || isSaving}>

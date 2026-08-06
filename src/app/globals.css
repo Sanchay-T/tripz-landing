@@ -17,13 +17,17 @@
   --color-brand-soft: #e8f0ec;
   --color-brand-live: #7ec79d;
 
-  /* The admin's page colour, and deliberately NOT `--color-field`.
+  /* The admin's page colour. Named `canvas`, NOT `base`: a `--color-base`
+     token generates a `text-base` COLOUR utility that collides with Tailwind's
+     built-in `text-base` font-size, so every `className="text-base"` in the
+     component library silently painted its text the page background. The admin
+     page colour, and deliberately NOT `--color-field`.
      `field` is the landing page's mint wash (#edf4ef, green channel eight steps
      above red) and it reads as tinted paper — right for a marketing page, dated
      behind a screen of white cards. This is the same value stripped of hue: near
      neutral, so white surfaces sitting on it read as raised rather than as a
      lighter shade of the same green. */
-  --color-base: #f4f5f4;
+  --color-canvas: #f4f5f4;
 
   /* One saturated accent. `--color-brand` is so dark it reads as black, which is
      correct for ink and useless for emphasis, so the admin had no way to mark the

@@ -218,12 +218,12 @@ export default function AdminShell({ children, user }) {
             min-width override, and a flex item defaults to min-width:auto, so it
             refuses to shrink below its content: at 768px the inset stayed 718px
             wide beside a 256px sidebar and pushed the page past the viewport. */}
-        <SidebarInset className="min-w-0 bg-base">
+        <SidebarInset className="min-w-0 bg-canvas">
           {/* The only chrome above the page. On desktop the trigger collapses the
               rail; on mobile it opens the sheet. `overflow-x-hidden` used to sit on
               the root here, which clipped any overflow rather than preventing it and
               hid every responsive bug underneath it. */}
-          <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-ink/8 bg-base/80 px-4 backdrop-blur-md">
+          <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b border-ink/8 bg-canvas/80 px-4 backdrop-blur-md">
             <SidebarTrigger className="-ml-1" />
             <Link href="/admin" className="md:hidden" aria-label="TripZ Admin home">
               <Wordmark size="text-lg" />

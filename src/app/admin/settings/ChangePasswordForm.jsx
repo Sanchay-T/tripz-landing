@@ -3,6 +3,8 @@
 import { useState } from "react";
 
 import { AdminButton, Notice } from "../components";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 
 /**
@@ -28,11 +30,6 @@ export default function ChangePasswordForm() {
   const [confirm, setConfirm] = useState("");
   const [status, setStatus] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-
-  const inputClass =
-    "w-full rounded-md border border-ink/12 bg-paper px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-brand-vivid focus:ring-2 focus:ring-brand-vivid/20";
-  const labelClass =
-    "mb-2 block font-mono text-xs uppercase tracking-widest text-ink/50";
 
   async function submit(event) {
     event.preventDefault();
@@ -82,24 +79,26 @@ export default function ChangePasswordForm() {
     <form className="mt-4 space-y-4" onSubmit={submit}>
       {status && <Notice tone={status.tone}>{status.message}</Notice>}
 
-      <label className="block" htmlFor="current-password">
-        <span className={labelClass}>Current password</span>
-        <input
+      <div className="grid gap-2">
+        <Label className="font-mono text-xs uppercase tracking-widest text-ink/50" htmlFor="current-password">
+          Current password
+        </Label>
+        <Input
           autoComplete="current-password"
-          className={inputClass}
           id="current-password"
           onChange={(event) => setCurrent(event.target.value)}
           required
           type="password"
           value={current}
         />
-      </label>
+      </div>
 
-      <label className="block" htmlFor="new-password">
-        <span className={labelClass}>New password</span>
-        <input
+      <div className="grid gap-2">
+        <Label className="font-mono text-xs uppercase tracking-widest text-ink/50" htmlFor="new-password">
+          New password
+        </Label>
+        <Input
           autoComplete="new-password"
-          className={inputClass}
           id="new-password"
           minLength={MIN_LENGTH}
           onChange={(event) => setNext(event.target.value)}
@@ -107,13 +106,14 @@ export default function ChangePasswordForm() {
           type="password"
           value={next}
         />
-      </label>
+      </div>
 
-      <label className="block" htmlFor="confirm-password">
-        <span className={labelClass}>Repeat new password</span>
-        <input
+      <div className="grid gap-2">
+        <Label className="font-mono text-xs uppercase tracking-widest text-ink/50" htmlFor="confirm-password">
+          Repeat new password
+        </Label>
+        <Input
           autoComplete="new-password"
-          className={inputClass}
           id="confirm-password"
           minLength={MIN_LENGTH}
           onChange={(event) => setConfirm(event.target.value)}
@@ -121,7 +121,7 @@ export default function ChangePasswordForm() {
           type="password"
           value={confirm}
         />
-      </label>
+      </div>
 
       <AdminButton
         disabled={submitting || !current || !next || !confirm}

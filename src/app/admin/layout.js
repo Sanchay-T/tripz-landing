@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import AdminShell from "./AdminShell";
+import { Toaster } from "@/components/ui/sonner";
 import { auth } from "@/lib/auth";
 
 export const metadata = {
@@ -32,5 +33,10 @@ export default async function AdminLayout({ children }) {
     redirect("/login?next=/admin");
   }
 
-  return <AdminShell user={session.user}>{children}</AdminShell>;
+  return (
+    <AdminShell user={session.user}>
+      {children}
+      <Toaster />
+    </AdminShell>
+  );
 }

@@ -46,11 +46,11 @@ const check = (name, detail, pass, offenders = []) =>
   checks.push({ name, detail, pass, offenders });
 
 // --- raw form controls -----------------------------------------------------
-const rawControl = /<(input|select|textarea)\b/;
+const rawControl = /<(input|select|textarea)\b(?![^>]*type="file")/;
 const controlOffenders = adminFiles.filter((f) => rawControl.test(code(read(f))));
 check(
   "no raw form controls",
-  "0 <input|select|textarea> under src/app/admin",
+  "0 <input|select|textarea> under src/app/admin (file pickers exempt)",
   controlOffenders.length === 0,
   controlOffenders
 );
@@ -74,13 +74,16 @@ check("no custom CSS", "0 arbitrary-value classes", cssOffenders.length === 0, c
 // --- library adoption ------------------------------------------------------
 // Pages that render nothing but a wrapper legitimately import no primitives, so
 // this measures files that build UI, not the raw file count.
-const buildsUI = adminFiles.filter((f) => /<[a-z]|className=/.test(code(read(f))));
-const adopters = buildsUI.filter((f) => read(f).includes("@/components/ui"));
+const handRolledEls = [];
+for (const f of adminFiles) {
+  const hits = [...code(read(f)).matchAll(/<(button|table|dialog)\b/g)].map((m) => m[1]);
+  if (hits.length) handRolledEls.push(`${f} → <${[...new Set(hits)].join(">, <")}>`);
+}
 check(
-  "library adoption",
-  `${adopters.length}/${buildsUI.length} UI-building admin files import @/components/ui`,
-  adopters.length === buildsUI.length,
-  buildsUI.filter((f) => !adopters.includes(f))
+  "no hand-rolled elements",
+  "no page builds a button/table/dialog the library already provides",
+  handRolledEls.length === 0,
+  handRolledEls
 );
 
 // --- no dead primitives ----------------------------------------------------

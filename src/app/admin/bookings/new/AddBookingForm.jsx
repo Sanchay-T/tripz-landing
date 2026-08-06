@@ -1,6 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { cloneElement, useId } from "react";
+
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useMemo, useState } from "react";
 
 import { AdminButton, Notice, Panel } from "../../components";
@@ -57,18 +73,49 @@ function inr(value) {
   }).format(Number(value ?? 0));
 }
 
+/**
+ * A labelled field.
+ *
+ * It used to wrap everything in a bare `<label>` with a `<span>` doing the label's
+ * job and no id at all, so the association worked only by nesting. Cloning a
+ * generated id onto the control gives a real `htmlFor` pair, which is what screen
+ * readers and "click the label to focus" both rely on.
+ */
 function Field({ label, children, hint }) {
+  const id = useId();
+
   return (
-    <label className="block">
-      <span className="mb-1.5 block font-mono text-xs uppercase tracking-widest text-ink/50">{label}</span>
-      {children}
-      {hint && <span className="mt-1.5 block text-xs leading-4 text-ink/45">{hint}</span>}
-    </label>
+    <div className="grid gap-1.5">
+      <Label className="font-mono text-xs uppercase tracking-widest text-ink/50" htmlFor={id}>
+        {label}
+      </Label>
+      {cloneElement(children, { id })}
+      {hint && <p className="text-xs leading-4 text-ink/45">{hint}</p>}
+    </div>
   );
 }
 
-const inputClass =
-  "w-full rounded-md border border-ink/12 bg-paper px-3 py-2.5 text-sm text-ink outline-none transition focus:border-brand-vivid focus:ring-2 focus:ring-brand-vivid/20";
+/**
+ * The five dropdowns were native `<select>` elements styled to look like the text
+ * inputs beside them. This maps the same {value, onChange, options} shape onto the
+ * library Select so they behave and look like one control, not two.
+ */
+function SelectField({ id, value, onChange, options, format = (o) => o }) {
+  return (
+    <Select onValueChange={onChange} value={value}>
+      <SelectTrigger className="w-full" id={id}>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((option) => (
+          <SelectItem key={option} value={option}>
+            {format(option)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
 
 export default function AddBookingForm() {
   const router = useRouter();
@@ -108,18 +155,18 @@ export default function AddBookingForm() {
         throw new Error(payload.detail || payload.error || "Could not save the booking.");
       }
 
-      setNotice({
-        tone: "success",
-        message: `Saved ${payload.booking.booking_code} — margin ${inr(payload.margin)}.${
-          payload.warning ? ` ${payload.warning}` : ""
-        }`
+      // A toast, not an inline banner: this is a transient confirmation of an
+      // action that succeeded, and the form below it has already been cleared.
+      // Inline Notice stays for errors, which you have to act on.
+      toast.success(`Saved ${payload.booking.booking_code}`, {
+        description: `Margin ${inr(payload.margin)}.${payload.warning ? ` ${payload.warning}` : ""}`
       });
       setForm(EMPTY);
       // The margin and dashboard pages are force-dynamic, so refreshing the router
       // cache is what makes the new booking show up in their totals immediately.
       router.refresh();
     } catch (error) {
-      setNotice({ tone: "error", message: error.message });
+      setNotice({ tone: "critical", message: error.message });
     } finally {
       setSaving(false);
     }
@@ -128,7 +175,7 @@ export default function AddBookingForm() {
   return (
     <form onSubmit={submit} className="space-y-4">
       {notice && (
-        <Notice tone={notice.tone === "success" ? "good" : "critical"}>
+        <Notice tone={notice.tone}>
           {notice.message}
         </Notice>
       )}
@@ -136,124 +183,103 @@ export default function AddBookingForm() {
       <Panel title="Customer">
         <div className="grid gap-5 sm:grid-cols-3">
           <Field label="Name">
-            <input
-              className={inputClass}
-              onChange={(e) => update("customerName", e.target.value)}
+            <Input
+                            onChange={(e) => update("customerName", e.target.value)}
               required
               value={form.customerName}
             />
           </Field>
           <Field label="Mobile number" hint="Used to match an existing customer">
-            <input
-              className={inputClass}
-              inputMode="numeric"
+            <Input
+                            inputMode="numeric"
               onChange={(e) => update("mobileNumber", e.target.value)}
               value={form.mobileNumber}
             />
           </Field>
           <Field label="Email">
-            <input
-              className={inputClass}
-              onChange={(e) => update("email", e.target.value)}
+            <Input
+                            onChange={(e) => update("email", e.target.value)}
               type="email"
               value={form.email}
             />
           </Field>
         </div>
-        <label className="mt-4 flex items-center gap-2 text-sm text-ink/70">
-          <input
+        {/* flex-wrap and a shrink-0 control: this row holds ~70 characters across
+            two spans, and without them the checkbox squashed to a sliver on a
+            phone rather than the label wrapping. */}
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-ink/70">
+          <Checkbox
             checked={form.isInternal}
-            className="size-4 rounded border-ink/25"
-            onChange={(e) => update("isInternal", e.target.checked)}
-            type="checkbox"
+            className="shrink-0"
+            id="is-internal"
+            onCheckedChange={(checked) => update("isInternal", checked === true)}
           />
-          This is our own booking, not customer business
+          <Label className="font-normal text-ink/70" htmlFor="is-internal">
+            This is our own booking, not customer business
+          </Label>
           <span className="text-xs text-ink/45">(excluded from the take rate)</span>
-        </label>
+        </div>
       </Panel>
 
       <Panel title="Booking">
         <div className="grid gap-5 sm:grid-cols-3">
           <Field label="Type">
-            <select
-              className={inputClass}
-              onChange={(e) => update("bookingType", e.target.value)}
+            <SelectField
+              onChange={(v) => update("bookingType", v)}
+              options={BOOKING_TYPES}
               value={form.bookingType}
-            >
-              {BOOKING_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
+            />
           </Field>
           <Field label="Market">
-            <select
-              className={inputClass}
-              onChange={(e) => update("market", e.target.value)}
+            <SelectField
+              onChange={(v) => update("market", v)}
+              options={MARKETS}
               value={form.market}
-            >
-              {MARKETS.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
-            </select>
+            />
           </Field>
           <Field label="Journey">
-            <select
-              className={inputClass}
-              onChange={(e) => update("journeyType", e.target.value)}
+            <SelectField
+              format={(o) => o.replace(/_/g, " ")}
+              onChange={(v) => update("journeyType", v)}
+              options={JOURNEY_TYPES}
               value={form.journeyType}
-            >
-              {JOURNEY_TYPES.map((j) => (
-                <option key={j} value={j}>
-                  {j.replace(/_/g, " ")}
-                </option>
-              ))}
-            </select>
+            />
           </Field>
           <Field label="From">
-            <input
-              className={inputClass}
-              onChange={(e) => update("departure", e.target.value)}
+            <Input
+                            onChange={(e) => update("departure", e.target.value)}
               value={form.departure}
             />
           </Field>
           <Field label="To / hotel">
-            <input
-              className={inputClass}
-              onChange={(e) => update("arrival", e.target.value)}
+            <Input
+                            onChange={(e) => update("arrival", e.target.value)}
               value={form.arrival}
             />
           </Field>
           <Field label="Provider" hint="Airline, hotel or vendor">
-            <input
-              className={inputClass}
-              onChange={(e) => update("provider", e.target.value)}
+            <Input
+                            onChange={(e) => update("provider", e.target.value)}
               value={form.provider}
             />
           </Field>
           <Field label="Travel date">
-            <input
-              className={inputClass}
-              onChange={(e) => update("travelDate", e.target.value)}
+            <Input
+                            onChange={(e) => update("travelDate", e.target.value)}
               type="date"
               value={form.travelDate}
             />
           </Field>
           <Field label="Return date">
-            <input
-              className={inputClass}
-              onChange={(e) => update("returnDate", e.target.value)}
+            <Input
+                            onChange={(e) => update("returnDate", e.target.value)}
               type="date"
               value={form.returnDate}
             />
           </Field>
           <Field label="PNR / confirmation">
-            <input
-              className={inputClass}
-              onChange={(e) => update("pnrOrConfirmation", e.target.value)}
+            <Input
+                            onChange={(e) => update("pnrOrConfirmation", e.target.value)}
               value={form.pnrOrConfirmation}
             />
           </Field>
@@ -269,47 +295,34 @@ export default function AddBookingForm() {
       >
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="Base cost (what we paid)">
-            <input
-              className={inputClass}
-              inputMode="decimal"
+            <Input
+                            inputMode="decimal"
               onChange={(e) => update("baseCost", e.target.value)}
               value={form.baseCost}
             />
           </Field>
           <Field label="Selling price (what they paid)">
-            <input
-              className={inputClass}
-              inputMode="decimal"
+            <Input
+                            inputMode="decimal"
               onChange={(e) => update("sellingPrice", e.target.value)}
               required
               value={form.sellingPrice}
             />
           </Field>
           <Field label="Payment">
-            <select
-              className={inputClass}
-              onChange={(e) => update("paymentStatus", e.target.value)}
+            <SelectField
+              onChange={(v) => update("paymentStatus", v)}
+              options={PAYMENT_STATUSES}
               value={form.paymentStatus}
-            >
-              {PAYMENT_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
+            />
           </Field>
           <Field label="Status">
-            <select
-              className={inputClass}
-              onChange={(e) => update("bookingStatus", e.target.value)}
+            <SelectField
+              format={(o) => o.replace(/_/g, " ")}
+              onChange={(v) => update("bookingStatus", v)}
+              options={BOOKING_STATUSES}
               value={form.bookingStatus}
-            >
-              {BOOKING_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s.replace(/_/g, " ")}
-                </option>
-              ))}
-            </select>
+            />
           </Field>
         </div>
 
@@ -336,8 +349,8 @@ export default function AddBookingForm() {
 
       <Panel>
         <Field label="Notes">
-          <textarea
-            className={`${inputClass} min-h-20`}
+          <Textarea
+            className="min-h-20"
             onChange={(e) => update("notes", e.target.value)}
             value={form.notes}
           />
@@ -351,16 +364,16 @@ export default function AddBookingForm() {
         <AdminButton href="/admin/margin" tone="light">
           View margin
         </AdminButton>
-        <button
-          className="text-sm text-ink/55 hover:text-ink"
+        <Button
           onClick={() => {
             setForm(EMPTY);
             setNotice(null);
           }}
           type="button"
+          variant="ghost"
         >
           Clear
-        </button>
+        </Button>
       </div>
     </form>
   );
