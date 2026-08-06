@@ -72,6 +72,20 @@ export function buildAuthOptions({ allowSignUp = false } = {}) {
     // Adds `username` and `displayUsername` to the user table and a
     // POST /sign-in/username endpoint. Email sign-in keeps working alongside it.
     plugins: [username()],
+    user: {
+      additionalFields: {
+        /**
+         * "editor" or "viewer". Viewers can read every screen but every write is
+         * refused server-side.
+         *
+         * `input: false` is the load-bearing part: without it the role is an
+         * accepted field on the sign-up payload, and anyone able to create an
+         * account could hand themselves write access. Roles are set by the seed
+         * script, never by a request.
+         */
+        role: { type: "string", defaultValue: "editor", input: false, required: false }
+      }
+    },
     session: {
       expiresIn: WEEK_SECONDS,
       // Refresh the expiry at most once a day rather than on every request, so a

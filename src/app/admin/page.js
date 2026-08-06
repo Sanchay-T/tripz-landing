@@ -1,4 +1,7 @@
+import { headers } from "next/headers";
 import { PlusCircle } from "lucide-react";
+
+import { auth } from "@/lib/auth";
 
 import { AdminButton, Notice, PageHeader, Panel } from "./components";
 import { RevenueVersusProfit, TakeRateBars, colorForType } from "./charts";
@@ -6,6 +9,7 @@ import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { SectionCards } from "@/components/section-cards";
 import { BookingsTable } from "@/components/bookings-table";
 import { fetchAdminDashboardData } from "@/lib/admin/records";
+import { isViewer } from "@/lib/roles";
 import {
   byType,
   customerBookings,
@@ -55,6 +59,8 @@ function formatDate(value) {
 }
 
 export default async function AdminDashboard() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const viewer = isViewer(session?.user);
   const [{ rows, error }, ops] = await Promise.all([
     fetchMarginRows(),
     fetchAdminDashboardData()
@@ -213,10 +219,12 @@ export default async function AdminDashboard() {
           </>
         }
         action={
-          <AdminButton href="/admin/bookings/new">
-            <PlusCircle size={16} />
-            Add booking
-          </AdminButton>
+          viewer ? null : (
+            <AdminButton href="/admin/bookings/new">
+              <PlusCircle size={16} />
+              Add booking
+            </AdminButton>
+          )
         }
       />
 

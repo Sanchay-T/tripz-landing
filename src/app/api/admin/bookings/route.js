@@ -9,7 +9,7 @@ import {
   ticketMarkets
 } from "@/lib/booking-extraction-schema";
 
-import { requireSession } from "@/lib/require-session";
+import { requireWrite } from "@/lib/require-session";
 
 export const runtime = "nodejs";
 
@@ -71,7 +71,7 @@ const bookingInputSchema = z.object({
 export async function POST(request) {
   // Real session check. The proxy only sees that a cookie exists; it runs on the
   // edge and cannot ask Postgres whether that cookie is still valid.
-  const gate = await requireSession();
+  const gate = await requireWrite();
   if (gate.response) return gate.response;
 
 

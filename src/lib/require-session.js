@@ -40,3 +40,38 @@ export async function requireSession() {
 
   return { session, response: null };
 }
+
+/**
+ * Validate the session AND refuse the request if the account is read-only.
+ *
+ * Every mutating handler uses this instead of `requireSession`. Hiding a button
+ * in the UI is a courtesy, not a control: without a server-side refusal, a
+ * read-only account can still POST to the endpoint directly with curl. This is
+ * the actual restriction; the hidden buttons just stop people trying.
+ *
+ * The test is `role === "viewer"`, not `role !== "editor"`. Accounts created
+ * before the column existed have a NULL role and must keep the write access they
+ * already had — a viewer is only ever a viewer because something set it so.
+ */
+export async function requireWrite() {
+  const gate = await requireSession();
+
+  if (gate.response) {
+    return gate;
+  }
+
+  if (gate.session.user?.role === "viewer") {
+    return {
+      session: gate.session,
+      response: NextResponse.json(
+        {
+          error: "This account is read-only.",
+          detail: "Ask Sanchay if you need to be able to add or change bookings."
+        },
+        { status: 403 }
+      )
+    };
+  }
+
+  return gate;
+}

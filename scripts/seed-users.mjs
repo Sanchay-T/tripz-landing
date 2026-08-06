@@ -39,6 +39,14 @@ const ACCOUNTS = [
     // address when we have it and the account keeps working either way.
     email: "charan@tripz.local",
     username: "charan"
+  },
+  {
+    name: "Palam",
+    email: "palam@tripz.local",
+    username: "palam",
+    // Read-only. Every screen is visible; every write is refused server-side by
+    // requireWrite(), not merely hidden in the UI.
+    role: "viewer"
   }
 ];
 
@@ -63,6 +71,14 @@ for (const account of ACCOUNTS) {
         password
       }
     });
+    // `role` is `input: false` on the model, so sign-up cannot set it — that is
+    // deliberate, or anyone creating an account could grant themselves writes.
+    // The seed script assigns it afterwards, through the adapter.
+    if (account.role) {
+      const ctx = await auth.$context;
+      const row = await ctx.internalAdapter.findUserByEmail(account.email);
+      await ctx.internalAdapter.updateUser(row.user.id, { role: account.role });
+    }
     created.push({ ...account, password });
   } catch (cause) {
     const message = cause?.body?.message ?? cause?.message ?? String(cause);
@@ -82,7 +98,7 @@ for (const account of ACCOUNTS) {
 if (created.length) {
   console.log("\nCreated. These passwords are shown once:\n");
   for (const account of created) {
-    console.log(`  ${account.username.padEnd(10)} ${account.email}`);
+    console.log(`  ${account.username.padEnd(10)} ${account.email}${account.role ? `  [${account.role}]` : ""}`);
     console.log(`  ${" ".repeat(10)} ${account.password}\n`);
   }
   console.log("Sign in with either the email or the username. Change it in /admin/settings.");

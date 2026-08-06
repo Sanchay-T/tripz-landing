@@ -46,6 +46,7 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Wordmark } from "../components/ui";
 import { authClient } from "@/lib/auth-client";
+import { isViewer } from "@/lib/roles";
 
 /**
  * The admin shell.
@@ -68,9 +69,9 @@ import { authClient } from "@/lib/auth-client";
 
 const navItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Upload", href: "/admin/intake", icon: UploadCloud },
+  { label: "Upload", href: "/admin/intake", icon: UploadCloud, writes: true },
   { label: "Bookings", href: "/admin/bookings", icon: Plane },
-  { label: "Add booking", href: "/admin/bookings/new", icon: PlusCircle },
+  { label: "Add booking", href: "/admin/bookings/new", icon: PlusCircle, writes: true },
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Tasks", href: "/admin/tasks", icon: ClipboardList },
   { label: "Documents", href: "/admin/documents", icon: FileStack },
@@ -147,7 +148,9 @@ export default function AdminShell({ children, user }) {
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {navItems.map((item) => {
+                  {navItems
+                    .filter((item) => !(isViewer(user) && item.writes))
+                    .map((item) => {
                     const active = isActivePath(pathname, item.href);
                     return (
                       <SidebarMenuItem key={item.href}>

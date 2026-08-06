@@ -3,7 +3,7 @@ import { getDb } from "@/lib/db";
 import { toNumberOrNull } from "@/lib/admin/records";
 import { ticketExtractionZodSchema } from "@/lib/booking-extraction-schema";
 
-import { requireSession } from "@/lib/require-session";
+import { requireSession, requireWrite } from "@/lib/require-session";
 
 export const runtime = "nodejs";
 
@@ -80,7 +80,7 @@ export async function GET() {
 export async function PATCH(request) {
   // Real session check. The proxy only sees that a cookie exists; it runs on the
   // edge and cannot ask Postgres whether that cookie is still valid.
-  const gate = await requireSession();
+  const gate = await requireWrite();
   if (gate.response) return gate.response;
 
 
