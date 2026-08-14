@@ -32,7 +32,7 @@ import { cn } from "@/lib/cn";
 
 /** A raised surface. */
 export function AdminCard({ children, className }) {
-  return <Card className={className}>{children}</Card>;
+  return <Card className={cn("min-w-0 max-w-full", className)}>{children}</Card>;
 }
 
 /**

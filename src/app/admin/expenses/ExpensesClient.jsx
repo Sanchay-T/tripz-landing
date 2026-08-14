@@ -47,6 +47,6 @@ export default function ExpensesClient({ viewer }) {
       <Field label="Notes"><Textarea value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} /></Field>
       <div className="flex gap-2"><AdminButton disabled={saving} type="submit">{saving ? "Saving…" : editing ? "Save changes" : "Add expense"}</AdminButton>{editing && <AdminButton tone="light" type="button" onClick={() => { setEditing(null); setForm(empty()); }}>Cancel</AdminButton>}</div>
     </form></Panel>}
-    <div className={viewer ? "lg:col-span-3" : "lg:col-span-2"}>{error && <Notice tone="critical">{error}</Notice>}<AdminCard className="mt-4 first:mt-0"><div className="p-4"><Input aria-label="Search expenses" placeholder="Search expenses" value={query} onChange={(event) => setQuery(event.target.value)} /></div><AdminTable columns={columns} rows={filtered} /></AdminCard></div>
+    <div className={`min-w-0 ${viewer ? "lg:col-span-3" : "lg:col-span-2"}`}>{error && <Notice tone="critical">{error}</Notice>}<AdminCard className="mt-4 first:mt-0"><div className="p-4"><Input aria-label="Search expenses" placeholder="Search expenses" value={query} onChange={(event) => setQuery(event.target.value)} /></div><AdminTable columns={columns} rows={filtered} /></AdminCard></div>
   </div>;
 }

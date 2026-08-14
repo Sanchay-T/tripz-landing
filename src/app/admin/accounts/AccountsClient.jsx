@@ -32,6 +32,6 @@ export default function AccountsClient({ viewer }) {
       <Field label="Notes"><Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></Field>
       <div className="flex gap-2"><AdminButton type="submit">{editing ? "Save entry" : "Add entry"}</AdminButton>{editing && <AdminButton tone="light" type="button" onClick={() => { setEditing(null); setForm(empty()); }}>Cancel</AdminButton>}</div>
     </form></Panel>}
-    <div className={viewer ? "lg:col-span-3" : "lg:col-span-2"}>{error && <Notice tone="critical">{error}</Notice>}<AdminCard className="mt-4 first:mt-0"><div className="p-4"><Input aria-label="Search login directory" placeholder="Search service, login ID or owner" value={query} onChange={(e) => setQuery(e.target.value)} /></div><AdminTable columns={columns} rows={rows} /></AdminCard></div>
+    <div className={`min-w-0 ${viewer ? "lg:col-span-3" : "lg:col-span-2"}`}>{error && <Notice tone="critical">{error}</Notice>}<AdminCard className="mt-4 first:mt-0"><div className="p-4"><Input aria-label="Search login directory" placeholder="Search service, login ID or owner" value={query} onChange={(e) => setQuery(e.target.value)} /></div><AdminTable columns={columns} rows={rows} /></AdminCard></div>
   </div>;
 }
