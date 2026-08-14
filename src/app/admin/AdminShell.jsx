@@ -9,6 +9,7 @@ import {
   ClipboardList,
   FileStack,
   LayoutDashboard,
+  KeyRound,
   Plane,
   PlusCircle,
   ReceiptText,
@@ -17,6 +18,7 @@ import {
   TrendingUp,
   UploadCloud,
   Users,
+  UserRoundSearch,
   WalletCards
 } from "lucide-react";
 
@@ -73,11 +75,13 @@ const navItems = [
   { label: "Bookings", href: "/admin/bookings", icon: Plane },
   { label: "Add booking", href: "/admin/bookings/new", icon: PlusCircle, writes: true },
   { label: "Customers", href: "/admin/customers", icon: Users },
+  { label: "Leads", href: "/admin/leads", icon: UserRoundSearch },
   { label: "Tasks", href: "/admin/tasks", icon: ClipboardList },
   { label: "Documents", href: "/admin/documents", icon: FileStack },
   { label: "Finance", href: "/admin/finance", icon: BarChart3 },
   { label: "Margin", href: "/admin/margin", icon: TrendingUp },
   { label: "Expenses", href: "/admin/expenses", icon: WalletCards },
+  { label: "Login directory", href: "/admin/accounts", icon: KeyRound },
   { label: "Templates", href: "/admin/templates", icon: BookOpen },
   { label: "Providers", href: "/admin/providers", icon: ReceiptText },
   { label: "Imports", href: "/admin/imports", icon: UploadCloud },

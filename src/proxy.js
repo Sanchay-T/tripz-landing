@@ -27,7 +27,7 @@ import { NextResponse } from "next/server";
  * client data.
  */
 
-export async function middleware(request) {
+export async function proxy(request) {
   const { pathname, search } = request.nextUrl;
 
   // No public-path list any more. Sign-in moved from /admin/login to /login and the

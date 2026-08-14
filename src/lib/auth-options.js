@@ -43,6 +43,7 @@ function authPool() {
 }
 
 const WEEK_SECONDS = 60 * 60 * 24 * 7;
+export const MIN_PASSWORD_LENGTH = 12;
 
 export function buildAuthOptions({ allowSignUp = false } = {}) {
   const secret = process.env.BETTER_AUTH_SECRET;
@@ -67,7 +68,7 @@ export function buildAuthOptions({ allowSignUp = false } = {}) {
       // No public registration. This is an internal admin over real customer names
       // and phone numbers; accounts are created by running the seed script.
       disableSignUp: !allowSignUp,
-      minPasswordLength: 12
+      minPasswordLength: MIN_PASSWORD_LENGTH
     },
     // Adds `username` and `displayUsername` to the user table and a
     // POST /sign-in/username endpoint. Email sign-in keeps working alongside it.
